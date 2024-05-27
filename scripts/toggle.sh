@@ -4,7 +4,7 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$CURRENT_DIR/helpers.sh"
 
-DEFAULT_FORMAT='popup/#{session_name}/#{b:pane_current_path}/#{@popup_name}'
+DEFAULT_ID_FORMAT='popup/#{session_name}/#{b:pane_current_path}/#{@popup_name}'
 DEFAULT_ON_OPEN='set status off'
 DEFAULT_ON_CLOSE=''
 
@@ -65,9 +65,9 @@ if [[ "$(tmux show -qv "$flag")" = 1 ]]; then
 	# the keybinding.
 	eval "tmux $on_close \; set -u '$flag' \; detach"
 else
-	format="$(showopt @popup-format "$DEFAULT_FORMAT")"
+	id_format="$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")"
 	on_open="$(showhook @popup-on-open "$DEFAULT_ON_OPEN")"
-	popup_id="$(tmux set @popup_name "$name" \; display -p "$format" \; set -u @popup_name)"
+	popup_id="$(tmux set @popup_name "$name" \; display -p "$id_format" \; set -u @popup_name)"
 
 	tmux popup \
 		"${popup_args[@]}" \
