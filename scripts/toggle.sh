@@ -59,17 +59,29 @@ done
 flag="@popup-$name-opened"
 
 if [[ "$(tmux show -qv "$flag")" = 1 ]]; then
-	on_close=$(showhook @popup-on-close "$DEFAULT_ON_CLOSE")
+	on_close=$(showopt @popup-on-close "$DEFAULT_ON_CLOSE")
 
 	# Clear the flag to prevent a manually attached session from being detached by
 	# the keybinding.
-	eval "tmux $on_close \; set -u '$flag' \; detach"
+	eval "$(
+		cat <<-EOF | makecmd
+			tmux
+			$on_close
+			set -u '$flag'
+			detach
+		EOF
+	)"
 else
 	id_format="$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")"
-	on_open="$(showhook @popup-on-open "$DEFAULT_ON_OPEN")"
+	on_open="$(showopt @popup-on-open "$DEFAULT_ON_OPEN")"
 	popup_id="$(tmux set @popup_name "$name" \; display -p "$id_format" \; set -u @popup_name)"
 
-	tmux popup \
-		"${popup_args[@]}" \
-		"tmux new -ADs '$popup_id' $cmd \; set '$flag' 1 \; $on_open"
+	tmux popup "${popup_args[@]}" "$(
+		cat <<-EOF | makecmd
+			tmux
+			new -ADs '$popup_id' $cmd
+			set '$flag' 1
+			$on_open
+		EOF
+	)"
 fi
