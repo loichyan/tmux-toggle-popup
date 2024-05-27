@@ -56,9 +56,9 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
-flag="@popup-$name-opened"
+opened="$(tmux show -qv @__popup_opened)"
 
-if [[ "$(tmux show -qv "$flag")" = 1 ]]; then
+if [[ "$opened" = "$name" ]]; then
 	on_close=$(showopt @popup-on-close "$DEFAULT_ON_CLOSE")
 
 	# Clear the flag to prevent a manually attached session from being detached by
@@ -67,7 +67,7 @@ if [[ "$(tmux show -qv "$flag")" = 1 ]]; then
 		cat <<-EOF | makecmd
 			tmux
 			$on_close
-			set -u '$flag'
+			set -u @__popup_opened
 			detach
 		EOF
 	)"
@@ -80,7 +80,7 @@ else
 		cat <<-EOF | makecmd
 			tmux
 			new -ADs '$popup_id' $cmd
-			set '$flag' 1
+			set @__popup_opened '$name'
 			$on_open
 		EOF
 	)"
