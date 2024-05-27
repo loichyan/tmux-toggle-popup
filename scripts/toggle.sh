@@ -4,8 +4,9 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$CURRENT_DIR/helpers.sh"
 
-DEFAULT_ID_FORMAT='popup/#{session_name}/#{b:pane_current_path}/#{@popup_name}'
-DEFAULT_ON_OPEN='set status off'
+DEFAULT_SOCKET_NAME='popup'
+DEFAULT_ID_FORMAT='#{b:socket_path}/#{session_name}/#{b:pane_current_path}/#{@popup_name}'
+DEFAULT_ON_OPEN="set exit-empty off ; set status off"
 DEFAULT_ON_CLOSE=''
 
 declare name="default" cmd popup_args
@@ -72,14 +73,15 @@ if [[ "$opened" = "$name" ]]; then
 		EOF
 	)"
 else
-	id_format="$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")"
+	socket_name="$(showopt @popup-socket-name "$DEFAULT_SOCKET_NAME")"
 	on_open="$(showopt @popup-on-open "$DEFAULT_ON_OPEN")"
+	id_format="$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")"
 	popup_id="$(tmux set @popup_name "$name" \; display -p "$id_format" \; set -u @popup_name)"
 
 	tmux popup "${popup_args[@]}" "$(
 		cat <<-EOF | makecmd
-			tmux
-			new -ADs '$popup_id' $cmd
+			tmux -L '$socket_name'
+			new -As '$popup_id' $cmd
 			set @__popup_opened '$name'
 			$on_open
 		EOF
