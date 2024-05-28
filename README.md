@@ -2,11 +2,29 @@
 
 A handy plugin that helps create toggleable popups.
 
+[demo.webm](https://github.com/loichyan/tmux-toggle-popup/assets/73006950/99a94285-3839-4fe0-949f-5649ad34d5a5)
+
+<details>
+<summary>Environment</summary>
+<br>
+
+- DE: [Gnome 46](https://release.gnome.org/46) & [PaperWM](https://github.com/paperwm/PaperWM)
+- Tmux: [Catppuccin theme](https://github.com/catppuccin/tmux)
+- Font: [Rec Mono Duotone](https://www.recursive.design)
+- Keystrokes: [Show Me the Key](https://showmethekey.alynx.one)
+- Rickroll: [rickrollrc](https://github.com/keroserene/rickrollrc)
+
+_Check
+[the dotfiles](https://github.com/loichyan/dotfiles/tree/5899f0e7572de4102261051277b22990e53f8bed)
+for more details_
+
+</details>
+
 ## 📦 Installation
 
 ### Requirements
 
-- TMUX >= **3.4** (not tested on earlier versions)
+- Tmux >= **3.4** (not tested on earlier versions)
 
 ### With [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
 
@@ -30,7 +48,7 @@ Add this line to the bottom of `.tmux.conf`:
 run ~/clone/path/toggle-popup.tmux
 ```
 
-Reload TMUX environment with: `tmux source-file ~/.tmux.conf`. You should now be able to use the
+Reload Tmux environment with: `tmux source-file ~/.tmux.conf`. You should now be able to use the
 plugin.
 
 ## ✍️ Usage
