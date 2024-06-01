@@ -57,8 +57,8 @@ Create keybindings to toggle your preferred shell and
 [lazygit](https://github.com/jesseduffield/lazygit):
 
 ```tmux
-bind -n M-t run "#{@popup-toggle} -E -d '#{pane_current_path}' -w 75% -h 75%"
-bind -n M-g run "#{@popup-toggle} -E -d '#{pane_current_path}' -w 90% -h 90% --name lazygit lazygit"
+bind -n M-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
+bind -n M-g run "#{@popup-toggle} -Ed'#{pane_current_path}' -w90% -h90% --name=lazygit lazygit"
 ```
 
 ## ⚙️ Options
@@ -109,7 +109,7 @@ set -g @popup-on-open {
 **Example**:
 
 ```tmux
-bind -n M-t run "#{@popup-toggle} -E -d '#{pane_current_path}' -w 75% -h 75%"
+bind -n M-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
 ```
 
 **Description**: A shell script to toggle a popup: when invoked within a popup of the same name, it
@@ -130,7 +130,7 @@ OPTION:
 
 EXAMPLES:
 
-  toggle.sh --name bash -E -d '#{pane_current_path}' bash -l
+  toggle.sh -Ed'#{pane_current_path}' --name=bash bash
 ```
 
 ## ⚖️ License

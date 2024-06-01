@@ -11,16 +11,19 @@ DEFAULT_ID_FORMAT='#{b:socket_path}/#{session_name}/#{b:pane_current_path}/#{@po
 DEFAULT_ON_OPEN="set exit-empty off ; set status off"
 DEFAULT_ON_CLOSE=''
 
-declare name cmd popup_args
+declare name popup_args cmd OPT OPTARG OPTIND=1
 
-while [[ $# -gt 0 ]]; do
-	case $1 in
-	--name)
-		name="$2"
-		shift
-		shift
+while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
+	if [ "$OPT" = "-" ]; then OPT="$OPTARG"; fi
+	case "$OPT" in
+	[BCE]) popup_args+=("-$OPT") ;;
+	[bcdehsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
+	name)
+		name="${!OPTIND}"
+		OPTIND=$((OPTIND + 1))
 		;;
-	--help)
+	name=*) name="${OPTARG#*=}" ;;
+	help)
 		cat <<-EOF >&2
 			USAGE:
 
@@ -35,31 +38,18 @@ while [[ $# -gt 0 ]]; do
 
 			EXAMPLES:
 
-			  toggle.sh --name bash -E -d '#{pane_current_path}' bash
+			  toggle.sh -Ed'#{pane_current_path}' --name=bash bash
 		EOF
 		exit
 		;;
-	-[BCE])
-		popup_args+=("$1")
-		shift
-		;;
-	-[bcdehsStTwxy])
-		popup_args+=("$1" "$2")
-		shift
-		shift
-		;;
-	-*)
-		echo "Unknown argument '$1'"
-		exit 1
-		;;
-	*)
-		cmd="'$(printf '%q ' "$@")'"
-		break
-		;;
+	*) badopt ;;
 	esac
 done
+if [ $OPTIND -le $# ]; then
+	cmd="$(printf '%q ' "${@:$OPTIND}")"
+fi
 
-opened="$(tmux show -qv @__popup_opened)"
+opened="$(showopt @__popup_opened)"
 
 if [[ -n "$opened" && ("$opened" = "$name" || -z "$*") ]]; then
 	on_close=$(showopt @popup-on-close "$DEFAULT_ON_CLOSE")
