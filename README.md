@@ -112,8 +112,9 @@ set -g @popup-on-open {
 bind -n M-t run "#{@popup-toggle} -E -d '#{pane_current_path}' -w 75% -h 75%"
 ```
 
-**Description**: A shell script to toggle a popup: when invoked from within a popup of the same
-name, it closes the popup; otherwise, it opens a popup of the specified name.
+**Description**: A shell script to toggle a popup: when invoked within a popup of the same name, it
+closes the popup; otherwise, it opens a popup of the specified name. If no arguments are provided
+and called within a popup, it will close the popup.
 
 ```text
 USAGE:

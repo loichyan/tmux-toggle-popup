@@ -5,12 +5,13 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
 
+DEFAULT_NAME='default'
 DEFAULT_SOCKET_NAME='popup'
 DEFAULT_ID_FORMAT='#{b:socket_path}/#{session_name}/#{b:pane_current_path}/#{@popup_name}'
 DEFAULT_ON_OPEN="set exit-empty off ; set status off"
 DEFAULT_ON_CLOSE=''
 
-declare name="default" cmd popup_args
+declare name cmd popup_args
 
 while [[ $# -gt 0 ]]; do
 	case $1 in
@@ -60,7 +61,7 @@ done
 
 opened="$(tmux show -qv @__popup_opened)"
 
-if [[ "$opened" = "$name" ]]; then
+if [[ -n "$opened" && ("$opened" = "$name" || -z "$*") ]]; then
 	on_close=$(showopt @popup-on-close "$DEFAULT_ON_CLOSE")
 
 	# Clear the flag to prevent a manually attached session from being detached by
@@ -74,6 +75,7 @@ if [[ "$opened" = "$name" ]]; then
 		EOF
 	)"
 else
+	: "${name:="$DEFAULT_NAME"}"
 	socket_name="$(showopt @popup-socket-name "$DEFAULT_SOCKET_NAME")"
 	on_open="$(showopt @popup-on-open "$DEFAULT_ON_OPEN")"
 	id_format="$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")"
