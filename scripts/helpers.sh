@@ -2,7 +2,7 @@
 
 showopt() {
 	local v
-	v="$(tmux show-option -gqv "$1")"
+	v="$(tmux show -Aqv "$1")"
 	echo "${v:-"$2"}"
 }
 
@@ -11,5 +11,5 @@ makecmd() {
 }
 
 bindkey() {
-	tmux bind-key "$@"
+	tmux bind "$@"
 }
