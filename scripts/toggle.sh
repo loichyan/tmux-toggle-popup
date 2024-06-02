@@ -24,17 +24,17 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 		;;
 	name=*) name="${OPTARG#*=}" ;;
 	help)
-		cat <<-EOF >&2
+		cat <<-EOF
 			USAGE:
 
 			  toggle.sh [OPTION]... [COMMAND]...
 
 			OPTION:
 
-			  --name <name>  Popup name [Default: "default"]
-			  -[BCE]         Flags passed to display-popup
+			  --name <name>     Popup name [Default: "default"]
+			  -[BCE]            Flags passed to display-popup
 			  -[bcdehsStTwxy] <value>
-			                 Options passed to display-popup
+			                    Options passed to display-popup
 
 			EXAMPLES:
 
