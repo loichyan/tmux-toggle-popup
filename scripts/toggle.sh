@@ -8,7 +8,7 @@ source "$CURRENT_DIR/helpers.sh"
 DEFAULT_NAME='default'
 DEFAULT_SOCKET_NAME='popup'
 DEFAULT_ID_FORMAT='#{b:socket_path}/#{session_name}/#{b:pane_current_path}/#{@popup_name}'
-DEFAULT_ON_OPEN="set exit-empty off ; set status off"
+DEFAULT_ON_OPEN="set exit-empty off \; set status off"
 DEFAULT_ON_CLOSE=''
 
 declare name popup_args cmd OPT OPTARG OPTIND=1
@@ -45,38 +45,33 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 	*) badopt ;;
 	esac
 done
-if [ $OPTIND -le $# ]; then
-	cmd="$(printf '%q ' "${@:$OPTIND}")"
-fi
+cmd=("${@:$OPTIND}")
 
 opened="$(showopt @__popup_opened)"
 
 if [[ -n "$opened" && ("$opened" = "$name" || -z "$*") ]]; then
-	on_close=$(showopt @popup-on-close "$DEFAULT_ON_CLOSE")
-
-	# Clear the flag to prevent a manually attached session from being detached by
-	# the keybinding.
+	# Clear the variables to prevent a manually attached session from being
+	# detached by the keybinding.
 	eval "$(
-		cat <<-EOF | makecmd
+		cat <<-EOF | joincmd
 			tmux
-			$on_close
-			set -u @__popup_opened
-			detach
+				$(showopt @popup-on-close "$DEFAULT_ON_CLOSE")
+				set -u @__popup_opened
+				detach
 		EOF
 	)"
 else
-	: "${name:="$DEFAULT_NAME"}"
+	name="${name:-"$DEFAULT_NAME"}"
 	socket_name="$(showopt @popup-socket-name "$DEFAULT_SOCKET_NAME")"
-	on_open="$(showopt @popup-on-open "$DEFAULT_ON_OPEN")"
 	id_format="$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")"
 	popup_id="$(format @popup_name "$name" "$id_format")"
 
 	tmux popup "${popup_args[@]}" "$(
-		cat <<-EOF | makecmd
+		cat <<-EOF | joincmd
 			tmux -L '$socket_name'
-			new -As '$popup_id' $cmd
-			set @__popup_opened '$name'
-			$on_open
+				new -As '$popup_id' $(escape "${cmd[@]}")
+				set @__popup_opened '$name'
+				$(showopt @popup-on-open "$DEFAULT_ON_OPEN")
 		EOF
 	) >/dev/null"
 fi

@@ -82,16 +82,19 @@ expansion of the format string.
 
 ### `@popup-on-open`
 
-**Default**: `set exit-empty off ; set status off`
+**Default**: `set exit-empty off \; set status off`
 
 **Example**:
 
 ```tmux
-# you can use braces for more concise syntax
-set -g @popup-on-open {
+set -g @popup-on-open '
   set exit-empty off
   set status off
-}
+'
+# escaping "\;" is required when binding key to multiple commands
+set -g @popup-on-init '
+  bind M-r display "some text" \\\; display "another text"
+'
 ```
 
 **Description**: Run extra commands in the popup every time after it's opened.

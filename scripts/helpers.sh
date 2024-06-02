@@ -6,8 +6,14 @@ showopt() {
 	echo "${v:-"$2"}"
 }
 
-makecmd() {
-	tr '\n' ';' | sed 's/;/ \\; /g'
+escape() {
+	if [ $# -gt 0 ]; then
+		printf '%q ' "$@"
+	fi
+}
+
+joincmd() {
+	sed 's/$/ \\;/' | tr '\n' ' '
 }
 
 bindkey() {
