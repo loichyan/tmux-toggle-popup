@@ -1,25 +1,43 @@
 #!/usr/bin/env bash
 
-showopt() {
-	local v
-	v="$(tmux show -Aqv "$1")"
-	echo "${v:-"$2"}"
+# Concats multiline Tmux commands into a single line.
+joincmd() {
+	sed 's/$/ \\;/' | tr '\n' ' '
 }
 
+# Escapes all given arguments.
 escape() {
 	if [ $# -gt 0 ]; then
 		printf '%q ' "$@"
 	fi
 }
 
-joincmd() {
-	sed 's/$/ \\;/' | tr '\n' ' '
+# Prints an error message and exits.
+die() {
+	echo "$*" >&2
+	exit 1
 }
 
-bindkey() {
-	tmux bind "$@"
+# Reports illegal arguments.
+badopt() {
+	case "$OPT" in
+	:) die "option requires a value: -$OPTARG <value>" ;;
+	\?) die "illegal option: -$OPTARG" ;;
+	*) die "illegal option: --$OPTARG" ;;
+	esac
 }
 
+# Returns the value of the specified option or the second argument as the
+# fallback value if the option is empty.
+showopt() {
+	local v
+	v="$(tmux show -Aqv "$1")"
+	echo "${v:-"$2"}"
+}
+
+# Expand the provided Tmux FORMAT string. The last argument is the format
+# string, while the preceding ones represent variables available during the
+# expansion.
 format() {
 	local set_v=() unset_v=()
 	while [ $# -gt 1 ]; do
@@ -28,17 +46,4 @@ format() {
 		shift 2
 	done
 	tmux "${set_v[@]}" display -p "$*" \; "${unset_v[@]}"
-}
-
-die() {
-	echo "$*" >&2
-	exit 1
-}
-
-badopt() {
-	case "$OPT" in
-	:) die "option requires a value: -$OPTARG <value>" ;;
-	\?) die "illegal option: -$OPTARG" ;;
-	*) die "illegal option: --$OPTARG" ;;
-	esac
 }
