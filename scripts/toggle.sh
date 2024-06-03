@@ -78,5 +78,5 @@ else
 			set @__popup_opened '$name'
 			$on_open
 		EOF
-	)"
+	) >/dev/null"
 fi
