@@ -52,14 +52,7 @@ opened="$(showopt @__popup_opened)"
 if [[ -n "$opened" && ("$opened" = "$name" || -z "$*") ]]; then
 	# Clear the variables to prevent a manually attached session from being
 	# detached by the keybinding.
-	eval "$(
-		cat <<-EOF | joincmd
-			tmux
-				$(showopt @popup-on-close "$DEFAULT_ON_CLOSE")
-				set -u @__popup_opened
-				detach
-		EOF
-	)"
+	tmux set -u @__popup_opened \; detach
 else
 	name="${name:-"$DEFAULT_NAME"}"
 	socket_name="$(showopt @popup-socket-name "$DEFAULT_SOCKET_NAME")"

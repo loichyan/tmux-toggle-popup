@@ -107,12 +107,6 @@ set -g @popup-on-init '
 
 **Description**: Run extra commands in the popup every time after it's opened.
 
-### `@popup-on-close`
-
-**Default**: empty
-
-**Description**: Similar to `@popup-on-open`, but executed before the popup is closed.
-
 ## ⌨️ Keybindings
 
 ### `@popup-toggle`
