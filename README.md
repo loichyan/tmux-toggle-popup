@@ -80,14 +80,21 @@ sessions, and within each session, popups are shared among the same project (ide
 directory name). A variable named `@popup_name` is assigned the name of the popup during the
 expansion of the format string.
 
-### `@popup-on-open`
+## 🪝 Hooks
 
-**Default**: `set exit-empty off \; set status off`
+A hook consists of Tmux commands delimited by semicolons (`;`). Each hook is interpreted by bash(1)
+as a sequence of shell arguments, which are then passed to tmux(1). Hence, semicolons should be
+escaped (`\;`) or quoted (`";"`) to prevent them from being recognized as bash command delimiters.
+Each command can alternatively be delimited by a line break, which is substituted with `\;` before
+interpretation.
+
+A hook will be executed either in the caller (i.e., the session that calls `@popup-toggle`) or in
+the popup (i.e., the session that opens as a popup).
 
 **Example**:
 
 ```tmux
-set -g @popup-on-open '
+set -g @popup-on-init '
   set exit-empty off
   set status off
 '
@@ -97,13 +104,26 @@ set -g @popup-on-init '
 '
 ```
 
-**Description**: Run extra commands in the popup every time after it's opened.
+### `@popup-on-init`
 
-### `@popup-on-close`
+**Default**: `set exit-empty off \; set status off`
+
+**Description**: Additional commands that are executed within the popup each time after it is
+opened.
+
+### `@popup-before-open`
 
 **Default**: empty
 
-**Description**: Similar to `@popup-on-open`, but executed before the popup is closed.
+**Description**: Additional commands that are executed within the caller each time before a popup is
+opened.
+
+### `@popup-after-close`
+
+**Default**: empty
+
+**Description**: Additional commands that are executed within the caller each time after a popup is
+closed.
 
 ## ⌨️ Keybindings
 

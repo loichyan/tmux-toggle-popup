@@ -35,6 +35,12 @@ showopt() {
 	echo "${v:-"$2"}"
 }
 
+# Returns the specified option as a hook, which consists of a sequence of Tmux
+# commands.
+showhook() {
+	showopt "$@" | joincmd
+}
+
 # Expand the provided Tmux FORMAT string. The last argument is the format
 # string, while the preceding ones represent variables available during the
 # expansion.
