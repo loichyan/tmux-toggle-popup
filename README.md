@@ -91,7 +91,7 @@ interpretation.
 **Example**:
 
 ```tmux
-set -g @popup-on-open '
+set -g @popup-on-init '
   set exit-empty off
   set status off
 '
@@ -101,11 +101,12 @@ set -g @popup-on-init '
 '
 ```
 
-### `@popup-on-open`
+### `@popup-on-init`
 
 **Default**: `set exit-empty off \; set status off`
 
-**Description**: Run extra commands in the popup every time after it's opened.
+**Description**: Additional commands that initialize a popup, executed within the popup each time
+after it is opened.
 
 ## ⌨️ Keybindings
 
