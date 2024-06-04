@@ -167,7 +167,9 @@ set -g @popup-before-open 'run "#{@popup-focus} --leave nvim"'
 set -g @popup-after-close 'run "#{@popup-focus} --enter nvim"'
 ```
 
-**Description**: Manually fire focus enter and leave events.
+**Description**: Manually send focus enter or leave events. The name of the program that accepts
+focus events can be specified and events are sent only if the current program matches any of the
+names; if no name is provided, focus events are always sent.
 
 ```text
 USAGE:
