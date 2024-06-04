@@ -80,9 +80,13 @@ sessions, and within each session, popups are shared among the same project (ide
 directory name). A variable named `@popup_name` is assigned the name of the popup during the
 expansion of the format string.
 
-### `@popup-on-open`
+## 🪝 Hooks
 
-**Default**: `set exit-empty off \; set status off`
+A hook consists of Tmux commands delimited by semicolons (`;`). Each hook is interpreted by bash(1)
+as a sequence of shell arguments, which are then passed to tmux(1). Hence, semicolons should be
+escaped (`\;`) or quoted (`";"`) to prevent them from being recognized as bash command delimiters.
+Each command can alternatively be delimited by a line break, which is substituted with `\;` before
+interpretation.
 
 **Example**:
 
@@ -96,6 +100,10 @@ set -g @popup-on-init '
   bind M-r display "some text" \\\; display "another text"
 '
 ```
+
+### `@popup-on-open`
+
+**Default**: `set exit-empty off \; set status off`
 
 **Description**: Run extra commands in the popup every time after it's opened.
 
