@@ -69,7 +69,7 @@ else
 	socket_name="$(showopt @popup-socket-name "$DEFAULT_SOCKET_NAME")"
 	on_open="$(showopt @popup-on-open "$DEFAULT_ON_OPEN")"
 	id_format="$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")"
-	popup_id="$(tmux set @popup_name "$name" \; display -p "$id_format" \; set -u @popup_name)"
+	popup_id="$(format @popup_name "$name" "$id_format")"
 
 	tmux popup "${popup_args[@]}" "$(
 		cat <<-EOF | makecmd

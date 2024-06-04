@@ -14,6 +14,16 @@ bindkey() {
 	tmux bind "$@"
 }
 
+format() {
+	local set_v=() unset_v=()
+	while [ $# -gt 1 ]; do
+		set_v+=(set "$1" "$2" \;)
+		unset_v+=(set -u "$1" \;)
+		shift 2
+	done
+	tmux "${set_v[@]}" display -p "$*" \; "${unset_v[@]}"
+}
+
 die() {
 	echo "$*" >&2
 	exit 1
