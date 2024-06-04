@@ -146,14 +146,42 @@ USAGE:
 
 OPTION:
 
-  --name <name>  Popup name [Default: "default"]
-  -[BCE]         Flags passed to display-popup
+  --name <name>     Popup name [Default: "default"]
+  -[BCE]            Flags passed to display-popup
   -[bcdehsStTwxy] <value>
-                 Options passed to display-popup
+                    Options passed to display-popup
 
 EXAMPLES:
 
   toggle.sh -Ed'#{pane_current_path}' --name=bash bash
+```
+
+### `@popup-focus`
+
+**Example**:
+
+A workaround of tmux/tmux#3991.
+
+```tmux
+set -g @popup-before-open 'run "#{@popup-focus} --leave nvim"'
+set -g @popup-after-close 'run "#{@popup-focus} --enter nvim"'
+```
+
+**Description**: Manually fire focus enter and leave events.
+
+```text
+USAGE:
+
+  focus.sh [OPTION]... [PROGRAM]...
+
+OPTION:
+
+  --enter           Send focus enter event [Default mode]
+  --leave           Send focus leave event
+
+EXAMPLES:
+
+  focus.sh --enter nvim emacs
 ```
 
 ## ⚖️ License

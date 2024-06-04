@@ -3,4 +3,6 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Set keybindings
-tmux set -g @popup-toggle "$CURRENT_DIR/scripts/toggle.sh"
+for key in toggle focus; do
+	tmux set -g "@popup-$key" "$CURRENT_DIR/scripts/$key.sh"
+done
