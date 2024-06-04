@@ -88,6 +88,9 @@ escaped (`\;`) or quoted (`";"`) to prevent them from being recognized as bash c
 Each command can alternatively be delimited by a line break, which is substituted with `\;` before
 interpretation.
 
+A hook will be executed either in the caller (i.e., the session that calls `@popup-toggle`) or in
+the popup (i.e., the session that opens as a popup).
+
 **Example**:
 
 ```tmux
@@ -105,8 +108,22 @@ set -g @popup-on-init '
 
 **Default**: `set exit-empty off \; set status off`
 
-**Description**: Additional commands that initialize a popup, executed within the popup each time
-after it is opened.
+**Description**: Additional commands that are executed within the popup each time after it is
+opened.
+
+### `@popup-before-open`
+
+**Default**: empty
+
+**Description**: Additional commands that are executed within the caller each time before a popup is
+opened.
+
+### `@popup-after-close`
+
+**Default**: empty
+
+**Description**: Additional commands that are executed within the caller each time after a popup is
+closed.
 
 ## ⌨️ Keybindings
 

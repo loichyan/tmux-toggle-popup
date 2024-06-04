@@ -58,10 +58,12 @@ else
 	id_format="$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")"
 	popup_id="$(format @popup_name "$name" "$id_format")"
 
+	eval "tmux -C \; $(showhook @popup-before-open) >/dev/null"
 	tmux popup "${popup_args[@]}" "
 		tmux -L '$socket_name' \
 			new -As '$popup_id' $(escape "${cmd[@]}") \; \
 			set @__popup_opened '$name' \; \
 			$(showhook @popup-on-init "$DEFAULT_ON_INIT") \; \
 			>/dev/null"
+	eval "tmux -C \; $(showhook @popup-after-close) >/dev/null"
 fi
