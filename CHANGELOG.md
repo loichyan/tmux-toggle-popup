@@ -11,7 +11,7 @@
 ### Features
 
 - Add two new hooks: `@popup-before-open` and `@popup-after-close` ([#2](https://github.com/loichyan/tmux-toggle-popup/pull/2)).
-- Add `@popup-focus`, primarily used as a workaround of [tmux/tmux#3](https://github.com/tmux/tmux/issues/3991) ([#3](https://github.com/loichyan/tmux-toggle-popup/pull/3)).
+- Add `@popup-focus`, primarily used as a workaround of [tmux/tmux#3991](https://github.com/tmux/tmux/issues/3991) ([#3](https://github.com/loichyan/tmux-toggle-popup/pull/3)).
 
 ## v0.1.0 (2024-05-31)
 
