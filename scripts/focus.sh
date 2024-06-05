@@ -8,7 +8,7 @@ source "$CURRENT_DIR/helpers.sh"
 declare mode=I progs OPT OPTARG OPTIND=1
 
 while getopts :-: OPT; do
-	if [ "$OPT" = "-" ]; then OPT="$OPTARG"; fi
+	if [ "$OPT" = '-' ]; then OPT="${OPTARG%%=*}"; fi
 	case "$OPT" in
 	enter) mode=I ;;
 	leave) mode=O ;;

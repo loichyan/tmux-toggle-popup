@@ -23,7 +23,7 @@ badopt() {
 	case "$OPT" in
 	:) die "option requires a value: -$OPTARG <value>" ;;
 	\?) die "illegal option: -$OPTARG" ;;
-	*) die "illegal option: --$OPTARG" ;;
+	*) die "illegal option: --$OPT" ;;
 	esac
 }
 

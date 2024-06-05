@@ -13,15 +13,19 @@ DEFAULT_ON_INIT="set exit-empty off \; set status off"
 declare name popup_args cmd OPT OPTARG OPTIND=1
 
 while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
-	if [ "$OPT" = "-" ]; then OPT="$OPTARG"; fi
+	if [ "$OPT" = '-' ]; then OPT="${OPTARG%%=*}"; fi
 	case "$OPT" in
 	[BCE]) popup_args+=("-$OPT") ;;
 	[bcdehsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
 	name)
-		name="${!OPTIND}"
-		OPTIND=$((OPTIND + 1))
+		OPTARG="${OPTARG:${#OPT}}"
+		if [ "${OPTARG::1}" = '=' ]; then
+			declare "$OPT"="${OPTARG:1}"
+		else
+			declare "$OPT"="${!OPTIND}"
+			OPTIND=$((OPTIND + 1))
+		fi
 		;;
-	name=*) name="${OPTARG#*=}" ;;
 	help)
 		cat <<-EOF
 			USAGE:
