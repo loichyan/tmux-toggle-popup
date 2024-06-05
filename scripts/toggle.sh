@@ -26,7 +26,7 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 		cat <<-EOF
 			USAGE:
 
-			  toggle.sh [OPTION]... [COMMAND]...
+			  toggle.sh [OPTION]... [SHELL_COMMAND]...
 
 			OPTION:
 

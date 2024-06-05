@@ -36,7 +36,7 @@ set -g @plugin "loichyan/tmux-toggle-popup"
 
 ### Manual installation
 
-Clone this repo:
+Clone the repo:
 
 ```sh
 git clone https://github.com/loichyan/tmux-toggle-popup ~/clone/path
@@ -75,7 +75,7 @@ popup sessions are opened.
 **Default**: `#{b:socket_path}/#{session_name}/#{b:pane_current_path}/#{@popup_name}`
 
 **Description**: A format string used to generate IDs for each popup, allowing you to customize how
-popups are shared across sessions, windows and panes. By default, popups are independent across
+popups are shared across sessions, windows, and panes. By default, popups are independent across
 sessions, and within each session, popups are shared among the same project (identified by the
 directory name). A variable named `@popup_name` is assigned the name of the popup during the
 expansion of the format string.
@@ -98,7 +98,7 @@ set -g @popup-on-init '
   set exit-empty off
   set status off
 '
-# escaping "\;" is required when binding key to multiple commands
+# Escaping "\;" is required when binding key to multiple commands
 set -g @popup-on-init '
   bind M-r display "some text" \\\; display "another text"
 '
@@ -136,13 +136,13 @@ bind -n M-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
 ```
 
 **Description**: A shell script to toggle a popup: when invoked within a popup of the same name, it
-closes the popup; otherwise, it opens a popup of the specified name. If no arguments are provided
-and called within a popup, it will close the popup.
+closes the popup; otherwise, it opens a popup of the specified name. If no argument is provided and
+called within a popup, it will close the popup.
 
 ```text
 USAGE:
 
-  toggle.sh [OPTION]... [COMMAND]...
+  toggle.sh [OPTION]... [SHELL_COMMAND]...
 
 OPTION:
 
@@ -160,7 +160,7 @@ EXAMPLES:
 
 **Example**:
 
-A workaround of tmux/tmux#3991.
+A workaround for <https://github.com/tmux/tmux/issues/3991>.
 
 ```tmux
 set -g @popup-before-open 'run "#{@popup-focus} --leave nvim"'
