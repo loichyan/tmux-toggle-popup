@@ -76,9 +76,9 @@ popup sessions are opened.
 
 **Description**: A format string used to generate IDs for each popup, allowing you to customize how
 popups are shared across sessions, windows, and panes. By default, popups are independent across
-sessions, and within each session, popups are shared among the same project (identified by the
-directory name). A variable named `@popup_name` is assigned the name of the popup during the
-expansion of the format string.
+sessions, and in each session, popups are shared among the same project (identified by the directory
+name). A variable named `@popup_name` is assigned the name of the popup during the expansion of the
+format string.
 
 ## 🪝 Hooks
 
@@ -108,22 +108,19 @@ set -g @popup-on-init '
 
 **Default**: `set exit-empty off \; set status off`
 
-**Description**: Additional commands that are executed within the popup each time after it is
-opened.
+**Description**: Tmux commands executed in the popup each time after it is opened.
 
 ### `@popup-before-open`
 
 **Default**: empty
 
-**Description**: Additional commands that are executed within the caller each time before a popup is
-opened.
+**Description**: Tmux commands executed in the caller each time before a popup is opened.
 
 ### `@popup-after-close`
 
 **Default**: empty
 
-**Description**: Additional commands that are executed within the caller each time after a popup is
-closed.
+**Description**: Tmux commands executed in the caller each time after a popup is closed.
 
 ## ⌨️ Keybindings
 
@@ -135,9 +132,9 @@ closed.
 bind -n M-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
 ```
 
-**Description**: A shell script to toggle a popup: when invoked within a popup of the same name, it
+**Description**: A shell script to toggle a popup: when invoked in a popup of the same name, it
 closes the popup; otherwise, it opens a popup of the specified name. If no argument is provided and
-called within a popup, it will close the popup.
+called in a popup, it will close the popup.
 
 ```text
 USAGE:
