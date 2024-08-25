@@ -7,7 +7,7 @@ joincmd() {
 
 # Escapes all given arguments.
 escape() {
-	if [ $# -gt 0 ]; then
+	if [[ $# -gt 0 ]]; then
 		printf '%q ' "$@"
 	fi
 }
@@ -46,7 +46,7 @@ showhook() {
 # expansion.
 format() {
 	local set_v=() unset_v=()
-	while [ $# -gt 1 ]; do
+	while [[ $# -gt 1 ]]; do
 		set_v+=(set "$1" "$2" \;)
 		unset_v+=(set -u "$1" \;)
 		shift 2
