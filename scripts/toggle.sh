@@ -47,7 +47,7 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 done
 cmd=("${@:$OPTIND}")
 
-opened="$(showopt @__popup_opened)"
+opened="$(showvariable @__popup_opened)"
 
 if [[ -n "$opened" && ("$opened" = "$name" || -z "$*") ]]; then
 	# Clear the variables to prevent a manually attached session from being

@@ -31,8 +31,13 @@ badopt() {
 # fallback value if the option is empty.
 showopt() {
 	local v
-	v="$(tmux show -Aqv "$1")"
+	v="$(tmux show -gqv "$1")"
 	echo "${v:-"$2"}"
+}
+
+# Returns the value of the specified variable in the current pane.
+showvariable() {
+	tmux show -qv "$1"
 }
 
 # Returns the specified option as a hook, which consists of a sequence of Tmux
