@@ -4,11 +4,8 @@ CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
-
-DEFAULT_NAME='default'
-DEFAULT_SOCKET_NAME='popup'
-DEFAULT_ID_FORMAT='#{b:socket_path}/#{session_name}/#{b:pane_current_path}/#{@popup_name}'
-DEFAULT_ON_INIT="set exit-empty off \; set status off"
+# shellcheck source=./variables.sh
+source "$CURRENT_DIR/variables.sh"
 
 declare name popup_args cmd OPT OPTARG OPTIND=1
 
@@ -58,7 +55,7 @@ if [[ -n "$opened" && ("$opened" = "$name" || -z "$*") ]]; then
 	tmux set -u @__popup_opened \; detach
 else
 	name="${name:-"$DEFAULT_NAME"}"
-	socket_name="$(showopt @popup-socket-name "$DEFAULT_SOCKET_NAME")"
+	socket_name="$(get_socket_name)"
 	id_format="$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")"
 	popup_id="$(format @popup_name "$name" "$id_format")"
 

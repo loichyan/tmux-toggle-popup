@@ -80,6 +80,12 @@ sessions, and in each session, popups are shared among the same project (identif
 name). A variable named `@popup_name` is assigned the name of the popup during the expansion of the
 format string.
 
+### `@popup-autostart`
+
+**Default**: `off`
+
+**Description**: If enabled, the designated tmux server for popups will start automatically.
+
 ## 🪝 Hooks
 
 A hook consists of Tmux commands delimited by semicolons (`;`). Each hook is interpreted by bash(1)
