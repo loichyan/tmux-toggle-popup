@@ -53,7 +53,7 @@ cmd=("${@:$OPTIND}")
 
 opened="$(showvariable @__popup_opened)"
 
-if [[ -n "$opened" && ("$opened" = "$name" || -z "$*") ]]; then
+if [[ -n "$opened" ]]; then
 	# Clear the variables to prevent a manually attached session from being
 	# detached by the keybinding.
 	tmux set -u @__popup_opened \; detach
