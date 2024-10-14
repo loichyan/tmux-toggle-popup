@@ -32,9 +32,11 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 			OPTION:
 
 			  --name <name>                   Popup name. [Default: "$DEFAULT_NAME"]
-			  --socket-name <socket-name>     Socket name. [Default: "$DEFAULT_SOCKET_NAME"]
-			  --id-format <id-format>         Popup ID format. [Default: "$DEFAULT_ID_FORMAT"]
-			  --on-init <on-init>             Command to run on popup initialization. [Default: "$DEFAULT_ON_INIT"]
+			  --socket-name <value>           Socket name. [Default: "$DEFAULT_SOCKET_NAME"]
+			  --id-format <value>             Popup ID format. [Default: "$DEFAULT_ID_FORMAT"]
+			  --on-init <hook>                Command to run on popup initialization. [Default: "$DEFAULT_ON_INIT"]
+				--popup-before-open <hook>      Hook to run before opening the popup.
+				--popup-after-close <hook>      Hook to run after closing the popup.
 			  -[BCE]                          Flags passed to display-popup.
 			  -[bcdehsStTwxy] <value>         Options passed to display-popup.
 
@@ -62,16 +64,18 @@ fi
 name="${name:-"$DEFAULT_NAME"}"
 socket_name="${socket_name:-$(get_socket_name)}"
 id_format="${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")}"
-on_init="${on_init:-$DEFAULT_ON_INIT}"
+on_init="${on_init:-$(showopt @popup-on-init "$DEFAULT_ON_INIT")}"
+popup_before_open="${popup_before_open:-$(showopt @popup-before-open)}"
+popup_after_close="${popup_after_close:-$(showopt @popup-after-close)}"
 
 popup_id="$(format @popup_name "$name" "$id_format")"
 
-eval "tmux -C \; $(showhook @popup-before-open) >/dev/null"
+eval "tmux -C \; $popup_before_open >/dev/null"
 tmux popup "${popup_args[@]}" "
 		tmux -L '$socket_name' \
 			new -As '$popup_id' $(escape "${cmd[@]}") \; \
 			set @__popup_opened '$name' \; \
-			$(showhook @popup-on-init "$on_init") \; \
+			$on_init \; \
 			>/dev/null"
 
-eval "tmux -C \; $(showhook @popup-after-close) >/dev/null"
+eval "tmux -C \; $popup_after_close >/dev/null"
