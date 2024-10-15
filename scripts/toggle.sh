@@ -55,7 +55,8 @@ cmd=("${@:$OPTIND}")
 
 # If the specified name doesn't match the currently opened popup, we open a new
 # popup within the current one (i.e. popup-in-popup).
-if [[ -z $name || $name = $(showvariable @__popup_opened) ]]; then
+opened_name="$(showvariable @__popup_opened)"
+if [[ -n "$opened_name" && (-z $name || $name = "$opened_name") ]]; then
 	# Clear the variables to prevent a manually attached session from being
 	# detached by the keybinding.
 	tmux set -u @__popup_opened \; detach
