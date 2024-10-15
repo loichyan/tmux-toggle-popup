@@ -35,8 +35,8 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 			  --socket-name <value>           Socket name. [Default: "$DEFAULT_SOCKET_NAME"]
 			  --id-format <value>             Popup ID format. [Default: "$DEFAULT_ID_FORMAT"]
 			  --on-init <hook>                Command to run on popup initialization. [Default: "$DEFAULT_ON_INIT"]
-				--popup-before-open <hook>      Hook to run before opening the popup.
-				--popup-after-close <hook>      Hook to run after closing the popup.
+			  --popup-before-open <hook>      Hook to run before opening the popup.
+			  --popup-after-close <hook>      Hook to run after closing the popup.
 			  -[BCE]                          Flags passed to display-popup.
 			  -[bcdehsStTwxy] <value>         Options passed to display-popup.
 
