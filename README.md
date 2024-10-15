@@ -139,8 +139,13 @@ bind -n M-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
 ```
 
 **Description**: A shell script to toggle a popup: when invoked in a popup of the same name, it
-closes the popup; otherwise, it opens a popup of the specified name. If no argument is provided and
+closes the popup; otherwise, it opens a popup of the specified name. If no name is specified and
 called in a popup, it will close the popup.
+
+By default, if you call it with the name _A_ specified within another opened popup _B_, it will open
+a new popup _A_ inside _B_ instead of closing _B_ (i.e. popup-in-popup). You may find this behavior
+surprising, but tmux simply allows us to do so. You can bind `run "#{@popup-toggle}"` to a primary
+toggle key, which will close the opened popup anyway.
 
 ```text
 USAGE:
