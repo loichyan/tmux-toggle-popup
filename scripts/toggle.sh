@@ -62,12 +62,12 @@ if [[ -z $name || $name = $(showvariable @__popup_opened) ]]; then
 	exit 0
 fi
 
-name="${name:-"$DEFAULT_NAME"}"
+name="${name:-$DEFAULT_NAME}"
 socket_name="${socket_name:-$(get_socket_name)}"
 id_format="${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")}"
-on_init="${on_init:-$(showopt @popup-on-init "$DEFAULT_ON_INIT")}"
-before_open="${before_open:-$(showopt @popup-before-open)}"
-after_close="${after_close:-$(showopt @popup-after-close)}"
+on_init="${on_init:-$(showhook @popup-on-init "$DEFAULT_ON_INIT")}"
+before_open="${before_open:-$(showhook @popup-before-open)}"
+after_close="${after_close:-$(showhook @popup-after-close)}"
 
 popup_id="$(format @popup_name "$name" "$id_format")"
 
