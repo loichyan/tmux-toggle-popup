@@ -149,10 +149,14 @@ USAGE:
 
 OPTION:
 
-  --name <name>     Popup name [Default: "default"]
-  -[BCE]            Flags passed to display-popup
-  -[bcdehsStTwxy] <value>
-                    Options passed to display-popup
+  --name <name>               Popup name.
+  --socket-name <value>       Socket name.
+  --id-format <value>         Popup ID format.
+  --on-init <hook>            Command to run on popup initialization.
+  --before-open <hook>        Hook to run before opening the popup.
+  --after-close <hook>        Hook to run after closing the popup.
+  -[BCE]                      Flags passed to display-popup.
+  -[bcdehsStTwxy] <value>     Options passed to display-popup.
 
 EXAMPLES:
 
@@ -181,8 +185,8 @@ USAGE:
 
 OPTION:
 
-  --enter           Send focus enter event [Default mode]
-  --leave           Send focus leave event
+  --enter           Send focus enter event. [Default mode]
+  --leave           Send focus leave event.
 
 EXAMPLES:
 
