@@ -9,7 +9,7 @@ A handy plugin that helps create toggleable popups.
 <br>
 
 - DE: [Gnome 46](https://release.gnome.org/46) & [PaperWM](https://github.com/paperwm/PaperWM)
-- Tmux: [Catppuccin theme](https://github.com/catppuccin/tmux)
+- tmux: [Catppuccin theme](https://github.com/catppuccin/tmux)
 - Font: [Rec Mono Duotone](https://www.recursive.design)
 - Keystrokes: [Show Me the Key](https://showmethekey.alynx.one)
 - Rickroll: [rickrollrc](https://github.com/keroserene/rickrollrc)
@@ -24,9 +24,9 @@ for more details_
 
 ### Requirements
 
-- Tmux >= **3.4** (not tested on earlier versions)
+- tmux >= **3.4** (not tested on earlier versions)
 
-### With [Tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
+### With [tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
 
 Add this plugin to the list of TPM plugins in `.tmux.conf`:
 
@@ -48,7 +48,7 @@ Add this line to the bottom of `.tmux.conf`:
 run ~/clone/path/toggle-popup.tmux
 ```
 
-Reload Tmux environment with: `tmux source-file ~/.tmux.conf`. You should now be able to use the
+Reload tmux environment with: `tmux source-file ~/.tmux.conf`. You should now be able to use the
 plugin.
 
 ## ✍️ Usage
@@ -104,14 +104,16 @@ format string.
 
 ## 🪝 Hooks
 
-A hook consists of Tmux commands delimited by semicolons (`;`). Each hook is interpreted by bash(1)
-as a sequence of shell arguments, which are then passed to tmux(1). Hence, semicolons should be
-escaped (`\;`) or quoted (`";"`) to prevent them from being recognized as bash command delimiters.
-Each command can alternatively be delimited by a line break, which is substituted with `\;` before
-interpretation.
+A hook consists of tmux commands. To write hooks, we support a limited version of `.tmux.conf`.
 
-A hook will be executed either in the caller (i.e., the session that calls `@popup-toggle`) or in
-the popup (i.e., the session that opens as a popup).
+To elaborate further, each tmux command can be delimited by semicolons (`;`) or line breaks. You can
+use escaped spaces (`\ `) or quotes (either `'` or `"`) to prevent an individual argument from being
+split. Additionally, you can nest different types of quotes within one another. Any character
+preceded by a backslash (`\`) is treated as a literal escape, meaning that `\;` is interpreted as
+`;`. To input `\;`, you need to escape the backslash, using `\\;`.
+
+A hook will be executed either in the caller session (i.e., the session that calls `@popup-toggle`)
+or in the popup session (i.e., the session where a popup resides).
 
 **Example**:
 
@@ -120,29 +122,33 @@ set -g @popup-on-init '
   set exit-empty off
   set status off
 '
-# Escaping "\;" is required when binding key to multiple commands
+# Bind to multiple commands should be escaped,
 set -g @popup-on-init '
-  bind M-r display "some text" \\\; display "another text"
+  bind -n M-1 display random\ text \\; display and\ more
 '
+# or quoted
+set -g @popup-on-init "
+  bind -n M-2 \"display 'random text' ; display 'and more'\"
+"
 ```
 
 ### `@popup-on-init`
 
 **Default**: `set exit-empty off \; set status off`
 
-**Description**: Tmux commands executed in the popup each time after it is opened.
+**Description**: tmux commands executed in the popup each time after it is opened.
 
 ### `@popup-before-open`
 
 **Default**: empty
 
-**Description**: Tmux commands executed in the caller each time before a popup is opened.
+**Description**: tmux commands executed in the caller each time before a popup is opened.
 
 ### `@popup-after-close`
 
 **Default**: empty
 
-**Description**: Tmux commands executed in the caller each time after a popup is closed.
+**Description**: tmux commands executed in the caller each time after a popup is closed.
 
 ## ⌨️ Keybindings
 

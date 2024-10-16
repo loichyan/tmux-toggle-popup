@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# Concats multiline Tmux commands into a single line.
-joincmd() {
-	sed 's/$/ \\;/' | tr '\n' ' '
-}
-
 # Escapes all given arguments.
 escape() {
 	if [[ $# -gt 0 ]]; then
@@ -40,13 +35,13 @@ showvariable() {
 	tmux show -qv "$1"
 }
 
-# Returns the specified option as a hook, which consists of a sequence of Tmux
-# commands.
-showhook() {
-	showopt "$@" | joincmd
+# Parses the tmux script into sequences and escapes each one, ensuring they can
+# be safely interrupted by Bash.
+makecmds() {
+	xargs printf "%q "
 }
 
-# Expand the provided Tmux FORMAT string. The last argument is the format
+# Expand the provided tmux FORMAT string. The last argument is the format
 # string, while the preceding ones represent variables available during the
 # expansion.
 format() {
