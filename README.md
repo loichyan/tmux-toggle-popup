@@ -68,9 +68,12 @@ bind -n M-g run "#{@popup-toggle} -Ed'#{pane_current_path}' -w90% -h90% --name=l
 **Default**: `popup`
 
 **Description**: The socket name (`tmux -L {@popup-socket-name} ...`) of the server in which all
-popup sessions are opened. A special environment variable, `$TMUX_POPUP_SERVER`, is set to its value
-before the server starts, which is used to identify popup servers. You can check this variable and
-load different configurations in your `.tmux.conf`.
+popup sessions are opened. Typically, it’s recommended to open popups in a standalone server, as it
+may start many sessions for popups, which can be quite annoying when you open the session selector.
+
+A special environment variable, `$TMUX_POPUP_SERVER`, is set to its value before the server starts,
+which is used to identify popup servers. You can check this variable and load different
+configurations in your `.tmux.conf`.
 
 **Example**:
 
@@ -157,8 +160,8 @@ closes the popup; otherwise, it opens a popup of the specified name. If no argum
 
 By default, if you call it with the name _A_ specified within another opened popup _B_, it will open
 a new popup _A_ inside _B_ instead of closing _B_ (i.e. popup-in-popup). You may find this behavior
-surprising, but tmux simply allows us to do so. You can bind `run "#{@popup-toggle}"` to a primary
-toggle key, which will close the opened popup anyway.
+surprising, but tmux simply allows us to do so. This can be disabled by the `--toggle` flag. Or you
+can bind `run "#{@popup-toggle}"` to a primary toggle key, which will close the opened popup anyway.
 
 ```text
 USAGE:
@@ -186,7 +189,8 @@ EXAMPLES:
 
 **Example**:
 
-A workaround for <https://github.com/tmux/tmux/issues/3991>.
+A workaround for <https://github.com/tmux/tmux/issues/3991>, which has been fixed in
+<https://github.com/tmux/tmux/commit/a869693405f99c8ca8e2da32a08534489ce165f2>.
 
 ```tmux
 set -g @popup-before-open 'run "#{@popup-focus} --leave nvim"'
