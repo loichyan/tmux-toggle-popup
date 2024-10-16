@@ -20,8 +20,8 @@ while getopts :-: OPT; do
 
 			OPTION:
 
-			  --enter           Send focus enter event [Default mode]
-			  --leave           Send focus leave event
+			  --enter           Send focus enter event. [Default mode]
+			  --leave           Send focus leave event.
 
 			EXAMPLES:
 

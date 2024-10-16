@@ -16,15 +16,18 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 	[bcdhsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
 	# forward environment overrides to popup sessions
 	e) session_args+=("-e" "$OPTARG") ;;
-	name)
+	name | socket-name | id-format | on-init | before-open | after-close)
 		OPTARG="${OPTARG:${#OPT}}"
 		if [[ ${OPTARG::1} == '=' ]]; then
-			declare "$OPT"="${OPTARG:1}"
+			# format: `--name=value`
+			declare "${OPT/-/_}"="${OPTARG:1}"
 		else
-			declare "$OPT"="${!OPTIND}"
+			# format: `--name value`
+			declare "${OPT/-/_}"="${!OPTIND}"
 			OPTIND=$((OPTIND + 1))
 		fi
 		;;
+	toggle) declare "${OPT/-/_}"="1" ;;
 	help)
 		cat <<-EOF
 			USAGE:
@@ -33,10 +36,15 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 
 			OPTION:
 
-			  --name <name>     Popup name [Default: "default"]
-			  -[BCE]            Flags passed to display-popup
-			  -[bcdehsStTwxy] <value>
-			                    Options passed to display-popup
+			  --name <name>               Popup name. [Default: "$DEFAULT_NAME"]
+			  --socket-name <value>       Socket name. [Default: "$DEFAULT_SOCKET_NAME"]
+			  --id-format <value>         Popup ID format. [Default: "$DEFAULT_ID_FORMAT"]
+			  --on-init <hook>            Command to run on popup initialization. [Default: "$DEFAULT_ON_INIT"]
+			  --before-open <hook>        Hook to run before opening the popup. [Default: ""]
+			  --after-close <hook>        Hook to run after closing the popup. [Default: ""]
+			  --toggle                    Always close the current popup instead of opening a new one.
+			  -[BCE]                      Flags passed to display-popup.
+			  -[bcdehsStTwxy] <value>     Options passed to display-popup.
 
 			EXAMPLES:
 
@@ -49,25 +57,30 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 done
 cmd=("${@:$OPTIND}")
 
-opened="$(showvariable @__popup_opened)"
-
-if [[ -n "$opened" && ("$opened" = "$name" || -z "$*") ]]; then
+# If the specified name doesn't match the currently opened popup, we open a new
+# popup within the current one (i.e. popup-in-popup).
+opened_name="$(showvariable @__popup_opened)"
+if [[ -n $opened_name && ($name == "$opened_name" || -n $toggle || -z $*) ]]; then
 	# Clear the variables to prevent a manually attached session from being
 	# detached by the keybinding.
 	tmux set -u @__popup_opened \; detach
-else
-	name="${name:-"$DEFAULT_NAME"}"
-	socket_name="$(get_socket_name)"
-	id_format="$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")"
-	popup_id="$(format @popup_name "$name" "$id_format")"
+	exit 0
+fi
 
-	eval "tmux -C \; $(showhook @popup-before-open) >/dev/null"
-	tmux popup "${popup_args[@]}" "
+name="${name:-$DEFAULT_NAME}"
+socket_name="${socket_name:-$(get_socket_name)}"
+id_format="${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")}"
+on_init="${on_init:-$(showhook @popup-on-init "$DEFAULT_ON_INIT")}"
+before_open="${before_open:-$(showhook @popup-before-open)}"
+after_close="${after_close:-$(showhook @popup-after-close)}"
+
+popup_id="$(format @popup_name "$name" "$id_format")"
+
+eval "tmux -C \; $before_open >/dev/null"
+tmux popup "${popup_args[@]}" "
 		TMUX_POPUP_SERVER='$socket_name' tmux -L '$socket_name' \
 			new -As '$popup_id' ${session_args[*]} $(escape "${cmd[@]}") \; \
-			new -As '$popup_id' $(escape "${cmd[@]}") \; \
 			set @__popup_opened '$name' \; \
-			$(showhook @popup-on-init "$DEFAULT_ON_INIT") \; \
+			$on_init \; \
 			>/dev/null"
-	eval "tmux -C \; $(showhook @popup-after-close) >/dev/null"
-fi
+eval "tmux -C \; $after_close >/dev/null"
