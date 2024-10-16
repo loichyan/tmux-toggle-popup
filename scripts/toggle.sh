@@ -79,7 +79,7 @@ popup_id="$(format @popup_name "$name" "$id_format")"
 eval "tmux -C \; $before_open >/dev/null"
 tmux popup "${popup_args[@]}" "
 		TMUX_POPUP_SERVER='$socket_name' tmux -L '$socket_name' \
-			new -As '$popup_id' ${session_args[*]} $(escape "${cmd[@]}") \; \
+			new -As '$popup_id' $(escape "${session_args[@]}") $(escape "${cmd[@]}") \; \
 			set @__popup_opened '$name' \; \
 			$on_init \; \
 			>/dev/null"
