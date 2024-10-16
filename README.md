@@ -189,8 +189,8 @@ EXAMPLES:
 
 **Example**:
 
-A workaround for <https://github.com/tmux/tmux/issues/3991>, which has been fixed in
-<https://github.com/tmux/tmux/commit/a869693405f99c8ca8e2da32a08534489ce165f2>.
+A workaround for [tmux/tmux#3991](https://github.com/tmux/tmux/issues/3991), which has been fixed in
+[tmux/tmux@a869693405f9](https://github.com/tmux/tmux/commit/a869693405f99c8ca8e2da32a08534489ce165f2).
 
 ```tmux
 set -g @popup-before-open 'run "#{@popup-focus} --leave nvim"'
