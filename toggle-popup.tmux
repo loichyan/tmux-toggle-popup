@@ -14,8 +14,11 @@ set_keybindings() {
 }
 
 handle_autostart() {
-	if [[ $(showopt @popup-autostart) = "on" ]]; then
-		tmux -L "$(get_socket_name)" new -d &
+	# shellcheck disable=2155
+	if [[ -z $TMUX_POPUP_SERVER ]]; then
+		# set $TMUX_POPUP_SERVER, used to identify the popup server
+		local socket_name="$(get_socket_name)"
+		TMUX_POPUP_SERVER="$socket_name" tmux -L "$socket_name" new -d &
 	fi
 }
 
