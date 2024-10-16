@@ -7,13 +7,15 @@ source "$CURRENT_DIR/helpers.sh"
 # shellcheck source=./variables.sh
 source "$CURRENT_DIR/variables.sh"
 
-declare popup_args cmd OPT OPTARG OPTIND=1
+declare name popup_args session_args cmd OPT OPTARG OPTIND=1
 
 while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 	if [[ $OPT == '-' ]]; then OPT="${OPTARG%%=*}"; fi
 	case "$OPT" in
 	[BCE]) popup_args+=("-$OPT") ;;
-	[bcdehsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
+	[bcdhsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
+	# forward environment overrides to popup sessions
+	e) session_args+=("-e" "$OPTARG") ;;
 	name | socket-name | id-format | on-init | before-open | after-close)
 		OPTARG="${OPTARG:${#OPT}}"
 		if [[ ${OPTARG::1} == '=' ]]; then
@@ -79,7 +81,7 @@ popup_id="$(format @popup_name "$name" "$id_format")"
 eval "tmux -C \; $before_open >/dev/null"
 tmux popup "${popup_args[@]}" "
 		TMUX_POPUP_SERVER='$socket_name' tmux -L '$socket_name' \
-			new -As '$popup_id' $(escape "${cmd[@]}") \; \
+			new -As '$popup_id' ${session_args[*]} $(escape "${cmd[@]}") \; \
 			set @__popup_opened '$name' \; \
 			$on_init \; \
 			>/dev/null"
