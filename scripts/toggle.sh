@@ -61,7 +61,7 @@ else
 
 	eval "tmux -C \; $(showhook @popup-before-open) >/dev/null"
 	tmux popup "${popup_args[@]}" "
-		tmux -L '$socket_name' \
+		TMUX_POPUP_SERVER='$socket_name' tmux -L '$socket_name' \
 			new -As '$popup_id' $(escape "${cmd[@]}") \; \
 			set @__popup_opened '$name' \; \
 			$(showhook @popup-on-init "$DEFAULT_ON_INIT") \; \
