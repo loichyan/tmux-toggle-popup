@@ -148,12 +148,6 @@ set -g @popup-on-init '
 
 ### `@popup-toggle`
 
-**Example**:
-
-```tmux
-bind -n M-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
-```
-
 **Description**: A shell script to toggle a popup: when invoked in a popup of the same name, it
 closes the popup; otherwise, it opens a popup of the specified name. If no argument is passed or
 `--toggle` is specified and called in a popup, it will close the popup.
@@ -185,17 +179,13 @@ EXAMPLES:
   toggle.sh -Ed'#{pane_current_path}' --name=bash bash
 ```
 
-### `@popup-focus`
-
 **Example**:
 
-A workaround for [tmux/tmux#3991](https://github.com/tmux/tmux/issues/3991), which has been fixed in
-[tmux/tmux@a869693405f9](https://github.com/tmux/tmux/commit/a869693405f99c8ca8e2da32a08534489ce165f2).
-
 ```tmux
-set -g @popup-before-open 'run "#{@popup-focus} --leave nvim"'
-set -g @popup-after-close 'run "#{@popup-focus} --enter nvim"'
+bind -n M-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
 ```
+
+### `@popup-focus`
 
 **Description**: Manually send focus enter or leave events. The name of the program that accepts
 focus events can be specified and events are sent only if the current program matches any of the
@@ -214,6 +204,16 @@ OPTION:
 EXAMPLES:
 
   focus.sh --enter nvim emacs
+```
+
+**Example**:
+
+A workaround for [tmux/tmux#3991](https://github.com/tmux/tmux/issues/3991), which has been fixed in
+[tmux/tmux@a869693405f9](https://github.com/tmux/tmux/commit/a869693405f99c8ca8e2da32a08534489ce165f2).
+
+```tmux
+set -g @popup-before-open 'run "#{@popup-focus} --leave nvim"'
+set -g @popup-after-close 'run "#{@popup-focus} --enter nvim"'
 ```
 
 ## ⚖️ License
