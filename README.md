@@ -68,7 +68,20 @@ bind -n M-g run "#{@popup-toggle} -Ed'#{pane_current_path}' -w90% -h90% --name=l
 **Default**: `popup`
 
 **Description**: The socket name (`tmux -L {@popup-socket-name} ...`) of the server in which all
-popup sessions are opened.
+popup sessions are opened. A special environment variable, `$TMUX_POPUP_SERVER`, is set to its value
+before the server starts, which is used to identify popup servers. You can check this variable and
+load different configurations in your `.tmux.conf`.
+
+**Example**:
+
+```tmux
+# configurations for popup servers
+if '[ -n "$TMUX_POPUP_SERVER" ]' {
+    set -g exit-empty off
+    set -g status off
+}
+# ...other configurations
+```
 
 ### `@popup-id-format`
 
