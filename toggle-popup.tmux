@@ -14,7 +14,7 @@ set_keybindings() {
 }
 
 handle_autostart() {
-	if [[ $(showopt @popup-autostart) = "on" ]]; then
+	if [[ $(showopt @popup-autostart) == "on" ]]; then
 		tmux -L "$(get_socket_name)" new -d &
 	fi
 }
