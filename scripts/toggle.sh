@@ -15,7 +15,7 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 	[BCE]) popup_args+=("-$OPT") ;;
 	[bcdhsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
 	# forward environment overrides to popup sessions
-	e) session_args+=("-e" "$OPTARG") ;;
+	e) session_args+=("-e" "'$OPTARG'") ;;
 	name | socket-name | id-format | on-init | before-open | after-close)
 		OPTARG="${OPTARG:${#OPT}}"
 		if [[ ${OPTARG::1} == '=' ]]; then
