@@ -15,7 +15,7 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 	[BCE]) popup_args+=("-$OPT") ;;
 	[bcdhsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
 	# forward environment overrides to popup sessions
-	e) session_args+=("-e" "'$OPTARG'") ;;
+	e) session_args+=("-e" "$OPTARG") ;;
 	name | socket-name | id-format | on-init | before-open | after-close)
 		OPTARG="${OPTARG:${#OPT}}"
 		if [[ ${OPTARG::1} == '=' ]]; then
@@ -79,7 +79,7 @@ popup_id="$(format @popup_name "$name" "$id_format")"
 eval "tmux -C \; $before_open >/dev/null"
 tmux popup "${popup_args[@]}" "
 		TMUX_POPUP_SERVER='$socket_name' tmux -L '$socket_name' \
-			new -As '$popup_id' ${session_args[*]} $(escape "${cmd[@]}") \; \
+			new -As '$popup_id' $(escape "${session_args[@]}") $(escape "${cmd[@]}") \; \
 			set @__popup_opened '$name' \; \
 			$on_init \; \
 			>/dev/null"
