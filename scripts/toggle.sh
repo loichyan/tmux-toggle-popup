@@ -27,9 +27,7 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 			OPTIND=$((OPTIND + 1))
 		fi
 		;;
-	single-instance)
-		declare "${OPT/-/_}"="1"
-		;;
+	toggle) declare "${OPT/-/_}"="1" ;;
 	help)
 		cat <<-EOF
 			USAGE:
@@ -44,7 +42,7 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 			  --on-init <hook>            Command to run on popup initialization. [Default: "$DEFAULT_ON_INIT"]
 			  --before-open <hook>        Hook to run before opening the popup. [Default: ""]
 			  --after-close <hook>        Hook to run after closing the popup. [Default: ""]
-				--single-instance           Always close the currently open popup before opening a new one.
+			  --toggle                    Always close the current popup instead of opening a new one.
 			  -[BCE]                      Flags passed to display-popup.
 			  -[bcdehsStTwxy] <value>     Options passed to display-popup.
 
@@ -62,7 +60,7 @@ cmd=("${@:$OPTIND}")
 # If the specified name doesn't match the currently opened popup, we open a new
 # popup within the current one (i.e. popup-in-popup).
 opened_name="$(showvariable @__popup_opened)"
-if [[ -n "$opened_name" && (-n "$single_instance" || -z $name || $name = "$opened_name") ]]; then
+if [[ -n $opened_name && ($name == "$opened_name" || -n $toggle || -z $*) ]]; then
 	# Clear the variables to prevent a manually attached session from being
 	# detached by the keybinding.
 	tmux set -u @__popup_opened \; detach

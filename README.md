@@ -173,6 +173,7 @@ OPTION:
   --on-init <hook>            Command to run on popup initialization.
   --before-open <hook>        Hook to run before opening the popup.
   --after-close <hook>        Hook to run after closing the popup.
+  --toggle                    Always close the current popup instead of opening a new one.
   -[BCE]                      Flags passed to display-popup.
   -[bcdehsStTwxy] <value>     Options passed to display-popup.
 
