@@ -75,7 +75,9 @@ after_close="${after_close:-$(showopt @popup-after-close)}"
 
 popup_id="$(format @popup_name "$name" "$id_format")"
 
-eval "tmux -C $(echo "$before_open" | makecmds) >/dev/null"
+if [[ -n $before_open ]]; then
+	eval "tmux -C $(echo "$before_open" | makecmds) >/dev/null"
+fi
 tmux popup "${popup_args[@]}" \
 	"TMUX_POPUP_SERVER='$socket_name' tmux -L '$socket_name' $(
 		cat <<-EOF | makecmds
@@ -84,4 +86,6 @@ tmux popup "${popup_args[@]}" \
 			$on_init ;
 		EOF
 	) >/dev/null"
-eval "tmux -C $(echo "$after_close" | makecmds) >/dev/null"
+if [[ -n $after_close ]]; then
+	eval "tmux -C $(echo "$after_close" | makecmds) >/dev/null"
+fi
