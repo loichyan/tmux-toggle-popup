@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 # shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
 # shellcheck source=./variables.sh
 source "$CURRENT_DIR/variables.sh"
 
-declare name popup_args session_args cmd OPT OPTARG OPTIND=1
+declare name popup_args session_args prog OPT OPTARG OPTIND=1
 
 while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 	if [[ $OPT == '-' ]]; then OPT="${OPTARG%%=*}"; fi
@@ -55,7 +54,7 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 	*) badopt ;;
 	esac
 done
-cmd=("${@:$OPTIND}")
+prog=("${@:$OPTIND}")
 
 # If the specified name doesn't match the currently opened popup, we open a new
 # popup within the current one (i.e. popup-in-popup).
@@ -70,17 +69,23 @@ fi
 name="${name:-$DEFAULT_NAME}"
 socket_name="${socket_name:-$(get_socket_name)}"
 id_format="${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")}"
-on_init="${on_init:-$(showhook @popup-on-init "$DEFAULT_ON_INIT")}"
-before_open="${before_open:-$(showhook @popup-before-open)}"
-after_close="${after_close:-$(showhook @popup-after-close)}"
+on_init="${on_init:-$(showopt @popup-on-init "$DEFAULT_ON_INIT")}"
+before_open="${before_open:-$(showopt @popup-before-open)}"
+after_close="${after_close:-$(showopt @popup-after-close)}"
 
 popup_id="$(format @popup_name "$name" "$id_format")"
 
-eval "tmux -C \; $before_open >/dev/null"
-tmux popup "${popup_args[@]}" "
-		TMUX_POPUP_SERVER='$socket_name' tmux -L '$socket_name' \
-			new -As '$popup_id' $(escape "${session_args[@]}") $(escape "${cmd[@]}") \; \
-			set @__popup_opened '$name' \; \
-			$on_init \; \
-			>/dev/null"
-eval "tmux -C \; $after_close >/dev/null"
+if [[ -n $before_open ]]; then
+	eval "tmux -C $(echo "$before_open" | makecmds) >/dev/null"
+fi
+tmux popup "${popup_args[@]}" \
+	"TMUX_POPUP_SERVER='$socket_name' tmux -L '$socket_name' $(
+		cat <<-EOF | makecmds
+			new -As '$popup_id' $(escape "${session_args[@]}") $(escape "${prog[@]}") ;
+			set @__popup_opened '$name' ;
+			$on_init ;
+		EOF
+	) >/dev/null"
+if [[ -n $after_close ]]; then
+	eval "tmux -C $(echo "$after_close" | makecmds) >/dev/null"
+fi
