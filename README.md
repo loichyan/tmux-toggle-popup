@@ -159,9 +159,20 @@ closes the popup; otherwise, it opens a popup of the specified name. If no argum
 `--force` is specified and called in a popup, it will close the popup.
 
 By default, if you call it with the name _A_ specified within another opened popup _B_, it will open
-a new popup _A_ inside _B_ instead of closing _B_ (i.e. popup-in-popup). You may find this behavior
+a new popup _A_ inside _B_ instead of closing _B_ (i.e., popup-in-popup). You may find this behavior
 surprising, but tmux simply allows us to do so. This can be prevented by the `--force` flag. Or you
 can bind `run "#{@popup-toggle}"` to a primary toggle key, which will close the opened popup anyway.
+
+If you have set popup keybindings in your `.tmux.conf`, which should be loaded in both your default
+server and the popup server, there's no need to worry about the toggle keys. For instance, if `M-t`
+is bound to open a shell, you can press it to open a popup in your working session and then press it
+again to close the popup.
+
+However, if you wish to set a keybinding outside of `.tmux.conf`, it can get a bit tricky. You may
+refer to [#5](https://github.com/loichyan/tmux-toggle-popup/pull/5) for more details. TL;DR, you can
+pass your desired key(s) to `@popup-toggle` using `--toggle-key M-t`, and the script will handle the
+necessary adjustments. You can also specify a different key table using `--toggle '-n M-t'` or
+`--toggle '-Troot M-t'`.
 
 ```text
 USAGE:
@@ -172,6 +183,7 @@ OPTIONS:
 
   --name <name>               Popup name. [Default: "$DEFAULT_NAME"]
   --force                     Toggle the popup even if its name doesn't match.
+  --toggle-key <key>          Bind additional keys to close the opened popup.
   -[BCE]                      Flags passed to display-popup.
   -[bcdehsStTwxy] <value>     Options passed to display-popup.
 
