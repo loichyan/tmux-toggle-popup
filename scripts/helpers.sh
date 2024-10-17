@@ -36,7 +36,7 @@ showvariable() {
 }
 
 # Parses the tmux script into sequences and escapes each one, ensuring they can
-# be safely interrupted by Bash.
+# be safely interpreted by Bash.
 makecmds() {
 	xargs printf "%q "
 }
