@@ -34,6 +34,8 @@ test_parse_commands() {
 	done
 }
 
+# TODO: run tests in GitHub actions
+
 # delimited by `;`
 test_parse_commands \
 	'set status off ; set exit-empty off' \

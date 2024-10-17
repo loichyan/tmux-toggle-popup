@@ -86,13 +86,14 @@ after_close="${after_close:-$(showopt @popup-after-close)}"
 popup_id="$(format @popup_name "$name" "$id_format")"
 
 # bind toggle keys in the opened popup
+unbind_keys=()
 for k in "${toggle_keys[@]}"; do
-	# TODO: unbind keys before popup closes
 	if [[ -n $force ]]; then
 		on_init+=("; bind $k run \"#{@popup-toggle} --name='$name'\" --force")
 	else
 		on_init+=("; bind $k run \"#{@popup-toggle} --name='$name'\"")
 	fi
+	unbind_keys+=("; unbind $k")
 done
 
 # hook: before-open
@@ -109,6 +110,11 @@ tmux popup "${popup_args[@]}" \
 			${on_init[*]} ;
 		EOF
 	) >/dev/null"
+# keybindings are registered to the global server level
+if [[ ${#unbind_keys[@]} -gt 0 ]]; then
+	# the tmux server may have stopped, ignore the returned error
+	eval "tmux -L '$socket_name' -NC $(echo "${unbind_keys[*]}" | makecmds) 2&>/dev/null" || true
+fi
 # hook: after-close
 if [[ -n $after_close ]]; then
 	eval "tmux -C $(echo "$after_close" | makecmds) >/dev/null"
