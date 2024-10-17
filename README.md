@@ -156,11 +156,11 @@ set -g @popup-on-init "
 
 **Description**: A shell script to toggle a popup: when invoked in a popup of the same name, it
 closes the popup; otherwise, it opens a popup of the specified name. If no argument is passed or
-`--toggle` is specified and called in a popup, it will close the popup.
+`--force` is specified and called in a popup, it will close the popup.
 
 By default, if you call it with the name _A_ specified within another opened popup _B_, it will open
 a new popup _A_ inside _B_ instead of closing _B_ (i.e. popup-in-popup). You may find this behavior
-surprising, but tmux simply allows us to do so. This can be disabled by the `--toggle` flag. Or you
+surprising, but tmux simply allows us to do so. This can be prevented by the `--force` flag. Or you
 can bind `run "#{@popup-toggle}"` to a primary toggle key, which will close the opened popup anyway.
 
 ```text
@@ -168,17 +168,22 @@ USAGE:
 
   toggle.sh [OPTION]... [SHELL_COMMAND]...
 
-OPTION:
+OPTIONS:
 
-  --name <name>               Popup name.
-  --socket-name <value>       Socket name.
-  --id-format <value>         Popup ID format.
-  --on-init <hook>            Command to run on popup initialization.
-  --before-open <hook>        Hook to run before opening the popup.
-  --after-close <hook>        Hook to run after closing the popup.
-  --toggle                    Always close the current popup instead of opening a new one.
+  --name <name>               Popup name. [Default: "$DEFAULT_NAME"]
+  --force                     Toggle the popup even if its name doesn't match.
   -[BCE]                      Flags passed to display-popup.
   -[bcdehsStTwxy] <value>     Options passed to display-popup.
+
+POPUP OPTIONS:
+
+  Override global popup options on the fly.
+
+  --socket-name <value>       Socket name. [Default: "$DEFAULT_SOCKET_NAME"]
+  --id-format <value>         Popup ID format. [Default: "$DEFAULT_ID_FORMAT"]
+  --on-init <hook>            Command to run on popup initialization. [Default: "$DEFAULT_ON_INIT"]
+  --before-open <hook>        Hook to run before opening the popup. [Default: ""]
+  --after-close <hook>        Hook to run after closing the popup. [Default: ""]
 
 EXAMPLES:
 
@@ -202,7 +207,7 @@ USAGE:
 
   focus.sh [OPTION]... [PROGRAM]...
 
-OPTION:
+OPTIONS:
 
   --enter           Send focus enter event. [Default mode]
   --leave           Send focus leave event.

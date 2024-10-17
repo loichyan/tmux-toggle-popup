@@ -26,24 +26,29 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 			OPTIND=$((OPTIND + 1))
 		fi
 		;;
-	toggle) declare "${OPT/-/_}"="1" ;;
+	force) declare "${OPT/-/_}"="1" ;;
 	help)
 		cat <<-EOF
 			USAGE:
 
 			  toggle.sh [OPTION]... [SHELL_COMMAND]...
 
-			OPTION:
+			OPTIONS:
 
 			  --name <name>               Popup name. [Default: "$DEFAULT_NAME"]
+			  --force                     Toggle the popup even if its name doesn't match.
+			  -[BCE]                      Flags passed to display-popup.
+			  -[bcdehsStTwxy] <value>     Options passed to display-popup.
+
+			POPUP OPTIONS:
+
+			  Override global popup options on the fly.
+
 			  --socket-name <value>       Socket name. [Default: "$DEFAULT_SOCKET_NAME"]
 			  --id-format <value>         Popup ID format. [Default: "$DEFAULT_ID_FORMAT"]
 			  --on-init <hook>            Command to run on popup initialization. [Default: "$DEFAULT_ON_INIT"]
 			  --before-open <hook>        Hook to run before opening the popup. [Default: ""]
 			  --after-close <hook>        Hook to run after closing the popup. [Default: ""]
-			  --toggle                    Always close the current popup instead of opening a new one.
-			  -[BCE]                      Flags passed to display-popup.
-			  -[bcdehsStTwxy] <value>     Options passed to display-popup.
 
 			EXAMPLES:
 
@@ -59,7 +64,7 @@ prog=("${@:$OPTIND}")
 # If the specified name doesn't match the currently opened popup, we open a new
 # popup within the current one (i.e. popup-in-popup).
 opened_name="$(showvariable @__popup_opened)"
-if [[ -n $opened_name && ($name == "$opened_name" || -n $toggle || -z $*) ]]; then
+if [[ -n $opened_name && ($name == "$opened_name" || -n $force || -z $*) ]]; then
 	# Clear the variables to prevent a manually attached session from being
 	# detached by the keybinding.
 	tmux set -u @__popup_opened \; detach
