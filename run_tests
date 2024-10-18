@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
+status=0
 for test in ./tests/*; do
-	echo "run test: $test"
-	command "$test"
+	echo "test: $test"
+	if ! command "$test"; then
+		echo "test failed"
+		status=1
+	fi
 done
+exit $status

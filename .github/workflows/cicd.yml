@@ -28,6 +28,9 @@ jobs:
       - name: Setup | Checkout
         uses: actions/checkout@v4
 
+      - name: Post Setup | Show information
+        run: bash --version
+
       - name: Check | Shellcheck
         uses: ludeeus/action-shellcheck@master
         with:

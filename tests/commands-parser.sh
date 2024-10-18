@@ -16,7 +16,13 @@ reparse_commands() {
 }
 
 test_parse_commands() {
-	readarray -t commands < <(echo "$1" | makecmds | reparse_commands)
+	echo "test: $1"
+	shift
+
+	local commands=()
+	while IFS=$'\n' read -r command; do
+		commands+=("$command")
+	done < <(echo "$1" | makecmds | reparse_commands)
 	shift
 
 	if [[ $# -ne ${#commands[@]} ]]; then
@@ -34,25 +40,21 @@ test_parse_commands() {
 	done
 }
 
-# delimited by `;`
-test_parse_commands \
+test_parse_commands "delimited_by_commas" \
 	'set status off ; set exit-empty off' \
 	'set' 'status' 'off' ';' \
 	'set' 'exit-empty' 'off'
-# delimited by line breaks
-test_parse_commands \
+test_parse_commands "delimited_by_line_breaks" \
 	'set status off
 	 set exit-empty off' \
 	'set' 'status' 'off' \
 	'set' 'exit-empty' 'off'
-# escaped multiple commands
-test_parse_commands \
+test_parse_commands "escaped_multiple_commands" \
 	'bind -n M-1 display random\ text \\; display and\ more' \
 	'bind' '-n' 'M-1' \
 	'display' 'random text' '\;' \
 	'display' 'and more'
-# quoted multiple commands
-test_parse_commands \
+test_parse_commands "quoted_multiple_commands" \
 	"bind -n M-2 \"display 'random text' ; display 'and more'\"" \
 	'bind' '-n' 'M-2' \
 	"display 'random text' ; display 'and more'"
