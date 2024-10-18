@@ -17,7 +17,7 @@ while getopts :-: OPT; do
 
 			  focus.sh [OPTION]... [PROGRAM]...
 
-			OPTION:
+			OPTIONS:
 
 			  --enter           Send focus enter event. [Default mode]
 			  --leave           Send focus leave event.

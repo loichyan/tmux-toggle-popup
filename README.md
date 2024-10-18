@@ -156,29 +156,46 @@ set -g @popup-on-init "
 
 **Description**: A shell script to toggle a popup: when invoked in a popup of the same name, it
 closes the popup; otherwise, it opens a popup of the specified name. If no argument is passed or
-`--toggle` is specified and called in a popup, it will close the popup.
+`--force` is specified and called in a popup, it will close the popup.
 
 By default, if you call it with the name _A_ specified within another opened popup _B_, it will open
-a new popup _A_ inside _B_ instead of closing _B_ (i.e. popup-in-popup). You may find this behavior
-surprising, but tmux simply allows us to do so. This can be disabled by the `--toggle` flag. Or you
+a new popup _A_ inside _B_ instead of closing _B_ (i.e., popup-in-popup). You may find this behavior
+surprising, but tmux simply allows us to do so. This can be prevented by the `--force` flag. Or you
 can bind `run "#{@popup-toggle}"` to a primary toggle key, which will close the opened popup anyway.
+
+If you have set popup keybindings in your `.tmux.conf`, which should be loaded in both your default
+server and the popup server, there's no need to worry about the toggle keys. For instance, if `M-t`
+is bound to open a shell, you can press it to open a popup in your working session and then press it
+again to close the popup.
+
+However, if you wish to set a keybinding outside of `.tmux.conf`, it can get a bit tricky. You may
+refer to [#5](https://github.com/loichyan/tmux-toggle-popup/pull/5) for more details. TL;DR, you can
+pass your desired key(s) to `@popup-toggle` using `--toggle-key M-t`, and the script will handle the
+necessary adjustments. You can also specify a different key table using `--toggle '-n M-t'` or
+`--toggle '-Troot M-t'`.
 
 ```text
 USAGE:
 
   toggle.sh [OPTION]... [SHELL_COMMAND]...
 
-OPTION:
+OPTIONS:
 
-  --name <name>               Popup name.
-  --socket-name <value>       Socket name.
-  --id-format <value>         Popup ID format.
-  --on-init <hook>            Command to run on popup initialization.
-  --before-open <hook>        Hook to run before opening the popup.
-  --after-close <hook>        Hook to run after closing the popup.
-  --toggle                    Always close the current popup instead of opening a new one.
+  --name <name>               Popup name. [Default: "$DEFAULT_NAME"]
+  --force                     Toggle the popup even if its name doesn't match.
+  --toggle-key <key>          Bind additional keys to close the opened popup.
   -[BCE]                      Flags passed to display-popup.
   -[bcdehsStTwxy] <value>     Options passed to display-popup.
+
+POPUP OPTIONS:
+
+  Override global popup options on the fly.
+
+  --socket-name <value>       Socket name. [Default: "$DEFAULT_SOCKET_NAME"]
+  --id-format <value>         Popup ID format. [Default: "$DEFAULT_ID_FORMAT"]
+  --on-init <hook>            Command to run on popup initialization. [Default: "$DEFAULT_ON_INIT"]
+  --before-open <hook>        Hook to run before opening the popup. [Default: ""]
+  --after-close <hook>        Hook to run after closing the popup. [Default: ""]
 
 EXAMPLES:
 
@@ -202,7 +219,7 @@ USAGE:
 
   focus.sh [OPTION]... [PROGRAM]...
 
-OPTION:
+OPTIONS:
 
   --enter           Send focus enter event. [Default mode]
   --leave           Send focus leave event.
