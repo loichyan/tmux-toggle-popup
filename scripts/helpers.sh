@@ -38,8 +38,10 @@ showvariable() {
 # Parses the tmux script into sequences and escapes each one, ensuring they can
 # be safely interpreted by Bash.
 makecmds() {
-	# Force to use bash's bulitin printf as macOS's printf does not support "%q"
-	xargs bash -c 'printf "%q " "$@"' {}
+	# Force to use bash's bulitin printf as macOS's printf does not support "%q".
+	# The first argument to `bash -c` is the script name, so we need a dummy
+	# name to prevent it from being "eaten" by Bash.
+	xargs bash -c 'printf "%q " "$@"' _
 }
 
 # Expand the provided tmux FORMAT string. The last argument is the format
