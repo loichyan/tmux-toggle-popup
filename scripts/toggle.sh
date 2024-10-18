@@ -107,7 +107,7 @@ default_shell="$(get_default_shell)"
 tmux \
 	set default-shell /bin/sh \; \
 	popup "${popup_args[@]}" \
-	"TMUX_POPUP_SERVER='$socket_name' tmux -L '$socket_name' $(
+	"TMUX_POPUP_SERVER='$socket_name' SHELL='$default_shell' tmux -L '$socket_name' $(
 		cat <<-EOF | makecmds
 			new -As '$popup_id' $(escape "${session_args[@]}") $(escape "${prog[@]}") ;
 			set @__popup_opened '$name' ;
