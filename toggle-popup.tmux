@@ -19,7 +19,10 @@ handle_autostart() {
 	if [[ $(showopt @popup-autostart) == "on" && -z $TMUX_POPUP_SERVER ]]; then
 		# set $TMUX_POPUP_SERVER, used to identify the popup server
 		local socket_name="$(get_socket_name)"
-		TMUX_POPUP_SERVER="$socket_name" tmux -L "$socket_name" new -d &
+		# propagate user's default shell
+		local default_shell="$(get_default_shell)"
+		TMUX_POPUP_SERVER="$socket_name" SHELL="$default_shell" \
+			tmux -L "$socket_name" set exit-empty off \; start &
 	fi
 }
 
