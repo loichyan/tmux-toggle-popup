@@ -134,7 +134,7 @@ set -g @popup-on-init "
 
 ### `@popup-on-init`
 
-**Default**: `set exit-empty off \; set status off`
+**Default**: `set exit-empty off ; set status off`
 
 **Description**: tmux commands executed in the popup each time after it is opened.
 
