@@ -1,0 +1,41 @@
+name: CICD
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md"]
+  pull_request:
+    paths-ignore: ["**.md"]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check:
+    name: Run tests and checks
+    strategy:
+      fail-fast: false
+      matrix:
+        # prettier-ignore
+        include:
+          - { os: ubuntu-20.04 }
+          - { os: macos-12     }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v4
+
+      - name: Post Setup | Show information
+        run: bash --version
+
+      - name: Check | Shellcheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          severity: error
+          additional_files: toggle-popup.tmux
+
+      - name: Check | Test suite
+        run: ./run_tests
