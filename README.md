@@ -181,7 +181,7 @@ USAGE:
 
 OPTIONS:
 
-  --name <name>               Popup name. [Default: "$DEFAULT_NAME"]
+  --name <name>               Popup name. [Default: "default"]
   --force                     Toggle the popup even if its name doesn't match.
   --toggle-key <key>          Bind additional keys to close the opened popup.
   -[BCE]                      Flags passed to display-popup.
@@ -191,11 +191,11 @@ POPUP OPTIONS:
 
   Override global popup options on the fly.
 
-  --socket-name <value>       Socket name. [Default: "$DEFAULT_SOCKET_NAME"]
-  --id-format <value>         Popup ID format. [Default: "$DEFAULT_ID_FORMAT"]
-  --on-init <hook>            Command to run on popup initialization. [Default: "$DEFAULT_ON_INIT"]
-  --before-open <hook>        Hook to run before opening the popup. [Default: ""]
-  --after-close <hook>        Hook to run after closing the popup. [Default: ""]
+  --socket-name <value>       Socket name.
+  --id-format <value>         Popup ID format.
+  --on-init <hook>            Command to run on popup initialization.
+  --before-open <hook>        Hook to run before opening the popup.
+  --after-close <hook>        Hook to run after closing the popup.
 
 EXAMPLES:
 
