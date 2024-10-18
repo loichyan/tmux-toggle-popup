@@ -9,3 +9,7 @@ DEFAULT_ON_INIT="set exit-empty off ; set status off"
 get_socket_name() {
 	showopt @popup-socket-name "$DEFAULT_SOCKET_NAME"
 }
+
+get_default_shell() {
+	showopt default-shell "$SHELL"
+}

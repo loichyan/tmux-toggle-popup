@@ -25,8 +25,8 @@ badopt() {
 # Returns the value of the specified option or the second argument as the
 # fallback value if the option is empty.
 showopt() {
-	local v
-	v="$(tmux show -gqv "$1")"
+	# shellcheck disable=2155
+	local v="$(tmux show -gqv "$1")"
 	echo "${v:-"$2"}"
 }
 

@@ -101,15 +101,20 @@ if [[ -n $before_open ]]; then
 	eval "tmux -C $(echo "$before_open" | makecmds) >/dev/null"
 fi
 # hook: on-init
-# printf "debug: %s\n" \
-tmux popup "${popup_args[@]}" \
+# Temporarily change `default-shell` to `/bin/sh` so that our scripts can be
+# recognized correctly.
+default_shell="$(get_default_shell)"
+tmux \
+	set default-shell /bin/sh \; \
+	popup "${popup_args[@]}" \
 	"TMUX_POPUP_SERVER='$socket_name' tmux -L '$socket_name' $(
 		cat <<-EOF | makecmds
 			new -As '$popup_id' $(escape "${session_args[@]}") $(escape "${prog[@]}") ;
 			set @__popup_opened '$name' ;
 			${on_init[*]} ;
 		EOF
-	) >/dev/null"
+	) >/dev/null" \; \
+	set default-shell "$default_shell"
 # keybindings are registered to the global server level
 if [[ ${#unbind_keys[@]} -gt 0 ]]; then
 	# the tmux server may have stopped, ignore the returned error
