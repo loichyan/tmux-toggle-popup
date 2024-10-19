@@ -100,25 +100,25 @@ done
 if [[ -n $before_open ]]; then
 	eval "tmux -C $(echo "$before_open" | makecmds) >/dev/null"
 fi
-# hook: on-init
-# Temporarily change `default-shell` to `/bin/sh` so that our scripts can be
-# recognized correctly.
+# Temporarily change `default-shell` to `/bin/sh` to ensure our scripts are
+# recognized correctly. Once in the popup, we must promptly revert to the user's
+# default shell to prevent long-running processes from permanently altering it.
 default_shell="$(get_default_shell)"
+reattach_args="$(format "'#{socket_path}' \; attach -t '#{session_id}'")"
 tmux \
-	set default-shell /bin/sh \; \
-	popup "${popup_args[@]}" \
-	"TMUX_POPUP_SERVER='$socket_name' SHELL='$default_shell' tmux -L '$socket_name' $(
-		cat <<-EOF | makecmds
-			new -As '$popup_id' $(escape "${session_args[@]}") $(escape "${prog[@]}") ;
-			set @__popup_opened '$name' ;
-			${on_init[*]} ;
+	set default-shell '/bin/sh' \; \
+	popup "${popup_args[@]}" "$(
+		cat <<-EOF
+			tmux -CS $reattach_args \; set default-shell '$default_shell' \;  detach \; >/dev/null &
+			TMUX_POPUP_SERVER='$socket_name' SHELL='$default_shell' tmux -L '$socket_name' \
+				new -As '$popup_id' $(escape "${session_args[@]}") $(escape "${prog[@]}") \; \
+				set @__popup_opened '$name' \; \
+			    $(echo "${on_init[*]}" | makecmds) \; >/dev/null
 		EOF
-	) >/dev/null" \; \
-	set default-shell "$default_shell"
-# keybindings are registered to the global server level
+	)"
 if [[ ${#unbind_keys[@]} -gt 0 ]]; then
 	# the tmux server may have stopped, ignore the returned error
-	eval "tmux -L '$socket_name' -NC $(echo "${unbind_keys[*]}" | makecmds) 2&>/dev/null" || true
+	eval "tmux -NCL '$socket_name' $(echo "${unbind_keys[*]}" | makecmds) 2&>/dev/null" || true
 fi
 # hook: after-close
 if [[ -n $after_close ]]; then
