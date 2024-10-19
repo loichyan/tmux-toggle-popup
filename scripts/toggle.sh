@@ -71,9 +71,7 @@ prog=("${@:$OPTIND}")
 # popup within the current one (i.e., popup-in-popup).
 opened_name="$(showvariable @__popup_opened)"
 if [[ -n $opened_name && ($name == "$opened_name" || -n $force || -z $*) ]]; then
-	# Clear the variables to prevent a manually attached session from being
-	# detached by the keybinding.
-	tmux set -u @__popup_opened \; detach
+	tmux detach
 	exit 0
 fi
 
