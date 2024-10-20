@@ -38,4 +38,4 @@ jobs:
           additional_files: toggle-popup.tmux
 
       - name: Check | Test suite
-        run: ./run_tests
+        run: ./run-tests
