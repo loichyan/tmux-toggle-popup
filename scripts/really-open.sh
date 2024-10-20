@@ -1,7 +1,11 @@
 #!/bin/sh
-# execute the open script if exists
-if [ -n "$__tmux_popup_open" ]; then
-	eval exec "$__tmux_popup_open"
+# clear the temporary variable
+open_script="${__tmux_popup_open:-}"
+unset -v __tmux_popup_open
+if [ -n "$open_script" ]; then
+	# execute the open script if exists
+	eval exec "$open_script"
 else
+	# or fallback to user's default shell
 	exec "$SHELL" "$@"
 fi
