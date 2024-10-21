@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
+## [Unreleased]
+
+### ⚠️ Breaking Changes
+
+- Use xargs(1) and printf(1) to parse tmux commands ([#8](https://github.com/loichyan/tmux-toggle-popup/pull/8)). This allows users to input `;` directly as the command delimiter without worrying about Bash's interpretation. The new parser may yield results that differ from the previous version, although this is usually not the case.
+
+### ✨ Highlights
+
+- We've implemented several improvements to make it easier for other programs to integrate with this plugin ([#5](https://github.com/loichyan/tmux-toggle-popup/pull/5), [#9](https://github.com/loichyan/tmux-toggle-popup/pull/9)). You can now override popup global options on the fly using the newly added arguments for `@popup-toggle`.
+- This release also includes some fixes to address the changes in `display-popup` introduced in tmux versions 3.5 and 3.5a ([#14](https://github.com/loichyan/tmux-toggle-popup/pull/14)).
+
 ## [v0.2.0](https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0) - 2024-06-05
 
 ### ⚠️ Breaking Changes

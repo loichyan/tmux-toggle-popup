@@ -4,6 +4,7 @@
 [remote.github]
 owner = "loichyan"
 repo = "tmux-toggle-popup"
+# version = "v0.3.0"
 
 [git]
 # parse the commits based on https://www.conventionalcommits.org
