@@ -98,22 +98,20 @@ done
 if [[ -n $before_open ]]; then
 	eval "tmux -C $(echo "$before_open" | makecmds) >/dev/null"
 fi
-# Temporarily change `default-shell` to `/bin/sh` to ensure our scripts are
-# recognized correctly. Once in the popup, we must promptly revert to the user's
-# default shell to prevent long-running processes from permanently altering it.
-default_shell="$(get_default_shell)"
-reattach_args="$(format "'#{socket_path}' \; attach -t '#{session_id}'")"
-tmux \
-	set default-shell '/bin/sh' \; \
-	popup "${popup_args[@]}" "$(
-		cat <<-EOF
-			tmux -CS $reattach_args \; set default-shell '$default_shell' \;  detach \; >/dev/null &
-			TMUX_POPUP_SERVER='$socket_name' SHELL='$default_shell' tmux -L '$socket_name' \
+# Starting from version 3.5, tmux uses the user's `default-shell` to execute
+# shell commands. However, our scripts are written in sh, which may not be
+# recognized by some shells that are incompatible with it. To address this, we
+# put the entire script in a temporary env variable and call `./really-open.sh`
+# to run these commands. This approach only requires the user's default shell to
+# support the `exec` command, which we believe most shells do.
+open_script="tmux -L '$socket_name' \
 				new -As '$popup_id' $(escape "${session_args[@]}") $(escape "${prog[@]}") \; \
 				set @__popup_opened '$name' \; \
-			    $(echo "${on_init[*]}" | makecmds) \; >/dev/null
-		EOF
-	)"
+				$(echo "${on_init[*]}" | makecmds) \; >/dev/null"
+tmux popup "${popup_args[@]}" \
+	-e TMUX_POPUP_SERVER="$socket_name" \
+	-e __tmux_popup_open="$open_script" \
+	"exec $CURRENT_DIR/really-open.sh"
 if [[ ${#unbind_keys[@]} -gt 0 ]]; then
 	# the tmux server may have stopped, ignore the returned error
 	eval "tmux -NCL '$socket_name' $(echo "${unbind_keys[*]}" | makecmds) 2&>/dev/null" || true
