@@ -38,4 +38,39 @@ jobs:
           additional_files: toggle-popup.tmux
 
       - name: Check | Test suite
-        run: ./run_tests
+        run: ./run-tests
+
+  # How to create a new GitHub release?
+  # 1. Create a release branch named "release/<tag>".
+  # 2. Open a PR from the branch, including a summary in the body that highlights any breaking changes and key features.
+  # 3. Wait for the CI to generate the CHANGELOG and create a draft release.
+  # 4. Publish the release when it's ready.
+  release:
+    name: Create GitHub release
+    needs: [check]
+    if: startsWith(github.head_ref, 'release/') && github.repository == 'loichyan/tmux-toggle-popup'
+    permissions:
+      contents: write # need to update release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Setup | Configure
+        id: configure
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          echo tag="${GITHUB_HEAD_REF#release/}" >$GITHUB_OUTPUT
+
+      - name: Setup | Install git-cliff
+        uses: taiki-e/install-action@git-cliff
+
+      - name: Release | Create Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_CLIFF_TAG: ${{ steps.configure.outputs.tag }}
+          GIT_CLIFF_SUMMARY: ${{ github.event.pull_request.body }}
+        run: ./ci/update-release.sh
