@@ -34,29 +34,29 @@ while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 	force) declare "${OPT/-/_}"="1" ;;
 	help)
 		cat <<-EOF
-			USAGE:
+			Usage:
 
-			  toggle.sh [OPTION]... [SHELL_COMMAND]...
+			  toggle.sh [OPTIONS] [POPUP_OPTIONS] [SHELL_COMMAND]...
 
-			OPTIONS:
+			Options:
 
-			  --name <name>               Popup name. [Default: "$DEFAULT_NAME"]
-			  --force                     Toggle the popup even if its name doesn't match.
-			  --toggle-key <key>          Bind additional keys to close the opened popup.
-			  -[BCE]                      Flags passed to display-popup.
-			  -[bcdehsStTwxy] <value>     Options passed to display-popup.
+			  --name <name>               Popup name [Default: "$DEFAULT_NAME"]
+			  --force                     Toggle the popup even if its name doesn't match
+			  --toggle-key <key>          Bind additional keys to close the opened popup
+			  -[BCE]                      Flags passed to display-popup
+			  -[bcdehsStTwxy] <value>     Options passed to display-popup
 
-			POPUP OPTIONS:
+			Popup Options:
 
 			  Override global popup options on the fly.
 
-			  --socket-name <value>       Socket name. [Default: "$DEFAULT_SOCKET_NAME"]
-			  --id-format <value>         Popup ID format. [Default: "$DEFAULT_ID_FORMAT"]
-			  --on-init <hook>            Command to run on popup initialization. [Default: "$DEFAULT_ON_INIT"]
-			  --before-open <hook>        Hook to run before opening the popup. [Default: ""]
-			  --after-close <hook>        Hook to run after closing the popup. [Default: ""]
+			  --socket-name <value>       Socket name [Default: "$DEFAULT_SOCKET_NAME"]
+			  --id-format <value>         Popup ID format [Default: "$DEFAULT_ID_FORMAT"]
+			  --on-init <hook>            Command to run on popup initialization [Default: "$DEFAULT_ON_INIT"]
+			  --before-open <hook>        Hook to run before opening the popup [Default: ""]
+			  --after-close <hook>        Hook to run after closing the popup [Default: ""]
 
-			EXAMPLES:
+			Examples:
 
 			  toggle.sh -Ed'#{pane_current_path}' --name=bash bash
 		EOF

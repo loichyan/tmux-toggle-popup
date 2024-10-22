@@ -175,29 +175,29 @@ necessary adjustments. You can also specify a different key table using `--toggl
 `--toggle '-Troot M-t'`.
 
 ```text
-USAGE:
+Usage:
 
-  toggle.sh [OPTION]... [SHELL_COMMAND]...
+  toggle.sh [OPTIONS] [POPUP_OPTIONS] [SHELL_COMMAND]...
 
-OPTIONS:
+Options:
 
-  --name <name>               Popup name. [Default: "default"]
-  --force                     Toggle the popup even if its name doesn't match.
-  --toggle-key <key>          Bind additional keys to close the opened popup.
-  -[BCE]                      Flags passed to display-popup.
-  -[bcdehsStTwxy] <value>     Options passed to display-popup.
+  --name <name>               Popup name [Default: "default"]
+  --force                     Toggle the popup even if its name doesn't match
+  --toggle-key <key>          Bind additional keys to close the opened popup
+  -[BCE]                      Flags passed to display-popup
+  -[bcdehsStTwxy] <value>     Options passed to display-popup
 
-POPUP OPTIONS:
+Popup Options:
 
   Override global popup options on the fly.
 
-  --socket-name <value>       Socket name.
-  --id-format <value>         Popup ID format.
-  --on-init <hook>            Command to run on popup initialization.
-  --before-open <hook>        Hook to run before opening the popup.
-  --after-close <hook>        Hook to run after closing the popup.
+  --socket-name <value>       Socket name
+  --id-format <value>         Popup ID format
+  --on-init <hook>            Command to run on popup initialization
+  --before-open <hook>        Hook to run before opening the popup
+  --after-close <hook>        Hook to run after closing the popup
 
-EXAMPLES:
+Examples:
 
   toggle.sh -Ed'#{pane_current_path}' --name=bash bash
 ```
@@ -215,16 +215,16 @@ focus events can be specified and events are sent only if the current program ma
 names; if no name is provided, focus events are always sent.
 
 ```text
-USAGE:
+Usage:
 
   focus.sh [OPTION]... [PROGRAM]...
 
-OPTIONS:
+Options:
 
-  --enter           Send focus enter event. [Default mode]
-  --leave           Send focus leave event.
+  --enter      Send focus enter event [Default mode]
+  --leave      Send focus leave event
 
-EXAMPLES:
+Examples:
 
   focus.sh --enter nvim emacs
 ```
