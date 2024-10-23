@@ -81,7 +81,7 @@ id_format="${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")}"
 on_init="${on_init:-$(showopt @popup-on-init "$DEFAULT_ON_INIT")}"
 before_open="${before_open:-$(showopt @popup-before-open)}"
 after_close="${after_close:-$(showopt @popup-after-close)}"
-popup_id="$(format @popup_name "$name" "$id_format")"
+popup_id_format="$(format "$id_format")"
 
 # bind toggle keys in the opened popup
 unbind_keys=()
@@ -104,9 +104,11 @@ fi
 # put the entire script in a temporary env variable and call `./really-open.sh`
 # to run these commands. This approach only requires the user's default shell to
 # support the `exec` command, which we believe most shells do.
+popup_id="$(interpolate popup_name "$name" "$popup_id_format")"
 open_script="tmux -L '$socket_name' \
 				new -As '$popup_id' $(escape "${session_args[@]}") $(escape "${prog[@]}") \; \
 				set @__popup_opened '$name' \; \
+				set @__popup_id_format '$popup_id_format' \; \
 				$(echo "${on_init[*]}" | makecmds) \; >/dev/null"
 tmux popup "${popup_args[@]}" \
 	-e TMUX_POPUP_SERVER="$socket_name" \

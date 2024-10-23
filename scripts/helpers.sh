@@ -44,15 +44,20 @@ makecmds() {
 	xargs bash -c 'printf "%q " "$@"' _
 }
 
-# Expand the provided tmux FORMAT string. The last argument is the format
-# string, while the preceding ones represent variables available during the
-# expansion.
+# Expands the provided tmux FORMAT string.
 format() {
-	local set_v=() unset_v=()
+	tmux display -p "$*"
+}
+
+# Interpolates the provided FORMAT string. The last argument is the format
+# string, while the preceding arguments represent the variables available during
+# the expansion. All `{variable}` placeholders in the format string will be
+# replaced with their corresponding values.
+interpolate() {
+	local result="${*: -1}"
 	while [[ $# -gt 1 ]]; do
-		set_v+=(set "$1" "$2" \;)
-		unset_v+=(set -u "$1" \;)
+		result="${result//"{$1}"/$2}"
 		shift 2
 	done
-	tmux "${set_v[@]}" display -p "$*" \; "${unset_v[@]}"
+	echo "$result"
 }
