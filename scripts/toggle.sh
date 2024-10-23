@@ -104,7 +104,7 @@ if [[ -n $opened_name ]]; then
 		id_format="$(showvariable @__popup_id_format)"
 		open_args+=("-d") # create the target session if not exists
 		prepare_for_open
-		eval tmux "$open_cmds" >/dev/null
+		eval tmux -C "$open_cmds" >/dev/null
 		exec tmux switch -t "$popup_id"
 	elif [[ $toggle_mode != "force-open" ]]; then
 		die "illegal toggle mode: $toggle_mode"
