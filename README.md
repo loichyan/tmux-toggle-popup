@@ -88,19 +88,24 @@ if '[ -n "$TMUX_POPUP_SERVER" ]' {
 
 ### `@popup-id-format`
 
-**Default**: `#{b:socket_path}/#{session_name}/#{b:pane_current_path}/#{@popup_name}`
+**Default**: `#{b:socket_path}/#{session_name}/#{b:pane_current_path}/{popup_name}`
 
 **Description**: A format string used to generate IDs for each popup, allowing you to customize how
 popups are shared across sessions, windows, and panes. By default, popups are independent across
 sessions, and in each session, popups are shared among the same project (identified by the directory
-name). A variable named `@popup_name` is assigned the name of the popup during the expansion of the
-format string.
+name). A placedholder named `{popup_name}` is substituted with the popup name during the expansion.
 
 ### `@popup-autostart`
 
 **Default**: `off`
 
 **Description**: If enabled, the designated tmux server for popups will start automatically.
+
+### `@popup-toggle-mode`
+
+**Default**: `switch`
+
+**Description**: The default toggle mode of `@popup-toggle`.
 
 ## 🪝 Hooks
 
@@ -154,14 +159,14 @@ set -g @popup-on-init "
 
 ### `@popup-toggle`
 
-**Description**: A shell script to toggle a popup: when invoked in a popup of the same name, it
-closes the popup; otherwise, it opens a popup of the specified name. If no argument is passed or
-`--force` is specified and called in a popup, it will close the popup.
+**Description**: A shell script to toggle a popup. When invoked in your working session, it opens a
+reusable popup window identified by `--name`. It supports three modes to handle nested toggle calls,
+specifically when invoked in an opened popup with a different name specified:
 
-By default, if you call it with the name _A_ specified within another opened popup _B_, it will open
-a new popup _A_ inside _B_ instead of closing _B_ (i.e., popup-in-popup). You may find this behavior
-surprising, but tmux simply allows us to do so. This can be prevented by the `--force` flag. Or you
-can bind `run "#{@popup-toggle}"` to a primary toggle key, which will close the opened popup anyway.
+1. `switch`: The default mode. Keep the popup window open and switch to the new popup.
+2. `force-close`: Close the opened popup window. This is the expected behavior when the name matches
+   or no arguments are provided.
+3. `force-open`: Open a new popup window within the current one, i.e., popup-in-popup.
 
 If you have set popup keybindings in your `.tmux.conf`, which should be loaded in both your default
 server and the popup server, there's no need to worry about the toggle keys. For instance, if `M-t`
@@ -182,7 +187,7 @@ Usage:
 Options:
 
   --name <name>               Popup name [Default: "default"]
-  --force                     Toggle the popup even if its name doesn't match
+  --toggle-mode <mode>        Action to handle nested calls [Default: "switch"]
   --toggle-key <key>          Bind additional keys to close the opened popup
   -[BCE]                      Flags passed to display-popup
   -[bcdehsStTwxy] <value>     Options passed to display-popup
