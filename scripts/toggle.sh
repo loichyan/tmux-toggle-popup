@@ -114,7 +114,7 @@ fi
 # hook: before-open
 before_open="${before_open:-$(showopt @popup-before-open)}"
 if [[ -n $before_open ]]; then
-	eval "tmux -C $(makecmds "$before_open") >/dev/null"
+	eval "tmux -C $(makecmds "$before_open")" >/dev/null
 fi
 
 # expand the configured ID format
@@ -122,7 +122,7 @@ id_format="$(format "${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT
 open_args+=("-A") # create the target session and attach to it
 prepare_for_open
 socket_name="${socket_name:-$(get_socket_name)}"
-open_script="tmux -L '$socket_name' $open_cmds >/dev/null"
+open_script="tmux -L '$socket_name' $open_cmds"
 
 # Starting from version 3.5, tmux uses the user's `default-shell` to execute
 # shell commands. However, our scripts are written in `sh`, which may not be
@@ -138,11 +138,11 @@ tmux popup "${popup_args[@]}" \
 # undo temporary changes
 if [[ ${#on_cleanup[@]} -gt 0 ]]; then
 	# the tmux server may have stopped, ignore the returned error
-	eval "tmux -NCL '$socket_name' $(makecmds "$on_cleanup") &>/dev/null" || true
+	eval "tmux -NCL '$socket_name' $(makecmds "$on_cleanup")" &>/dev/null || true
 fi
 
 # hook: after-close
 after_close="${after_close:-$(showopt @popup-after-close)}"
 if [[ -n $after_close ]]; then
-	eval "tmux -C $(makecmds "$after_close") >/dev/null"
+	eval "tmux -C $(makecmds "$after_close")" >/dev/null
 fi
