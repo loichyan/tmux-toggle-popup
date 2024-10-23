@@ -90,9 +90,9 @@ prepare_for_open() {
 		escape \
 			new "${open_args[@]}" -s "$popup_id" "${program[@]}" \; \
 			set @__popup_opened "$name" \; \
-			set @__popup_id_format "$id_format"
+			set @__popup_id_format "$id_format" \;
 	)"
-	open_cmds+=" \; $(makecmds "$on_init")"
+	open_cmds+="$(makecmds "$on_init")"
 }
 
 opened_name="$(showvariable @__popup_opened)"
@@ -122,7 +122,7 @@ id_format="$(format "${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT
 open_args+=("-A") # create the target session and attach to it
 prepare_for_open
 socket_name="${socket_name:-$(get_socket_name)}"
-open_script="tmux -L '$socket_name' $open_cmds"
+open_script="exec tmux -L '$socket_name' $open_cmds"
 
 # Starting from version 3.5, tmux uses the user's `default-shell` to execute
 # shell commands. However, our scripts are written in `sh`, which may not be
