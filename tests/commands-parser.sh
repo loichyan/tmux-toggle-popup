@@ -20,9 +20,9 @@ test_parse_commands() {
 	shift
 
 	local commands=()
-	while IFS=$'\n' read -r command; do
+	while IFS= read -r command; do
 		commands+=("$command")
-	done < <(echo "$1" | makecmds | reparse_commands)
+	done < <(makecmds "$1" | reparse_commands)
 	shift
 
 	if [[ $# -ne ${#commands[@]} ]]; then
