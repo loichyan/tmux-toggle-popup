@@ -13,16 +13,16 @@ while getopts :-: OPT; do
 	leave) mode=O ;;
 	help)
 		cat <<-EOF
-			USAGE:
+			Usage:
 
 			  focus.sh [OPTION]... [PROGRAM]...
 
-			OPTIONS:
+			Options:
 
-			  --enter           Send focus enter event. [Default mode]
-			  --leave           Send focus leave event.
+			  --enter      Send focus enter event [Default mode]
+			  --leave      Send focus leave event
 
-			EXAMPLES:
+			Examples:
 
 			  focus.sh --enter nvim emacs
 		EOF
