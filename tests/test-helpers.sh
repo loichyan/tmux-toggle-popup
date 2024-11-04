@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=2155
-
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 # shellcheck source=../scripts//helpers.sh
-source "$CURRENT_DIR/../scripts/helpers.sh"
+source "$SRC_DIR/../scripts/helpers.sh"
 
 test_fail() {
 	echo "${BASH_SOURCE[1]}:${BASH_LINENO[1]}" "$@"
@@ -12,8 +10,8 @@ test_fail() {
 }
 
 test_interpolate() {
-	local format="$1" expected="$2"
-	local result="$(interpolate "${@:3}" "$format")"
+	format="$1" expected="$2"
+	result="$(interpolate "${@:3}" "$format")"
 
 	if [[ $result != "$expected" ]]; then
 		test_fail "$result != $expected"

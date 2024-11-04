@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 # shellcheck source=../scripts//helpers.sh
-source "$CURRENT_DIR/../scripts/helpers.sh"
+source "$SRC_DIR/../scripts/helpers.sh"
 
 test_fail() {
 	echo "${BASH_SOURCE[1]}:${BASH_LINENO[1]}" "$@"

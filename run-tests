@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+SRC_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
 status=0
 for test in ./tests/*; do
 	echo "test: $test"

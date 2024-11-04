@@ -1,26 +1,25 @@
 #!/usr/bin/env bash
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
 # shellcheck source=./scripts/helpers.sh
-source "$CURRENT_DIR/scripts/helpers.sh"
+source "$SRC_DIR/scripts/helpers.sh"
 # shellcheck source=./scripts/variables.sh
-source "$CURRENT_DIR/scripts/variables.sh"
+source "$SRC_DIR/scripts/variables.sh"
 
 set_keybindings() {
 	tmux \; \
-		set -g "@popup-toggle" "$CURRENT_DIR/scripts/toggle.sh" \; \
-		set -g "@popup-focus" "$CURRENT_DIR/scripts/focus.sh" \;
+		set -g "@popup-toggle" "$SRC_DIR/scripts/toggle.sh" \; \
+		set -g "@popup-focus" "$SRC_DIR/scripts/focus.sh" \;
 }
 
 handle_autostart() {
-	# shellcheck disable=2155
 	# do not start itself within a popup server
-	if [[ $(showopt @popup-autostart) == "on" && -z $TMUX_POPUP_SERVER ]]; then
+	if [[ $(showopt @popup-autostart) == "on" && -z ${TMUX_POPUP_SERVER-} ]]; then
 		# set $TMUX_POPUP_SERVER, used to identify the popup server
-		local socket_name="$(get_socket_name)"
+		socket_name="$(get_socket_name)"
 		# propagate user's default shell
-		local default_shell="$(get_default_shell)"
+		default_shell="$(get_default_shell)"
 		TMUX_POPUP_SERVER="$socket_name" SHELL="$default_shell" \
 			tmux -L "$socket_name" set exit-empty off \; start &
 	fi

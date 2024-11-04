@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
 # shellcheck source=./helpers.sh
-source "$CURRENT_DIR/helpers.sh"
+source "$SRC_DIR/helpers.sh"
 # shellcheck source=./variables.sh
-source "$CURRENT_DIR/variables.sh"
+source "$SRC_DIR/variables.sh"
 
 declare OPT OPTARG OPTIND=1 popup_args open_args toggle_keys
-
 while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 	if [[ $OPT == '-' ]]; then OPT="${OPTARG%%=*}"; fi
 	case "$OPT" in
@@ -76,7 +76,7 @@ toggle_mode="${toggle_mode:-$(showopt @popup-toggle-mode "$DEFAULT_TOGGLE_MODE")
 # - `on_cleanup` is used to undo temporary changes
 # - `popup_id` is set to the expanded popup session name
 declare open_cmds on_cleanup popup_id
-prepare_for_open() {
+prepare_open() {
 	local on_init="${on_init:-$(showopt @popup-on-init "$DEFAULT_ON_INIT")}"
 
 	# create temporary toggle keys in the opened popup
@@ -95,54 +95,60 @@ prepare_for_open() {
 	open_cmds+="$(makecmds "$on_init")"
 }
 
-opened_name="$(showvariable @__popup_opened)"
-if [[ -n $opened_name ]]; then
-	if [[ $name == "$opened_name" || -z $* || $toggle_mode == "force-close" ]]; then
-		exec tmux detach >/dev/null
-	elif [[ $toggle_mode == "switch" ]]; then
-		# reuse the caller's ID format to ensure we open the intended popup
-		id_format="$(showvariable @__popup_id_format)"
-		open_args+=("-d") # create the target session if not exists
-		prepare_for_open
-		eval tmux -C "$open_cmds" >/dev/null
-		exec tmux switch -t "$popup_id" >/dev/null
-	elif [[ $toggle_mode != "force-open" ]]; then
-		die "illegal toggle mode: $toggle_mode"
+main() {
+	opened_name="$(showvariable @__popup_opened)"
+	if [[ -n $opened_name ]]; then
+		if [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
+			exec tmux detach >/dev/null
+		elif [[ $toggle_mode == "switch" ]]; then
+			# reuse the caller's ID format to ensure we open the intended popup
+			id_format="$(showvariable @__popup_id_format)"
+			open_args+=("-d") # create the target session if not exists
+			prepare_open
+			eval tmux -C "$open_cmds" &>/dev/null || true # ignore error if already created
+			exec tmux switch -t "$popup_id" >/dev/null
+		elif [[ $toggle_mode != "force-open" ]]; then
+			die "illegal toggle mode: $toggle_mode"
+		fi
 	fi
-fi
 
-# hook: before-open
-before_open="${before_open:-$(showopt @popup-before-open)}"
-if [[ -n $before_open ]]; then
-	eval "tmux -C $(makecmds "$before_open")" >/dev/null
-fi
+	# hook: before-open
+	before_open="${before_open:-$(showopt @popup-before-open)}"
+	if [[ -n $before_open ]]; then
+		eval "tmux -C $(makecmds "$before_open")" >/dev/null
+	fi
 
-# expand the configured ID format
-id_format="$(format "${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")}")"
-open_args+=("-A") # create the target session and attach to it
-prepare_for_open
-socket_name="${socket_name:-$(get_socket_name)}"
-open_script="exec tmux -L '$socket_name' $open_cmds >/dev/null"
+	# expand the configured ID format
+	id_format="$(format "${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")}")"
+	open_args+=("-A") # create the target session and attach to it
+	prepare_open
+	socket_name="${socket_name:-$(get_socket_name)}"
+	open_script="exec tmux -L '$socket_name' $open_cmds >/dev/null"
 
-# Starting from version 3.5, tmux uses the user's `default-shell` to execute
-# shell commands. However, our scripts are written in `sh`, which may not be
-# recognized by some shells that are incompatible with it. To address this, we
-# put the entire script in a temporary env variable and call `./really-open.sh`
-# to run these commands. This approach only requires the user's default shell to
-# support the `exec` command, which we believe most shells do.
-tmux popup "${popup_args[@]}" \
-	-e TMUX_POPUP_SERVER="$socket_name" \
-	-e __tmux_popup_open="$open_script" \
-	"exec $CURRENT_DIR/really-open.sh"
+	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
+	# shell commands. However, our scripts are written in `sh`, which may not be
+	# recognized by some shells that are incompatible with it. To address this,
+	# we put the entire script in a temporary env variable and call `./really-open.sh`
+	# to run these commands. This approach only requires the user's default
+	# shell to support the `exec` command, which we believe most shells do.
+	tmux popup "${popup_args[@]}" \
+		-e TMUX_POPUP_SERVER="$socket_name" \
+		-e __tmux_popup_open="$open_script" \
+		"exec $SRC_DIR/really-open.sh"
 
-# undo temporary changes
-if [[ ${#on_cleanup[@]} -gt 0 ]]; then
-	# the tmux server may have stopped, ignore the returned error
-	eval "tmux -NCL '$socket_name' $(makecmds "$on_cleanup")" &>/dev/null || true
-fi
+	# undo temporary changes
+	if [[ -n ${on_cleanup-} ]]; then
+		# ignore error if the server has already stopped
+		eval "tmux -NCL '$socket_name' $(makecmds "$on_cleanup")" &>/dev/null || true
+	fi
 
-# hook: after-close
-after_close="${after_close:-$(showopt @popup-after-close)}"
-if [[ -n $after_close ]]; then
-	eval "tmux -C $(makecmds "$after_close")" >/dev/null
-fi
+	# hook: after-close
+	after_close="${after_close:-$(showopt @popup-after-close)}"
+	if [[ -n $after_close ]]; then
+		eval "tmux -C $(makecmds "$after_close")" >/dev/null
+	fi
+
+	return
+}
+
+main

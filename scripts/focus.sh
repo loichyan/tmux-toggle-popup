@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+
 # shellcheck source=./helpers.sh
-source "$CURRENT_DIR/helpers.sh"
+source "$SRC_DIR/helpers.sh"
 
-declare mode=I progs OPT OPTARG OPTIND=1
-
+declare OPT OPTARG OPTIND=1 mode=I
 while getopts :-: OPT; do
 	if [[ $OPT == '-' ]]; then OPT="${OPTARG%%=*}"; fi
 	case "$OPT" in
@@ -33,7 +33,8 @@ while getopts :-: OPT; do
 done
 progs=("${@:$OPTIND}")
 
-check() {
+# Checks whether the running program is in the given list.
+check_program() {
 	if [[ ${#progs} == 0 ]]; then
 		return
 	fi
@@ -46,6 +47,11 @@ check() {
 
 	return 1
 }
-if check; then
-	tmux send Escape "[$mode"
-fi
+
+main() {
+	if check_program; then
+		tmux send Escape "[$mode"
+	fi
+}
+
+main
