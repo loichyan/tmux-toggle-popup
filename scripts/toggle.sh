@@ -98,14 +98,14 @@ prepare_for_open() {
 opened_name="$(showvariable @__popup_opened)"
 if [[ -n $opened_name ]]; then
 	if [[ $name == "$opened_name" || -z $* || $toggle_mode == "force-close" ]]; then
-		exec tmux detach
+		exec tmux detach >/dev/null
 	elif [[ $toggle_mode == "switch" ]]; then
 		# reuse the caller's ID format to ensure we open the intended popup
 		id_format="$(showvariable @__popup_id_format)"
 		open_args+=("-d") # create the target session if not exists
 		prepare_for_open
 		eval tmux -C "$open_cmds" >/dev/null
-		exec tmux switch -t "$popup_id"
+		exec tmux switch -t "$popup_id" >/dev/null
 	elif [[ $toggle_mode != "force-open" ]]; then
 		die "illegal toggle mode: $toggle_mode"
 	fi
@@ -122,7 +122,7 @@ id_format="$(format "${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT
 open_args+=("-A") # create the target session and attach to it
 prepare_for_open
 socket_name="${socket_name:-$(get_socket_name)}"
-open_script="exec tmux -L '$socket_name' $open_cmds"
+open_script="exec tmux -L '$socket_name' $open_cmds >/dev/null"
 
 # Starting from version 3.5, tmux uses the user's `default-shell` to execute
 # shell commands. However, our scripts are written in `sh`, which may not be
