@@ -128,13 +128,13 @@ main() {
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
 	# shell commands. However, our scripts are written in `sh`, which may not be
 	# recognized by some shells that are incompatible with it. To address this,
-	# we put the entire script in a temporary env variable and call `./really-open.sh`
+	# we put the entire script in a temporary env variable and call `./really_open.sh`
 	# to run these commands. This approach only requires the user's default
 	# shell to support the `exec` command, which we believe most shells do.
 	tmux popup "${popup_args[@]}" \
 		-e TMUX_POPUP_SERVER="$socket_name" \
 		-e __tmux_popup_open="$open_script" \
-		"exec $SRC_DIR/really-open.sh"
+		"exec $SRC_DIR/really_open.sh"
 
 	# undo temporary changes
 	if [[ -n ${on_cleanup-} ]]; then
