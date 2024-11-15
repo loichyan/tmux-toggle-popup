@@ -32,6 +32,23 @@ noticeable to end-users since the last release. For developers, this project fol
 
 ## [Unreleased]
 
+### ✨ Added
+
+- Add a new toggle mode, `switch`, which always reuses the currently opened window when switching to
+  the another popup ([#21](https://github.com/loichyan/tmux-toggle-popup/pull/21)).
+
+### 🔧 Changed
+
+- [**breaking**] Replace `@popup-toggle --force` with `--toggle-mode=force-close`
+  ([#21](https://github.com/loichyan/tmux-toggle-popup/pull/21)).
+- [**breaking**] Replace tmux variable `#{@popup_name}` in `@popup-id-format` with the
+  `{popup_name}` placeholder ([#21](https://github.com/loichyan/tmux-toggle-popup/pull/21)).
+
+### 🐛 Fixed
+
+- Disable potential tmux messages from popups
+  ([#23](https://github.com/loichyan/tmux-toggle-popup/pull/23)).
+
 ## [0.3.0] - 2024-10-21
 
 We've implemented several improvements to make it easier for other programs to integrate with this
