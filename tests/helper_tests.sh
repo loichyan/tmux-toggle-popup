@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-# shellcheck disable=2155
+SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=../scripts//helpers.sh
-source "$CURRENT_DIR/../scripts/helpers.sh"
+source "$SRC_DIR/../scripts/helpers.sh"
 
 test_fail() {
 	echo "${BASH_SOURCE[1]}:${BASH_LINENO[1]}" "$@"
@@ -12,8 +12,8 @@ test_fail() {
 }
 
 test_interpolate() {
-	local format="$1" expected="$2"
-	local result="$(interpolate "${@:3}" "$format")"
+	format="$1" expected="$2"
+	result="$(interpolate "${@:3}" "$format")"
 
 	if [[ $result != "$expected" ]]; then
 		test_fail "$result != $expected"

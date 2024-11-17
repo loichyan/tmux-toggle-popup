@@ -1,4 +1,5 @@
 #!/bin/sh
+
 # clear the temporary variable
 open_script="${__tmux_popup_open:-}"
 unset -v __tmux_popup_open
