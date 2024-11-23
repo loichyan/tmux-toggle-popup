@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# name:     tmux-toggle-popup
+# version:  0.4.0
+# authors:  Loi Chyan <loichyan@foxmail.com>
+# license:  MIT OR Apache-2.0
+
 SRC_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 
 # shellcheck source=./scripts/helpers.sh

@@ -32,6 +32,8 @@ are noticeable to end-users since the last release. For developers, this project
 
 ## [Unreleased]
 
+## [0.4.0] - 2024-11-23
+
 ### Added
 
 - Add a new toggle mode, `switch`, which always reuses the currently opened window when switching to another popup
@@ -117,7 +119,8 @@ thanks [@cenk1cenk2]). You can now override popup global options on the fly usin
 
 🎉 Initial release. See [README](https://github.com/loichyan/tmux-toggle-popup/blob/v0.1.0/README.md) for more details.
 
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..HEAD
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..HEAD
+[0.4.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..v0.4.0
 [0.3.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/loichyan/tmux-toggle-popup/releases/tag/v0.1.0

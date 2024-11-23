@@ -53,6 +53,9 @@ jobs:
       contents: write # need to update release
     runs-on: ubuntu-latest
     steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v4
+
       - name: Setup | Configure
         id: configure
         run: |
