@@ -32,7 +32,7 @@ are noticeable to end-users since the last release. For developers, this project
 
 ## [Unreleased]
 
-## [0.4.0] - 2024-11-19
+## [0.4.0] - 2024-11-23
 
 ### Added
 
