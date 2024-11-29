@@ -74,12 +74,11 @@ identify popup servers. You can check this variable and load different configura
 **Example**:
 
 ```tmux
-# configurations for popup servers
+# Configurations specified for popup servers
 if '[ -n "$TMUX_POPUP_SERVER" ]' {
     set -g exit-empty off
     set -g status off
 }
-# ...other configurations
 ```
 
 ### `@popup-id-format`
@@ -126,7 +125,7 @@ set -g @popup-on-init '
 set -g @popup-on-init '
   bind -n M-1 display random\ text \\; display and\ more
 '
-# or quoted
+# or quoted.
 set -g @popup-on-init "
   bind -n M-2 \"display 'random text' ; display 'and more'\"
 "
