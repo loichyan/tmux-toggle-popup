@@ -5,41 +5,31 @@ SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=./helpers.sh
 source "$SRC_DIR/helpers.sh"
 
-declare OPT OPTARG OPTIND=1 mode=I
-while getopts :-: OPT; do
-	if [[ $OPT == '-' ]]; then OPT="${OPTARG%%=*}"; fi
-	case "$OPT" in
-	enter) mode=I ;;
-	leave) mode=O ;;
-	help)
-		cat <<-EOF
-			Usage:
+declare OPT OPTARG OPTIND=1 mode=I programs
+usage() {
+	cat <<-EOF
+		Usage:
 
-			  focus.sh [OPTION]... [PROGRAM]...
+		  focus.sh [OPTION]... [PROGRAM]...
 
-			Options:
+		Options:
 
-			  --enter      Send focus enter event [Default mode]
-			  --leave      Send focus leave event
+		  --enter      Send focus enter event [Default mode]
+		  --leave      Send focus leave event
 
-			Examples:
+		Examples:
 
-			  focus.sh --enter nvim emacs
-		EOF
-		exit
-		;;
-	*) badopt ;;
-	esac
-done
-progs=("${@:$OPTIND}")
+		  focus.sh --enter nvim emacs
+	EOF
+}
 
 # Checks whether the running program is in the given list.
 check_program() {
-	if [[ ${#progs} == 0 ]]; then
+	if [[ ${#programs} == 0 ]]; then
 		return
 	fi
 
-	for prog in "${progs[@]}"; do
+	for prog in "${programs[@]}"; do
 		if [[ $(format '#{pane_current_command}') == "$prog" ]]; then
 			return
 		fi
@@ -49,9 +39,23 @@ check_program() {
 }
 
 main() {
+	while getopts :-: OPT; do
+		if [[ $OPT == '-' ]]; then OPT="${OPTARG%%=*}"; fi
+		case "$OPT" in
+		enter) mode=I ;;
+		leave) mode=O ;;
+		help)
+			usage
+			exit
+			;;
+		*) badopt ;;
+		esac
+	done
+	programs=("${@:$OPTIND}")
+
 	if check_program; then
 		tmux send Escape "[$mode"
 	fi
 }
 
-main
+main "$@"
