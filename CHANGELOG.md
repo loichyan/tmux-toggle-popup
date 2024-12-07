@@ -14,7 +14,7 @@ are noticeable to end-users since the last release. For developers, this project
 
 ### Added
 
-- [**breaking**] Always place breaking changes at the top.
+- (**breaking**) Always place breaking changes at the top.
 - Append other changes in chronological order under the relevant subsections.
 
 ### Changed
@@ -41,8 +41,8 @@ are noticeable to end-users since the last release. For developers, this project
 
 ### Changed
 
-- [**breaking**] Replace `@popup-toggle --force` with `--toggle-mode=force-close` ([#21]).
-- [**breaking**] Replace tmux variable `#{@popup_name}` in `@popup-id-format` with the `{popup_name}` placeholder
+- (**breaking**) Replace `@popup-toggle --force` with `--toggle-mode=force-close` ([#21]).
+- (**breaking**) Replace tmux variable `#{@popup_name}` in `@popup-id-format` with the `{popup_name}` placeholder
   ([#21]).
 
 ### Fixed
@@ -67,7 +67,7 @@ thanks [@cenk1cenk2]). You can now override popup global options on the fly usin
 
 ### Changed
 
-- [**breaking**] Use xargs(1) and printf(1) to parse tmux commands ([#8]). This allows you to input `;` directly as the
+- (**breaking**) Use xargs(1) and printf(1) to parse tmux commands ([#8]). This allows you to input `;` directly as the
   command delimiter without worrying about Bash's interpretation. The new parser may yield results that differ from the
   previous version, although this is usually not the case.
 
@@ -95,13 +95,13 @@ thanks [@cenk1cenk2]). You can now override popup global options on the fly usin
 
 ### Changed
 
-- [**breaking**] Use bash(1) to parse tmux commands, thus semicolons in hooks (`@popup-on-open` and `@popup-on-close`)
+- (**breaking**) Use bash(1) to parse tmux commands, thus semicolons in hooks (`@popup-on-open` and `@popup-on-close`)
   must now be explicitly escaped or quoted ([#1]).
-- [**breaking**] Rename `@popup-on-open` to `@popup-on-init` ([#2]).
+- (**breaking**) Rename `@popup-on-open` to `@popup-on-init` ([#2]).
 
 ### Removed
 
-- [**breaking**] Remove `@popup-on-close`, as it cannot handle popup exits. Instead, consider setting the
+- (**breaking**) Remove `@popup-on-close`, as it cannot handle popup exits. Instead, consider setting the
   `client-detached` and `pane-exited` tmux hooks in `@popup-on-init` ([#2]).
 
 ### Fixed
