@@ -17,6 +17,7 @@ usage() {
 		Options:
 
 		  --name <name>               Popup name [Default: "$DEFAULT_NAME"]
+		  --id <id>                   Popup ID, default to the expanded ID format
 		  --toggle-mode <mode>        Action to handle nested calls [Default: "$DEFAULT_TOGGLE_MODE"]
 		  --toggle-key <key>          Bind additional keys to close the opened popup
 		  -[BCE]                      Flags passed to display-popup
@@ -53,7 +54,7 @@ prepare_open() {
 		on_cleanup+=" ; unbind $k"
 	done
 
-	popup_id="$(interpolate popup_name "$name" "$id_format")"
+	popup_id="${id:-$(interpolate popup_name "$name" "$id_format")}"
 	open_cmds+="$(
 		escape \
 			new "${open_args[@]}" -s "$popup_id" "${program[@]}" \; \
@@ -71,7 +72,7 @@ main() {
 		[bcdhsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
 		# Forward environment overrides to popup sessions
 		e) open_args+=("-e" "$OPTARG") ;;
-		name | toggle-key | socket-name | id-format | \
+		name | toggle-key | socket-name | id-format | id | \
 			toggle-mode | on-init | before-open | after-close)
 			OPTARG="${OPTARG:${#OPT}}"
 			if [[ ${OPTARG::1} == '=' ]]; then
