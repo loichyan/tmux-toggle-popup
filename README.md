@@ -106,10 +106,10 @@ with the popup name during the expansion.
 
 A hook consists of tmux commands. To write hooks, we support a limited version of `.tmux.conf`.
 
-To elaborate further, each tmux command can be delimited by semicolons (`;`) or line breaks. You can use escaped spaces
-(`\ `) or quotes (either `'` or `"`) to prevent an individual argument from being split. Additionally, you can nest
-different types of quotes within one another. Any character preceded by a backslash (`\`) is treated as a literal
-escape, meaning that `\;` is interpreted as `;`. To input `\;`, you need to escape the backslash, using `\\;`.
+To elaborate further, each tmux command must be delimited by semicolons (`;`). You can use escaped spaces (`\ `) or
+quotes (either `'` or `"`) to prevent an individual argument from being split. Additionally, you can nest different
+types of quotes within one another. Any character preceded by a backslash (`\`) is treated as a literal escape, meaning
+that `\;` is interpreted as `;`. To input `\;`, you need to escape the backslash, using `\\;`.
 
 A hook will be executed either in the caller session (i.e., the session that calls `@popup-toggle`) or in the popup
 session (i.e., the session where a popup resides).
@@ -117,9 +117,9 @@ session (i.e., the session where a popup resides).
 **Example**:
 
 ```tmux
+# Keep the server running and hide status bar.
 set -g @popup-on-init '
-  set exit-empty off
-  set status off
+  set exit-empty off ; set status off
 '
 # Bind to multiple commands should be escaped,
 set -g @popup-on-init '
