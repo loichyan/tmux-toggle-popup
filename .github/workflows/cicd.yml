@@ -21,8 +21,8 @@ jobs:
       matrix:
         # prettier-ignore
         include:
-          - { os: ubuntu-20.04 }
-          - { os: macos-12     }
+          - { os: ubuntu-22.04 }
+          - { os: macos-13     }
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup | Checkout
