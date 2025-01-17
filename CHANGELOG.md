@@ -34,7 +34,8 @@ are noticeable to end-users since the last release. For developers, this project
 
 ### Added
 
-- Add a new argument, `@popup-toggle --id <id>`, to set the ID of a popup directly ([#XX]).
+- Add a new argument, `@popup-toggle --id <id>`, to directly set the ID of a
+  popup, useful for creating globally shared popups ([#27]).
 
 ## [0.4.0] - 2024-11-23
 
@@ -55,7 +56,7 @@ are noticeable to end-users since the last release. For developers, this project
 
 [#21]: https://github.com/loichyan/tmux-toggle-popup/pull/21
 [#23]: https://github.com/loichyan/tmux-toggle-popup/pull/23
-[#XX]: https://github.com/loichyan/tmux-toggle-popup/pull/XX
+[#27]: https://github.com/loichyan/tmux-toggle-popup/pull/27
 
 ## [0.3.0] - 2024-10-21
 
