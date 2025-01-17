@@ -197,6 +197,7 @@ Usage:
 Options:
 
   --name <name>               Popup name [Default: "default"]
+  --id <id>                   Popup ID, default to the expanded ID format
   --toggle-mode <mode>        Action to handle nested calls [Default: "switch"]
   --toggle-key <key>          Bind additional keys to close the opened popup
   -[BCE]                      Flags passed to display-popup
