@@ -54,7 +54,7 @@ prepare_open() {
 		on_cleanup+=" ; unbind $k"
 	done
 
-	popup_id="${id:-$(interpolate popup_name "$name" "$id_format")}"
+	popup_id="${id:-$(interpolate popup_name "$name" "$id_format" | check_popup_id)}"
 	open_cmds+="$(
 		escape \
 			new "${open_args[@]}" -s "$popup_id" "${program[@]}" \; \
