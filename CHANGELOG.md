@@ -35,28 +35,29 @@ are noticeable to end-users since the last release. For developers, this project
 ### Added
 
 - Add a new argument, `@popup-toggle --id <id>`, to directly set the ID of a
-  popup, useful for creating globally shared popups ([#27]).
+  popup, useful for creating globally shared popups ([#27])
+
+[#27]: https://github.com/loichyan/tmux-toggle-popup/pull/27
 
 ## [0.4.0] - 2024-11-23
 
 ### Added
 
 - Add a new toggle mode, `switch`, which always reuses the currently opened
-  window when switching to another popup ([#21]).
+  window when switching to another popup ([#21])
 
 ### Changed
 
-- (**breaking**) Replace `@popup-toggle --force` with `--toggle-mode=force-close` ([#21]).
+- (**breaking**) Replace `@popup-toggle --force` with `--toggle-mode=force-close` ([#21])
 - (**breaking**) Replace tmux variable `#{@popup_name}` in `@popup-id-format`
-  with the `{popup_name}` placeholder ([#21]).
+  with the `{popup_name}` placeholder ([#21])
 
 ### Fixed
 
-- Disable potential tmux messages from popups ([#23]).
+- Disable potential tmux messages from popups ([#23])
 
 [#21]: https://github.com/loichyan/tmux-toggle-popup/pull/21
 [#23]: https://github.com/loichyan/tmux-toggle-popup/pull/23
-[#27]: https://github.com/loichyan/tmux-toggle-popup/pull/27
 
 ## [0.3.0] - 2024-10-21
 
@@ -66,10 +67,10 @@ override popup global options on the fly using the newly added arguments of `@po
 
 ### Added
 
-- Support autostart popup server ([13bb98a]).
-- Set an env variable to identify popup servers ([d95d654]).
-- Support bind additional toggle keys in popups ([#9]).
-- Support override global options through `@popup-toggle` ([#5]).
+- Support autostart popup server ([13bb98a])
+- Set an env variable to identify popup servers ([d95d654])
+- Support bind additional toggle keys in popups ([#9])
+- Support override global options through `@popup-toggle` ([#5])
 
 ### Changed
 
@@ -80,9 +81,9 @@ override popup global options on the fly using the newly added arguments of `@po
 
 ### Fixed
 
-- Always retrieve option values from global ([61789c7]).
+- Always retrieve option values from global ([61789c7])
 - Address the breaking changes in `display-popup` introduced in tmux versions
-  3.5 and 3.5a ([#14]).
+  3.5 and 3.5a ([#14])
 
 [#5]: https://github.com/loichyan/tmux-toggle-popup/pull/8
 [#8]: https://github.com/loichyan/tmux-toggle-popup/pull/8
@@ -97,26 +98,26 @@ override popup global options on the fly using the newly added arguments of `@po
 
 ### Added
 
-- Add two new hooks: `@popup-before-open` and `@popup-after-close` ([#2]).
-- Add `@popup-focus`, primarily used as a workaround of [tmux/tmux#3991] ([#3]).
-- Support close a popup if no argument passed to `@popup-toggle` ([5ef9ea4]).
+- Add two new hooks: `@popup-before-open` and `@popup-after-close` ([#2])
+- Add `@popup-focus`, primarily used as a workaround of [tmux/tmux#3991] ([#3])
+- Support close a popup if no argument passed to `@popup-toggle` ([5ef9ea4])
 
 ### Changed
 
 - (**breaking**) Use bash(1) to parse tmux commands, thus semicolons in hooks
   (`@popup-on-open` and `@popup-on-close`) must now be explicitly escaped or
-  quoted ([#1]).
-- (**breaking**) Rename `@popup-on-open` to `@popup-on-init` ([#2]).
+  quoted ([#1])
+- (**breaking**) Rename `@popup-on-open` to `@popup-on-init` ([#2])
 
 ### Removed
 
 - (**breaking**) Remove `@popup-on-close`, as it cannot handle popup exits.
   Instead, consider setting the `client-detached` and `pane-exited` tmux hooks
-  in `@popup-on-init` ([#2]).
+  in `@popup-on-init`. ([#2])
 
 ### Fixed
 
-- Hide messages of tmux commands in popups ([5eb66cd]).
+- Hide messages of tmux commands in popups ([5eb66cd])
 
 [#1]: https://github.com/loichyan/tmux-toggle-popup/pull/1
 [#2]: https://github.com/loichyan/tmux-toggle-popup/pull/2
