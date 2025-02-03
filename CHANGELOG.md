@@ -41,9 +41,12 @@ are noticeable to end-users since the last release. For developers, this project
 
 - Replace special characters in the popup ID to ensure `@popup-toggle` does not
   fail if the current directory contains dots (`.`) or colons (`:`) ([#29])
+- Forward working directory to popup sessions to ensure `@popup-toggle -d <dir>`
+  functions properly in switch mode (#30)
 
 [#27]: https://github.com/loichyan/tmux-toggle-popup/pull/27
 [#29]: https://github.com/loichyan/tmux-toggle-popup/pull/29
+[#30]: https://github.com/loichyan/tmux-toggle-popup/pull/30
 
 ## [0.4.0] - 2024-11-23
 
