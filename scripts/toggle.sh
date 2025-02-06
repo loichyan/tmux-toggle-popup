@@ -70,7 +70,9 @@ main() {
 		if [[ $OPT == '-' ]]; then OPT="${OPTARG%%=*}"; fi
 		case "$OPT" in
 		[BCE]) popup_args+=("-$OPT") ;;
-		[bcdhsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
+		[bchsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
+		# Forward working directory to popup sessions
+		d) open_args+=("-c" "$OPTARG") ;;
 		# Forward environment overrides to popup sessions
 		e) open_args+=("-e" "$OPTARG") ;;
 		name | toggle-key | socket-name | id-format | id | \
