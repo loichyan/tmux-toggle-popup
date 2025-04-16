@@ -56,12 +56,9 @@ prepare_open() {
 
 	popup_id="${id:-$(interpolate popup_name "$name" "$id_format")}"
 	popup_id="$(check_popup_id "$popup_id")"
-	open_cmds+="$(
-		escape \
-			new "${open_args[@]}" -s "$popup_id" "${program[@]}" \; \
-			set @__popup_opened "$name" \; \
-			set @__popup_id_format "$id_format" \;
-	)"
+	open_cmds+="$(escape new "${open_args[@]}" -s "$popup_id" "${program[@]}" \;)"
+	open_cmds+="$(escape set @__popup_opened "$name" \;)"
+	open_cmds+="$(escape set @__popup_id_format "$id_format" \;)"
 	open_cmds+="$(makecmds "$on_init")"
 }
 
@@ -113,7 +110,8 @@ main() {
 			open_args+=("-d") # Create the target session if not exists
 			prepare_open
 			eval tmux -C "$open_cmds" &>/dev/null || true # Ignore error if already created
-			exec tmux switch -t "$popup_id" >/dev/null
+			# Forward current ID format so that this popup can be switched back.
+			exec tmux switch -t "$popup_id" \; set @__popup_id_format "$id_format" \; >/dev/null
 		elif [[ $toggle_mode != "force-open" ]]; then
 			die "illegal toggle mode: $toggle_mode"
 		fi
