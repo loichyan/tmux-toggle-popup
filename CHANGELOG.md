@@ -32,6 +32,8 @@ are noticeable to end-users since the last release. For developers, this project
 
 ## [Unreleased]
 
+## [0.4.1] - 2025-05-07
+
 ### Added
 
 - Add a new argument, `@popup-toggle --id <id>`, to directly set the ID of a
@@ -42,6 +44,7 @@ are noticeable to end-users since the last release. For developers, this project
 - Replace special characters in the popup ID to ensure `@popup-toggle` does not
   fail if the current directory contains dots (`.`) or colons (`:`) ([#29])
 - Forward working directory to popup sessions to ensure `@popup-toggle -d <dir>`
+  functions properly in switch mode ([#30])
 - Forward current popup's ID format in switch mode to ensure the intended popup
   is opened when switching ([#31])
 
