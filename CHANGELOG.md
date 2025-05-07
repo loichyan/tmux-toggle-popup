@@ -32,6 +32,8 @@ are noticeable to end-users since the last release. For developers, this project
 
 ## [Unreleased]
 
+## [0.4.1] - 2025-05-07
+
 ### Added
 
 - Add a new argument, `@popup-toggle --id <id>`, to directly set the ID of a
@@ -142,8 +144,9 @@ override popup global options on the fly using the newly added arguments of `@po
 🎉 Initial release. See [README](https://github.com/loichyan/tmux-toggle-popup/blob/v0.1.0/README.md)
 for more details.
 
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..HEAD
-[0.4.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..v0.4.0
-[0.3.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.2.0..v0.3.0
-[0.2.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/loichyan/tmux-toggle-popup/releases/tag/v0.1.0
+[0.2.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0
+[0.3.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.2.0..v0.3.0
+[0.4.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..v0.4.0
+[0.4.1]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..v0.4.1
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.1..HEAD
