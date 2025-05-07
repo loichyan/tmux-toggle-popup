@@ -43,7 +43,8 @@ are noticeable to end-users since the last release. For developers, this project
 
 - Replace special characters in the popup ID to ensure `@popup-toggle` does not
   fail if the current directory contains dots (`.`) or colons (`:`) ([#29])
-- Forward working directory to popup sessions to ensure `@popup-toggle -d <dir>` ([#30])
+- Forward working directory to popup sessions to ensure `@popup-toggle -d <dir>`
+  functions properly in switch mode ([#30])
 - Forward current popup's ID format in switch mode to ensure the intended popup
   is opened when switching ([#31])
 
@@ -144,9 +145,8 @@ override popup global options on the fly using the newly added arguments of `@po
 🎉 Initial release. See [README](https://github.com/loichyan/tmux-toggle-popup/blob/v0.1.0/README.md)
 for more details.
 
-[0.1.0]: https://github.com/loichyan/tmux-toggle-popup/releases/tag/v0.1.0
-[0.2.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0
-[0.3.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.2.0..v0.3.0
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..HEAD
 [0.4.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..v0.4.0
-[0.4.1]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..v0.4.1
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.1..HEAD
+[0.3.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.2.0..v0.3.0
+[0.2.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0
+[0.1.0]: https://github.com/loichyan/tmux-toggle-popup/releases/tag/v0.1.0
