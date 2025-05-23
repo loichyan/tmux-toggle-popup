@@ -5,7 +5,7 @@
 # Authors:  Loi Chyan <loichyan@foxmail.com>
 # License:  MIT OR Apache-2.0
 
-SRC_DIR="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck source=./scripts/helpers.sh
 source "$SRC_DIR/scripts/helpers.sh"
