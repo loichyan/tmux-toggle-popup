@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRC_ROOT="$(dirname "$SRC_DIR")"
-
-command "$SRC_ROOT/run_tests.sh"
