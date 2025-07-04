@@ -12,7 +12,7 @@ source "$CURRENT_DIR/src/helpers.sh"
 # shellcheck source=./src/variables.sh
 source "$CURRENT_DIR/src/variables.sh"
 
-set_keybindings() {
+export_commands() {
 	tmux \; \
 		set -g "@popup-toggle" "$CURRENT_DIR/src/toggle.sh" \; \
 		set -g "@popup-focus" "$CURRENT_DIR/src/focus.sh" \;
@@ -31,8 +31,7 @@ handle_autostart() {
 }
 
 main() {
-	set_keybindings
+	export_commands
 	handle_autostart
 }
-
 main

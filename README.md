@@ -61,7 +61,10 @@ bind -n M-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
 bind -n M-g run "#{@popup-toggle} -Ed'#{pane_current_path}' -w90% -h90% --name=lazygit lazygit"
 ```
 
-## ⌨️ Keybindings
+## ⌨️ Commands
+
+Commands are shell scripts exported by this plugin, which you can bind keys to. The basic usage is
+`tmux bind-key <key> run-shell '#{@command_name} ...<args>'`.
 
 ### `@popup-toggle`
 
