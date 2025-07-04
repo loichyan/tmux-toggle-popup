@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck source=./helpers.sh
-source "$SRC_DIR/helpers.sh"
+source "$CURRENT_DIR/helpers.sh"
 # shellcheck source=./variables.sh
-source "$SRC_DIR/variables.sh"
+source "$CURRENT_DIR/variables.sh"
 
 declare OPT OPTARG OPTIND=1 popup_args open_args toggle_keys program
 usage() {
@@ -139,7 +139,7 @@ main() {
 	tmux display-popup "${popup_args[@]}" \
 		-e TMUX_POPUP_SERVER="$socket_name" \
 		-e __eval="$open_script" \
-		"exec '$SRC_DIR/eval.sh'"
+		"exec '$CURRENT_DIR/eval.sh'"
 
 	# Undo temporary changes
 	if [[ -n ${on_cleanup-} ]]; then

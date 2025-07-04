@@ -5,17 +5,17 @@
 # Authors:  Loi Chyan <loichyan@foxmail.com>
 # License:  MIT OR Apache-2.0
 
-SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# shellcheck source=./scripts/helpers.sh
-source "$SRC_DIR/scripts/helpers.sh"
-# shellcheck source=./scripts/variables.sh
-source "$SRC_DIR/scripts/variables.sh"
+# shellcheck source=./src/helpers.sh
+source "$CURRENT_DIR/src/helpers.sh"
+# shellcheck source=./src/variables.sh
+source "$CURRENT_DIR/src/variables.sh"
 
 set_keybindings() {
 	tmux \; \
-		set -g "@popup-toggle" "$SRC_DIR/scripts/toggle.sh" \; \
-		set -g "@popup-focus" "$SRC_DIR/scripts/focus.sh" \;
+		set -g "@popup-toggle" "$CURRENT_DIR/src/toggle.sh" \; \
+		set -g "@popup-focus" "$CURRENT_DIR/src/focus.sh" \;
 }
 
 handle_autostart() {

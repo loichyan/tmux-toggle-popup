@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# shellcheck source=../scripts//helpers.sh
-source "$SRC_DIR/../scripts/helpers.sh"
+# shellcheck source=../src/helpers.sh
+source "$CURRENT_DIR/../src/helpers.sh"
 
 test_fail() {
 	echo "${BASH_SOURCE[1]}:${BASH_LINENO[1]}" "$@"

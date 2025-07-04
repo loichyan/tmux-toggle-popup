@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck source=./helpers.sh
-source "$SRC_DIR/helpers.sh"
+source "$CURRENT_DIR/helpers.sh"
 
 declare OPT OPTARG OPTIND=1 mode=I programs
 usage() {
