@@ -2,21 +2,14 @@
 
 A handy plugin to create toggleable popups.
 
-[demo.webm](https://github.com/loichyan/tmux-toggle-popup/assets/73006950/99a94285-3839-4fe0-949f-5649ad34d5a5)
+[toggle-popup-demo.webm](https://github.com/user-attachments/assets/faf45582-50c5-4efb-86cb-1f1d0e4d95a9)
 
 <details>
-<summary>Environment</summary>
-<br>
+<summary>Information</summary>
 
-- DE: [Gnome 46](https://release.gnome.org/46) & [PaperWM](https://github.com/paperwm/PaperWM)
-- tmux: [Catppuccin theme](https://github.com/catppuccin/tmux)
-- Font: [Rec Mono Duotone](https://www.recursive.design)
-- Keystrokes: [Show Me the Key](https://showmethekey.alynx.one)
-- Rickroll: [rickrollrc](https://github.com/keroserene/rickrollrc)
-
-*Check
-[the dotfiles](https://github.com/loichyan/dotfiles/tree/5899f0e7572de4102261051277b22990e53f8bed)
-for more details*
+- font: [Rec Mono Duotone](https://www.recursive.design)
+- tmux: [tmux-base16](https://github.com/loichyan/tmux-base16)
+- Neovim: [Meowim](https://github.com/loichyan/Meowim)
 
 </details>
 
