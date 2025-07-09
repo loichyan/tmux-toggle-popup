@@ -7,7 +7,7 @@ A handy plugin to create toggleable popups.
 <details>
 <summary>Information</summary>
 
-- font: [Rec Mono Duotone](https://www.recursive.design)
+- font: [0xProto](https://github.com/0xType/0xProto)
 - tmux: [tmux-base16](https://github.com/loichyan/tmux-base16)
 - Neovim: [Meowim](https://github.com/loichyan/Meowim)
 
