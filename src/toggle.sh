@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
@@ -46,7 +46,7 @@ usage() {
 # - `popup_id` is set to the expanded popup session name
 declare name toggle_mode open_cmds on_cleanup popup_id
 prepare_open() {
-	local on_init="${on_init:-$(showopt @popup-on-init "$DEFAULT_ON_INIT")}"
+	local on_init=${on_init:-$(showopt @popup-on-init "$DEFAULT_ON_INIT")}
 
 	# Create temporary toggle keys in the opened popup
 	for k in "${toggle_keys[@]}"; do
@@ -54,17 +54,17 @@ prepare_open() {
 		on_cleanup+=" ; unbind $k"
 	done
 
-	popup_id="${id:-$(interpolate popup_name "$name" "$id_format")}"
-	popup_id="$(check_popup_id "$popup_id")"
-	open_cmds+="$(escape new "${open_args[@]}" -s "$popup_id" "${program[@]}" \;)"
-	open_cmds+="$(escape set @__popup_opened "$name" \;)"
-	open_cmds+="$(escape set @__popup_id_format "$id_format" \;)"
-	open_cmds+="$(makecmds "$on_init")"
+	popup_id=${id:-$(interpolate popup_name "$name" "$id_format")}
+	popup_id=$(check_popup_id "$popup_id")
+	open_cmds+=$(escape new "${open_args[@]}" -s "$popup_id" "${program[@]}" \;)
+	open_cmds+=$(escape set @__popup_opened "$name" \;)
+	open_cmds+=$(escape set @__popup_id_format "$id_format" \;)
+	open_cmds+=$(makecmds "$on_init")
 }
 
 main() {
 	while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
-		if [[ $OPT == '-' ]]; then OPT="${OPTARG%%=*}"; fi
+		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
 		case "$OPT" in
 		[BCE]) popup_args+=("-$OPT") ;;
 		[bchsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
@@ -74,13 +74,13 @@ main() {
 		e) open_args+=("-e" "$OPTARG") ;;
 		name | toggle-key | socket-name | id-format | id | \
 			toggle-mode | on-init | before-open | after-close)
-			OPTARG="${OPTARG:${#OPT}}"
+			OPTARG=${OPTARG:${#OPT}}
 			if [[ ${OPTARG::1} == '=' ]]; then
 				# FORMAT: `--name=value`
-				OPTARG="${OPTARG:1}"
+				OPTARG=${OPTARG:1}
 			else
 				# FORMAT: `--name value`
-				OPTARG="${!OPTIND}"
+				OPTARG=${!OPTIND}
 				OPTIND=$((OPTIND + 1))
 			fi
 			if [[ $OPT == "toggle-key" ]]; then
@@ -97,16 +97,16 @@ main() {
 		esac
 	done
 	program=("${@:$OPTIND}")
-	name="${name:-$DEFAULT_NAME}"
-	toggle_mode="${toggle_mode:-$(showopt @popup-toggle-mode "$DEFAULT_TOGGLE_MODE")}"
+	name=${name:-$DEFAULT_NAME}
+	toggle_mode=${toggle_mode:-$(showopt @popup-toggle-mode "$DEFAULT_TOGGLE_MODE")}
 
-	opened_name="$(showvariable @__popup_opened)"
+	opened_name=$(showvariable @__popup_opened)
 	if [[ -n $opened_name ]]; then
 		if [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
 			exec tmux detach >/dev/null
 		elif [[ $toggle_mode == "switch" ]]; then
 			# Reuse the caller's ID format to ensure we open the intended popup
-			id_format="$(showvariable @__popup_id_format)"
+			id_format=$(showvariable @__popup_id_format)
 			open_args+=("-d") # Create the target session if not exists
 			prepare_open
 			eval tmux -C "$open_cmds" &>/dev/null || true # Ignore error if already created
@@ -118,16 +118,16 @@ main() {
 	fi
 
 	# HOOK: before-open
-	before_open="${before_open:-$(showopt @popup-before-open)}"
+	before_open=${before_open:-$(showopt @popup-before-open)}
 	if [[ -n $before_open ]]; then
 		eval "tmux -C $(makecmds "$before_open")" >/dev/null
 	fi
 
 	# Expand the configured ID format
-	id_format="$(format "${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")}")"
+	id_format=$(format "${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")}")
 	open_args+=("-A") # Create the target session and attach to it
 	prepare_open
-	socket_name="${socket_name:-$(get_socket_name)}"
+	socket_name=${socket_name:-$(get_socket_name)}
 	open_script="exec tmux -L '$socket_name' $open_cmds >/dev/null"
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
@@ -148,7 +148,7 @@ main() {
 	fi
 
 	# HOOK: after-close
-	after_close="${after_close:-$(showopt @popup-after-close)}"
+	after_close=${after_close:-$(showopt @popup-after-close)}
 	if [[ -n $after_close ]]; then
 		eval "tmux -C $(makecmds "$after_close")" >/dev/null
 	fi

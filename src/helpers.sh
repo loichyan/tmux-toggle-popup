@@ -25,7 +25,8 @@ badopt() {
 # Returns the value of the specified option or the second argument as the
 # fallback value if the option is empty.
 showopt() {
-	v="$(tmux show -gqv "$1")"
+	local v
+	v=$(tmux show -gqv "$1")
 	echo "${v:-"${2-}"}"
 }
 
@@ -53,9 +54,10 @@ format() {
 # the expansion. All `{variable}` placeholders in the format string will be
 # replaced with their corresponding values.
 interpolate() {
-	local result="${*: -1}"
+	local result
+	result=${*: -1}
 	while [[ $# -gt 1 ]]; do
-		result="${result//"{$1}"/$2}"
+		result=${result//"{$1}"/$2}
 		shift 2
 	done
 	echo "$result"

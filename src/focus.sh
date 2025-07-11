@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
@@ -40,7 +40,7 @@ check_program() {
 
 main() {
 	while getopts :-: OPT; do
-		if [[ $OPT == '-' ]]; then OPT="${OPTARG%%=*}"; fi
+		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
 		case "$OPT" in
 		enter) mode=I ;;
 		leave) mode=O ;;
