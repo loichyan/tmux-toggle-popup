@@ -48,7 +48,7 @@ main() {
 			usage
 			exit
 			;;
-		*) badopt ;;
+		*) die_badopt ;;
 		esac
 	done
 	programs=("${@:$OPTIND}")

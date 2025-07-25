@@ -22,9 +22,9 @@ handle_autostart() {
 	# Do not start itself within a popup server
 	if [[ $(showopt @popup-autostart) == "on" && -z ${TMUX_POPUP_SERVER-} ]]; then
 		# Set $TMUX_POPUP_SERVER, used to identify the popup server
-		socket_name=$(get_socket_name)
+		socket_name=$(showopt @popup-socket-name "$DEFAULT_SOCKET_NAME")
 		# Propagate user's default shell
-		default_shell=$(get_default_shell)
+		default_shell=$(showopt default-shell "$SHELL")
 		env \
 			TMUX_POPUP_SERVER="$socket_name" \
 			SHELL="$default_shell" \

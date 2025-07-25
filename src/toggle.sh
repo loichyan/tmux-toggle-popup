@@ -46,17 +46,17 @@ usage() {
 # - `popup_id` is set to the expanded popup session name
 declare name toggle_mode open_cmds on_cleanup popup_id
 prepare_open() {
-	on_init=${on_init:-$(showopt @popup-on-init "$DEFAULT_ON_INIT")}
+	on_init=${on_init:-"$DEFAULT_ON_INIT"}
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
 
 	open_cmds+=$(escape new "${open_args[@]}" -s "$popup_id" "${program[@]}" \;)
-	open_cmds+=$(makecmds "$on_init" \;)
+	open_cmds+=$(parse_cmds "$on_init" \;)
 	open_cmds+=$(escape set @__popup_opened "$name" \;)
 	open_cmds+=$(escape set @__popup_id_format "$id_format" \;)
 
 	# Create temporary toggle keys in the opened popup
-	# shellcheck disable=2086
+	# shellcheck disable=SC2086
 	for k in "${toggle_keys[@]}"; do
 		open_cmds+=$(escape bind $k run \
 			"#{@popup-toggle} --name='$name' --toggle-mode='$toggle_mode'" \;)
@@ -65,6 +65,22 @@ prepare_open() {
 }
 
 main() {
+	batch_get_options \
+		socket_name="#{@popup-socket-name}" \
+		toggle_mode="#{@popup-toggle-mode}" \
+		on_init="#{@popup-on-init}" \
+		before_open="#{@popup-before-open}" \
+		after_close="#{@popup-after-close}" \
+		id_format="#{E:@popup-id-format}" \
+		default_id_format="$DEFAULT_ID_FORMAT" \
+		caller_id_format="#{@__popup_id_format}" \
+		opened_name="#{@__popup_opened}"
+	name=${name:-$DEFAULT_NAME}
+	toggle_mode=${toggle_mode:-"$DEFAULT_TOGGLE_MODE"}
+	socket_name=${socket_name:-"$DEFAULT_SOCKET_NAME"}
+	on_init=${on_init:-"$DEFAULT_ON_INIT"}
+	id_format="${id_format:-"$default_id_format"}"
+
 	while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
 		case "$OPT" in
@@ -88,27 +104,25 @@ main() {
 			if [[ $OPT == "toggle-key" ]]; then
 				toggle_keys+=("$OPTARG")
 			else
-				declare "${OPT/-/_}"="$OPTARG"
+				declare "${OPT//-/_}"="$OPTARG"
 			fi
 			;;
 		help)
 			usage
 			exit
 			;;
-		*) badopt ;;
+		*) die_badopt ;;
 		esac
 	done
 	program=("${@:$OPTIND}")
-	name=${name:-$DEFAULT_NAME}
-	toggle_mode=${toggle_mode:-$(showopt @popup-toggle-mode "$DEFAULT_TOGGLE_MODE")}
 
-	opened_name=$(showvariable @__popup_opened)
 	if [[ -n $opened_name ]]; then
 		if [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
 			exec tmux detach >/dev/null
 		elif [[ $toggle_mode == "switch" ]]; then
 			# Reuse the caller's ID format to ensure we open the intended popup
-			id_format=$(showvariable @__popup_id_format)
+			# shellcheck disable=SC2154
+			id_format=${caller_id_format}
 			open_args+=("-d") # Create the target session if not exists
 			prepare_open
 			eval tmux -C "$open_cmds" &>/dev/null || true # Ignore error if already created
@@ -120,16 +134,13 @@ main() {
 	fi
 
 	# HOOK: before-open
-	before_open=${before_open:-$(showopt @popup-before-open)}
 	if [[ -n $before_open ]]; then
-		eval "tmux -C $(makecmds "$before_open")" >/dev/null
+		eval "tmux -C $(parse_cmds "$before_open")" >/dev/null
 	fi
 
 	# Expand the configured ID format
-	id_format=$(format "${id_format:-$(showopt @popup-id-format "$DEFAULT_ID_FORMAT")}")
 	open_args+=("-A") # Create the target session and attach to it
 	prepare_open
-	socket_name=${socket_name:-$(get_socket_name)}
 	open_script="exec tmux -L '$socket_name' $open_cmds >/dev/null"
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
@@ -146,13 +157,12 @@ main() {
 	# Undo temporary changes
 	if [[ -n ${on_cleanup-} ]]; then
 		# Ignore error if the server has already stopped
-		eval "tmux -NCL '$socket_name' $(makecmds "$on_cleanup")" &>/dev/null || true
+		eval "tmux -NCL '$socket_name' $(parse_cmds "$on_cleanup")" &>/dev/null || true
 	fi
 
 	# HOOK: after-close
-	after_close=${after_close:-$(showopt @popup-after-close)}
 	if [[ -n $after_close ]]; then
-		eval "tmux -C $(makecmds "$after_close")" >/dev/null
+		eval "tmux -C $(parse_cmds "$after_close")" >/dev/null
 	fi
 }
 

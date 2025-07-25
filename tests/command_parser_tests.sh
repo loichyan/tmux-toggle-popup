@@ -13,7 +13,7 @@ test_fail() {
 
 # Simulates Bash arguments interpretation.
 reparse_commands() {
-	# shellcheck disable=2046
+	# shellcheck disable=SC2046
 	eval printf '%s\\n' $(cat)
 }
 
@@ -24,7 +24,7 @@ test_parse_commands() {
 	local commands=()
 	while IFS= read -r command; do
 		commands+=("$command")
-	done < <(makecmds "$1" | reparse_commands)
+	done < <(parse_cmds "$1" | reparse_commands)
 	shift
 
 	if [[ $# -ne ${#commands[@]} ]]; then
