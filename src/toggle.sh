@@ -143,19 +143,19 @@ main() {
 		eval "tmux -C $(escape "${cmds[@]}")" >/dev/null
 	fi
 
-	# Expand the configured ID format
 	open_args+=("-A") # Create the target session and attach to it
 	prepare_open
-	open_script="exec tmux -L '$socket_name' $open_cmds >/dev/null"
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
 	# shell commands. However, our scripts are written in `sh`, which may not be
 	# recognized by some shells that are incompatible with it. Here we change
 	# the default shell to `/bin/sh` and then revert immediately.
-	tmux set default-shell "/bin/sh"
-	tmux popup "${popup_args[@]}" -e TMUX_POPUP_SERVER="$socket_name" "$open_script" &
-	tmux set default-shell "$default_shell"
-	wait
+	tmux \
+		set default-shell "/bin/sh" \; \
+		popup "${popup_args[@]}" -e TMUX_POPUP_SERVER="$socket_name" "
+		tmux set default-shell '$default_shell'
+		exec tmux -L '$socket_name' $open_cmds >/dev/null
+	"
 
 	# Undo temporary changes
 	if [[ ${#on_cleanup} -gt 0 ]]; then
