@@ -5,7 +5,7 @@
 # Authors:  Loi Chyan <loichyan@foxmail.com>
 # License:  MIT OR Apache-2.0
 
-CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=./src/helpers.sh
 source "$CURRENT_DIR/src/helpers.sh"
@@ -13,24 +13,32 @@ source "$CURRENT_DIR/src/helpers.sh"
 source "$CURRENT_DIR/src/variables.sh"
 
 export_commands() {
-	tmux \; \
+	tmux \
 		set -g "@popup-toggle" "$CURRENT_DIR/src/toggle.sh" \; \
 		set -g "@popup-focus" "$CURRENT_DIR/src/focus.sh" \;
 }
 
+declare autostart socket_name default_shell
 handle_autostart() {
 	# Do not start itself within a popup server
-	if [[ $(showopt @popup-autostart) == "on" && -z ${TMUX_POPUP_SERVER-} ]]; then
-		# Set $TMUX_POPUP_SERVER, used to identify the popup server
-		socket_name="$(get_socket_name)"
-		# Propagate user's default shell
-		default_shell="$(get_default_shell)"
-		TMUX_POPUP_SERVER="$socket_name" SHELL="$default_shell" \
+	if [[ $autostart == "on" && -z $TMUX_POPUP_SERVER ]]; then
+		# 1) Set $TMUX_POPUP_SERVER, used to identify the popup server.
+		# 2) Propagate user's default shell.
+		env \
+			TMUX_POPUP_SERVER="$socket_name" \
+			SHELL="$default_shell" \
 			tmux -L "$socket_name" set exit-empty off \; start &
 	fi
 }
 
 main() {
+	batch_get_options \
+		autostart="#{@popup-autostart}" \
+		socket_name="#{@popup-socket-name}" \
+		default_shell="#{default-shell}"
+	socket_name=${socket_name:-"$DEFAULT_SOCKET_NAME"}
+	default_shell=${default_shell:-"$SHELL"}
+
 	export_commands
 	handle_autostart
 }
