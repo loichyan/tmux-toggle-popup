@@ -66,6 +66,8 @@ prepare_open() {
 	open_cmds=$(escape "${init_cmds[@]}" "${cmds[@]}" \;)
 }
 
+declare socket_name toggle_mode on_init before_open after_close id_format
+declare default_id_format caller_id_format opened_name default_shell
 main() {
 	batch_get_options \
 		socket_name="#{@popup-socket-name}" \
@@ -76,7 +78,8 @@ main() {
 		id_format="#{E:@popup-id-format}" \
 		default_id_format="$DEFAULT_ID_FORMAT" \
 		caller_id_format="#{@__popup_id_format}" \
-		opened_name="#{@__popup_opened}"
+		opened_name="#{@__popup_opened}" \
+		default_shell="#{default-shell}"
 	name=${name:-$DEFAULT_NAME}
 	toggle_mode=${toggle_mode:-"$DEFAULT_TOGGLE_MODE"}
 	socket_name=${socket_name:-"$DEFAULT_SOCKET_NAME"}
@@ -123,7 +126,6 @@ main() {
 			exec tmux detach >/dev/null
 		elif [[ $toggle_mode == "switch" ]]; then
 			# Reuse the caller's ID format to ensure we open the intended popup
-			# shellcheck disable=SC2154
 			id_format=${caller_id_format}
 			open_args+=("-d") # Create the target session if not exists
 			prepare_open
@@ -148,14 +150,12 @@ main() {
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
 	# shell commands. However, our scripts are written in `sh`, which may not be
-	# recognized by some shells that are incompatible with it. To address this,
-	# we put the entire script in a temporary env variable and call `./eval.sh`
-	# to run these commands. This approach only requires the user's default
-	# shell to support the `exec` command, which we believe most shells do.
-	tmux display-popup "${popup_args[@]}" \
-		-e TMUX_POPUP_SERVER="$socket_name" \
-		-e __eval="$open_script" \
-		"exec '$CURRENT_DIR/eval.sh'"
+	# recognized by some shells that are incompatible with it. Here we change
+	# the default shell to `/bin/sh` and then revert immediately.
+	tmux set default-shell "/bin/sh"
+	tmux popup "${popup_args[@]}" -e TMUX_POPUP_SERVER="$socket_name" "$open_script" &
+	tmux set default-shell "$default_shell"
+	wait
 
 	# Undo temporary changes
 	if [[ ${#on_cleanup} -gt 0 ]]; then
