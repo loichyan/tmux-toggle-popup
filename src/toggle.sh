@@ -55,7 +55,7 @@ prepare_open() {
 	done
 
 	popup_id=${id:-$(interpolate popup_name "$name" "$id_format")}
-	popup_id=$(check_popup_id "$popup_id")
+	popup_id=$(escape_session_name "$popup_id")
 	open_cmds+=$(escape new "${open_args[@]}" -s "$popup_id" "${program[@]}" \;)
 	open_cmds+=$(escape set @__popup_opened "$name" \;)
 	open_cmds+=$(escape set @__popup_id_format "$id_format" \;)
