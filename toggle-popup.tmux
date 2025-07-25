@@ -13,18 +13,17 @@ source "$CURRENT_DIR/src/helpers.sh"
 source "$CURRENT_DIR/src/variables.sh"
 
 export_commands() {
-	tmux \; \
+	tmux \
 		set -g "@popup-toggle" "$CURRENT_DIR/src/toggle.sh" \; \
 		set -g "@popup-focus" "$CURRENT_DIR/src/focus.sh" \;
 }
 
+declare autostart socket_name default_shell
 handle_autostart() {
 	# Do not start itself within a popup server
-	if [[ $(showopt @popup-autostart) == "on" && -z ${TMUX_POPUP_SERVER-} ]]; then
-		# Set $TMUX_POPUP_SERVER, used to identify the popup server
-		socket_name=$(showopt @popup-socket-name "$DEFAULT_SOCKET_NAME")
-		# Propagate user's default shell
-		default_shell=$(showopt default-shell "$SHELL")
+	if [[ $autostart == "on" && -z $TMUX_POPUP_SERVER ]]; then
+		# 1) Set $TMUX_POPUP_SERVER, used to identify the popup server.
+		# 2) Propagate user's default shell.
 		env \
 			TMUX_POPUP_SERVER="$socket_name" \
 			SHELL="$default_shell" \
@@ -33,6 +32,13 @@ handle_autostart() {
 }
 
 main() {
+	batch_get_options \
+		autostart="#{@popup-autostart}" \
+		socket_name="#{@popup-socket-name}" \
+		default_shell="#{default-shell}"
+	socket_name=${socket_name:-"$DEFAULT_SOCKET_NAME"}
+	default_shell=${default_shell:-"$SHELL"}
+
 	export_commands
 	handle_autostart
 }
