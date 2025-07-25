@@ -46,20 +46,22 @@ usage() {
 # - `popup_id` is set to the expanded popup session name
 declare name toggle_mode open_cmds on_cleanup popup_id
 prepare_open() {
-	local on_init=${on_init:-$(showopt @popup-on-init "$DEFAULT_ON_INIT")}
-
-	# Create temporary toggle keys in the opened popup
-	for k in "${toggle_keys[@]}"; do
-		on_init+=" ; bind $k run \"#{@popup-toggle} --name='$name' --toggle-mode='$toggle_mode'\""
-		on_cleanup+=" ; unbind $k"
-	done
-
-	popup_id=${id:-$(interpolate popup_name "$name" "$id_format")}
+	on_init=${on_init:-$(showopt @popup-on-init "$DEFAULT_ON_INIT")}
+	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
+
 	open_cmds+=$(escape new "${open_args[@]}" -s "$popup_id" "${program[@]}" \;)
+	open_cmds+=$(makecmds "$on_init" \;)
 	open_cmds+=$(escape set @__popup_opened "$name" \;)
 	open_cmds+=$(escape set @__popup_id_format "$id_format" \;)
-	open_cmds+=$(makecmds "$on_init")
+
+	# Create temporary toggle keys in the opened popup
+	# shellcheck disable=2086
+	for k in "${toggle_keys[@]}"; do
+		open_cmds+=$(escape bind $k run \
+			"#{@popup-toggle} --name='$name' --toggle-mode='$toggle_mode'" \;)
+		on_cleanup+=$(escape unbind $k \;)
+	done
 }
 
 main() {
@@ -152,8 +154,6 @@ main() {
 	if [[ -n $after_close ]]; then
 		eval "tmux -C $(makecmds "$after_close")" >/dev/null
 	fi
-
-	return
 }
 
 main "$@"

@@ -54,11 +54,13 @@ format() {
 # the expansion. All `{variable}` placeholders in the format string will be
 # replaced with their corresponding values.
 interpolate() {
-	local result
+	local result key val
 	result=${*: -1}
 	while [[ $# -gt 1 ]]; do
-		result=${result//"{$1}"/$2}
-		shift 2
+		key=${1%%=*}
+		val=${1:${#key}+1}
+		result=${result//"{$key}"/$val}
+		shift
 	done
 	echo "$result"
 }
