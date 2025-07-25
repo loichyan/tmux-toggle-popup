@@ -5,27 +5,15 @@ set -euo pipefail
 
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
+# shellcheck source=./helpers.sh
+source "$CURRENT_DIR/helpers.sh"
 # shellcheck source=../src/helpers.sh
 source "$CURRENT_DIR/../src/helpers.sh"
 
-test_fail() {
-	echo "${BASH_SOURCE[1]}:${BASH_LINENO[1]}" "$@"
-	exit 1
-}
-
-declare output expected
-assert_eq() {
-	local left right
-	left=${1:-"$output"}
-	right=${2:-"$expected"}
-	if [[ $left != "$right" ]]; then
-		test_fail "$left != $right"
-	fi
-}
-
+declare expected output
 test_interpolate() {
 	output=$(interpolate "${@}" "$format")
-	assert_eq
+	assert_eq "$expected" "$output"
 }
 
 echo "test: no_interpolate_of_unknown"

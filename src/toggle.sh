@@ -39,29 +39,31 @@ usage() {
 	EOF
 }
 
-# Prepares the tmux commands to open a popup. When called,
+# Prepares the tmux commands to open a popup. After called,
 #
 # - `open_cmds` is used to create the popup session
-# - `on_cleanup` is used to undo temporary changes
+# - `on_cleanup` is used to undo temporary changes on the popup server
 # - `popup_id` is set to the expanded popup session name
-declare name toggle_mode open_cmds on_cleanup popup_id
+declare open_cmds on_cleanup popup_id
 prepare_open() {
-	on_init=${on_init:-"$DEFAULT_ON_INIT"}
+	local init_cmds=()
+
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
 
-	open_cmds+=$(escape new "${open_args[@]}" -s "$popup_id" "${program[@]}" \;)
-	open_cmds+=$(parse_cmds "$on_init" \;)
-	open_cmds+=$(escape set @__popup_opened "$name" \;)
-	open_cmds+=$(escape set @__popup_id_format "$id_format" \;)
+	init_cmds+=(new "${open_args[@]}" -s "$popup_id" "${program[@]}" \;)
+	init_cmds+=(set @__popup_opened "$name" \;)
+	init_cmds+=(set @__popup_id_format "$id_format" \;)
 
 	# Create temporary toggle keys in the opened popup
-	# shellcheck disable=SC2086
+	# shellcheck disable=SC2206
 	for k in "${toggle_keys[@]}"; do
-		open_cmds+=$(escape bind $k run \
-			"#{@popup-toggle} --name='$name' --toggle-mode='$toggle_mode'" \;)
-		on_cleanup+=$(escape unbind $k \;)
+		init_cmds+=(bind $k run "#{@popup-toggle} --name='$name' --toggle-mode='$toggle_mode'" \;)
+		on_cleanup+=(unbind $k \;)
 	done
+
+	parse_cmds "$on_init"
+	open_cmds=$(escape "${init_cmds[@]}" "${cmds[@]}" \;)
 }
 
 main() {
@@ -95,7 +97,7 @@ main() {
 			OPTARG=${OPTARG:${#OPT}}
 			if [[ ${OPTARG::1} == '=' ]]; then
 				# FORMAT: `--name=value`
-				OPTARG=${OPTARG:1}
+				OPTARG=${OPTARG#*=}
 			else
 				# FORMAT: `--name value`
 				OPTARG=${!OPTIND}
@@ -135,7 +137,8 @@ main() {
 
 	# HOOK: before-open
 	if [[ -n $before_open ]]; then
-		eval "tmux -C $(parse_cmds "$before_open")" >/dev/null
+		parse_cmds "$before_open"
+		eval "tmux -C $(escape "${cmds[@]}")" >/dev/null
 	fi
 
 	# Expand the configured ID format
@@ -155,14 +158,15 @@ main() {
 		"exec '$CURRENT_DIR/eval.sh'"
 
 	# Undo temporary changes
-	if [[ -n ${on_cleanup-} ]]; then
+	if [[ ${#on_cleanup} -gt 0 ]]; then
 		# Ignore error if the server has already stopped
-		eval "tmux -NCL '$socket_name' $(parse_cmds "$on_cleanup")" &>/dev/null || true
+		eval "tmux -NCL '$socket_name' $(escape "${on_cleanup[@]}")" &>/dev/null || true
 	fi
 
 	# HOOK: after-close
 	if [[ -n $after_close ]]; then
-		eval "tmux -C $(parse_cmds "$after_close")" >/dev/null
+		parse_cmds "$after_close"
+		eval "tmux -C $(escape "${cmds[@]}")" >/dev/null
 	fi
 }
 

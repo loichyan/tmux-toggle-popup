@@ -3,13 +3,10 @@ set -euo pipefail
 
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-# shellcheck source=../src//helpers.sh
+# shellcheck source=./helpers.sh
+source "$CURRENT_DIR/helpers.sh"
+# shellcheck source=../src/helpers.sh
 source "$CURRENT_DIR/../src/helpers.sh"
-
-test_fail() {
-	echo "${BASH_SOURCE[1]}:${BASH_LINENO[1]}" "$@"
-	exit 1
-}
 
 # Simulates Bash arguments interpretation.
 reparse_commands() {
@@ -18,45 +15,43 @@ reparse_commands() {
 }
 
 test_parse_commands() {
-	echo "test: $1"
+	parse_cmds "$1"
 	shift
 
-	local commands=()
-	while IFS= read -r command; do
-		commands+=("$command")
-	done < <(parse_cmds "$1" | reparse_commands)
-	shift
-
-	if [[ $# -ne ${#commands[@]} ]]; then
-		test_fail "expected $# commands to be parsed, got \`$(printf "%s, " "${commands[@]}")\`"
+	if [[ $# -ne ${#cmds[@]} ]]; then
+		failf "expected $# tokens to be parsed, got ${#cmds[@]}:%s" "$(printf "\n\t%s" "${cmds[@]}")"
 	fi
 
 	local -i i=0
 	while [[ $# -gt 0 ]]; do
-		if [[ $1 != "${commands[$i]}" ]]; then
-			git diff <(echo "$1") <(echo "${commands[i]}")
-			test_fail "unexpected command at $((i + 1))"
+		if [[ $1 != "${cmds[$i]}" ]]; then
+			git diff <(echo "$1") <(echo "${cmds[i]}")
+			failf "unexpected token at $((i + 1))"
 		fi
 		shift
 		i+=1
 	done
 }
 
-test_parse_commands "delimited_by_commas" \
+echo "test: delimited_by_semis"
+test_parse_commands \
 	'set status off ; set exit-empty off' \
 	'set' 'status' 'off' ';' \
 	'set' 'exit-empty' 'off'
-test_parse_commands "delimited_by_line_breaks" \
+echo "test: delimited_by_line_breaks"
+test_parse_commands \
 	'set status off
 	 set exit-empty off' \
 	'set' 'status' 'off' \
 	'set' 'exit-empty' 'off'
-test_parse_commands "escaped_multiple_commands" \
+echo "test: escaped_multiple_commands"
+test_parse_commands \
 	'bind -n M-1 display random\ text \\; display and\ more' \
 	'bind' '-n' 'M-1' \
 	'display' 'random text' '\;' \
 	'display' 'and more'
-test_parse_commands "quoted_multiple_commands" \
+echo "test: quoted_multiple_commands"
+test_parse_commands \
 	"bind -n M-2 \"display 'random text' ; display 'and more'\"" \
 	'bind' '-n' 'M-2' \
 	"display 'random text' ; display 'and more'"

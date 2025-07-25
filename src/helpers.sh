@@ -30,13 +30,13 @@ batch_get_options() {
 	local vars=() formats=() key val
 	while [[ $# -gt 0 ]]; do
 		key=${1%%=*}
-		val=${1:${#key}+1}
+		val=${1#*=}
 		vars+=("$key")
 		formats+=("$val")
 		shift
 	done
 	set -- "${vars[@]}"
-	while read -r val; do
+	while IFS= read -r val; do
 		printf -v "$1" "%s" "$val"
 		shift
 	done < <(tmux display -p "$(printf "%s\n" "${formats[@]}")")
@@ -55,13 +55,11 @@ escape_session_name() {
 	echo "${1//[.:]/_}"
 }
 
-# Parses the tmux script into sequences and escapes each one, ensuring they can
-# be safely interpreted by Bash.
+# Parses tmux commands, assigning the tokens to an array named `cmds`.
+declare cmds
 parse_cmds() {
-	# Force to use bash's bulitin printf as macOS's printf does not support
-	# "%q". The first argument to `bash -c` is the script name, so we need a
-	# dummy name to prevent it from being eaten by Bash.
-	echo "$*" | xargs bash -c 'printf "%q " "$@"' _
+	# shellcheck disable=SC2034
+	IFS=$'\n' read -d '' -ra cmds < <(echo "$*" | xargs printf "%s\n") || true
 }
 
 # Expands the provided tmux FORMAT string.
@@ -75,10 +73,10 @@ format() {
 # replaced with their corresponding values.
 interpolate() {
 	local result key val
-	result=${*: -1}
+	result=${!#}
 	while [[ $# -gt 1 ]]; do
 		key=${1%%=*}
-		val=${1:${#key}+1}
+		val=${1#*=}
 		result=${result//"{$key}"/$val}
 		shift
 	done
