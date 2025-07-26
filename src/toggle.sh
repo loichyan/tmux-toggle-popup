@@ -18,7 +18,6 @@ usage() {
 
 		  --name <name>               Popup name [Default: "$DEFAULT_NAME"]
 		  --id <id>                   Popup ID, default to the expanded ID format
-		  --toggle-mode <mode>        Action to handle nested calls [Default: "$DEFAULT_TOGGLE_MODE"]
 		  --toggle-key <key>          Bind additional keys to close the opened popup
 		  -[BCE]                      Flags passed to display-popup
 		  -[bcdehsStTwxy] <value>     Options passed to display-popup
@@ -27,11 +26,12 @@ usage() {
 
 		  Override global popup options on the fly.
 
-		  --socket-name <value>       Socket name [Default: "$DEFAULT_SOCKET_NAME"]
 		  --id-format <value>         Popup ID format [Default: "$DEFAULT_ID_FORMAT"]
 		  --on-init <hook>            Command to run on popup initialization [Default: "$DEFAULT_ON_INIT"]
 		  --before-open <hook>        Hook to run before opening the popup [Default: ""]
 		  --after-close <hook>        Hook to run after closing the popup [Default: ""]
+		  --toggle-mode <mode>        Action to handle nested calls [Default: "$DEFAULT_TOGGLE_MODE"]
+		  --socket-name <value>       Socket name [Default: "$DEFAULT_SOCKET_NAME"]
 
 		Examples:
 
@@ -80,17 +80,18 @@ prepare_open() {
 	open_cmds+=("${cmds[@]}")
 }
 
-declare name socket_name toggle_mode on_init before_open after_close id_format
+declare name id id_format toggle_keys popup_dir
+declare on_init before_open after_close toggle_mode socket_name
 declare opened_name caller_id_format caller_path caller_pane_path
-declare default_id_format default_shell session_path pane_path popup_dir
+declare default_id_format default_shell session_path pane_path
 main() {
 	batch_get_options \
-		socket_name="#{@popup-socket-name}" \
-		toggle_mode="#{@popup-toggle-mode}" \
+		id_format="#{E:@popup-id-format}" \
 		on_init="#{@popup-on-init}" \
 		before_open="#{@popup-before-open}" \
 		after_close="#{@popup-after-close}" \
-		id_format="#{E:@popup-id-format}" \
+		toggle_mode="#{@popup-toggle-mode}" \
+		socket_name="#{@popup-socket-name}" \
 		opened_name="#{@__popup_opened}" \
 		caller_id_format="#{@__popup_id_format}" \
 		caller_path="#{@__popup_caller_path}" \
@@ -100,10 +101,10 @@ main() {
 		session_path="#{session_path}" \
 		pane_path="#{pane_current_path}"
 	name=${name:-$DEFAULT_NAME}
-	socket_name=${socket_name:-$DEFAULT_SOCKET_NAME}
-	toggle_mode=${toggle_mode:-$DEFAULT_TOGGLE_MODE}
-	on_init=${on_init:-$DEFAULT_ON_INIT}
 	id_format="${id_format:-$default_id_format}"
+	on_init=${on_init:-$DEFAULT_ON_INIT}
+	toggle_mode=${toggle_mode:-$DEFAULT_TOGGLE_MODE}
+	socket_name=${socket_name:-$DEFAULT_SOCKET_NAME}
 
 	while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
@@ -114,8 +115,8 @@ main() {
 		d) popup_dir=$OPTARG ;;
 		# Forward environment overrides to popup sessions
 		e) open_args+=("-e" "$OPTARG") ;;
-		name | toggle-key | socket-name | id-format | id | \
-			toggle-mode | on-init | before-open | after-close)
+		name | id | id-format | toggle-key | \
+			on-init | before-open | after-close | toggle-mode | socket-name)
 			OPTARG=${OPTARG:${#OPT}}
 			if [[ ${OPTARG::1} == '=' ]]; then
 				# Handle syntax: `--name=value`
