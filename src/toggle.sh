@@ -7,7 +7,6 @@ source "$CURRENT_DIR/helpers.sh"
 # shellcheck source=./variables.sh
 source "$CURRENT_DIR/variables.sh"
 
-declare OPT OPTARG OPTIND=1 popup_args open_args toggle_keys program
 usage() {
 	cat <<-EOF
 		Usage:
@@ -50,9 +49,9 @@ prepare_open() {
 
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
-	if [[ -n $popup_dir ]]; then
+	if [[ -n $open_dir ]]; then
 		open_args+=(-c "$(interpolate popup_caller_path="$caller_path" \
-			popup_caller_pane_path="$caller_pane_path" "$popup_dir")")
+			popup_caller_pane_path="$caller_pane_path" "$open_dir")")
 	fi
 
 	if [[ $1 == "open" ]]; then
@@ -80,7 +79,7 @@ prepare_open() {
 	open_cmds+=("${cmds[@]}")
 }
 
-declare name id id_format toggle_keys popup_dir
+declare name id id_format toggle_keys open_args open_dir program display_args
 declare on_init before_open after_close toggle_mode socket_name
 declare opened_name caller_id_format caller_path caller_pane_path
 declare default_id_format default_shell session_path pane_path
@@ -100,19 +99,21 @@ main() {
 		default_shell="#{default-shell}" \
 		session_path="#{session_path}" \
 		pane_path="#{pane_current_path}"
+	# Load default values
 	name=${name:-$DEFAULT_NAME}
 	id_format="${id_format:-$default_id_format}"
 	on_init=${on_init:-$DEFAULT_ON_INIT}
 	toggle_mode=${toggle_mode:-$DEFAULT_TOGGLE_MODE}
 	socket_name=${socket_name:-$DEFAULT_SOCKET_NAME}
 
+	declare OPT OPTARG OPTIND=1
 	while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
 		case "$OPT" in
-		[BCE]) popup_args+=("-$OPT") ;;
-		[bchsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
+		[BCE]) display_args+=("-$OPT") ;;
+		[bchsStTwxy]) display_args+=("-$OPT" "$OPTARG") ;;
 		# Forward working directory to popup sessions
-		d) popup_dir=$OPTARG ;;
+		d) open_dir=$OPTARG ;;
 		# Forward environment overrides to popup sessions
 		e) open_args+=("-e" "$OPTARG") ;;
 		name | id | id-format | toggle-key | \
@@ -174,7 +175,7 @@ main() {
 	# recognized by some shells that are incompatible with it. Here we change
 	# the default shell to `/bin/sh` and then revert immediately.
 	tmux set default-shell "/bin/sh" \; \
-		popup "${popup_args[@]}" -e TMUX_POPUP_SERVER="$socket_name" "$open_script"
+		popup "${display_args[@]}" -e TMUX_POPUP_SERVER="$socket_name" "$open_script"
 
 	# Undo temporary changes on the popup server
 	if [[ ${#on_cleanup} -gt 0 ]]; then

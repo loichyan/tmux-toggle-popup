@@ -5,7 +5,6 @@ CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
 
-declare OPT OPTARG OPTIND=1 mode=I programs
 usage() {
 	cat <<-EOF
 		Usage:
@@ -38,7 +37,9 @@ check_program() {
 	return 1
 }
 
+declare mode=I programs
 main() {
+	declare OPT OPTARG OPTIND=1
 	while getopts :-: OPT; do
 		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
 		case "$OPT" in
