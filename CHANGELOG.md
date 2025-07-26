@@ -16,6 +16,8 @@ are noticeable to end-users since the last release. For developers, this project
 
 - (**breaking**) Always place breaking changes at the top.
 - Append other changes in chronological order under the relevant subsections.
+- Additionally, you may use `{{PPNUM}}` as a placeholder for the number of a new pull
+  request, which will be substituted with the actual number through GitHub Actions.
 
 ### Changed
 

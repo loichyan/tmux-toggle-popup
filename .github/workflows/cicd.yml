@@ -40,6 +40,20 @@ jobs:
       - name: Check | Test suite
         run: ./run_tests.sh
 
+      - name: Post Check | Update PR numbers
+        if: github.event_name == 'pull_request'
+        run: |
+          sed -i 's/\([^`]\){{PRNUM}}\([^`]\)/\1${{ github.event.number }}\2/g' CHANGELOG.md
+
+      - name: Post Check | Commit changes
+        if: github.event_name == 'pull_request'
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "docs: update pull request numbers"
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com
+          commit_author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
   # How to create a new GitHub release?
   # 1. Create a release branch named "release/<tag>".
   # 2. Open a PR from the branch, including the release note in the PR body.
