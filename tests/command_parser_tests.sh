@@ -8,12 +8,6 @@ source "$CURRENT_DIR/helpers.sh"
 # shellcheck source=../src/helpers.sh
 source "$CURRENT_DIR/../src/helpers.sh"
 
-# Simulates Bash arguments interpretation.
-reparse_commands() {
-	# shellcheck disable=SC2046
-	eval printf '%s\\n' $(cat)
-}
-
 test_parse_commands() {
 	parse_cmds "$1"
 	shift

@@ -94,10 +94,10 @@ main() {
 		session_path="#{session_path}" \
 		pane_path="#{pane_current_path}"
 	name=${name:-$DEFAULT_NAME}
-	socket_name=${socket_name:-"$DEFAULT_SOCKET_NAME"}
-	toggle_mode=${toggle_mode:-"$DEFAULT_TOGGLE_MODE"}
-	on_init=${on_init:-"$DEFAULT_ON_INIT"}
-	id_format="${id_format:-"$default_id_format"}"
+	socket_name=${socket_name:-$DEFAULT_SOCKET_NAME}
+	toggle_mode=${toggle_mode:-$DEFAULT_TOGGLE_MODE}
+	on_init=${on_init:-$DEFAULT_ON_INIT}
+	id_format="${id_format:-$default_id_format}"
 
 	while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
