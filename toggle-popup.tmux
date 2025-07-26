@@ -12,7 +12,7 @@ source "$CURRENT_DIR/src/helpers.sh"
 # shellcheck source=./src/variables.sh
 source "$CURRENT_DIR/src/variables.sh"
 
-export_commands() {
+handle_exports() {
 	tmux \
 		set -g "@popup-toggle" "$CURRENT_DIR/src/toggle.sh" \; \
 		set -g "@popup-focus" "$CURRENT_DIR/src/focus.sh" \;
@@ -36,10 +36,10 @@ main() {
 		autostart="#{@popup-autostart}" \
 		socket_name="#{@popup-socket-name}" \
 		default_shell="#{default-shell}"
-	socket_name=${socket_name:-"$DEFAULT_SOCKET_NAME"}
-	default_shell=${default_shell:-"$SHELL"}
+	socket_name=${socket_name:-$DEFAULT_SOCKET_NAME}
+	default_shell=${default_shell:-$SHELL}
 
-	export_commands
+	handle_exports
 	handle_autostart
 }
 main

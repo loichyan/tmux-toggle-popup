@@ -50,8 +50,8 @@ Create keybindings to toggle your preferred shell and
 [lazygit](https://github.com/jesseduffield/lazygit):
 
 ```tmux
-bind -n M-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
-bind -n M-g run "#{@popup-toggle} -Ed'#{pane_current_path}' -w90% -h90% --name=lazygit lazygit"
+bind -n M-t run "#{@popup-toggle} -w75% -h75% -Ed'{popup_caller_pane_path}'"
+bind -n M-g run "#{@popup-toggle} -w90% -h90% -Ed'{popup_caller_pane_path}' --name=lazygit lazygit"
 ```
 
 ## ⌨️ Commands
@@ -69,6 +69,11 @@ namely when invoked in an opened popup with a different name specified:
 2. `force-close`: Close the opened popup window. This is the expected behavior when the name matches
    or no arguments are provided.
 3. `force-open`: Open a new popup window within the current one, i.e., popup-in-popup.
+
+Additionally, you may use `{popup_caller_path}` and `{popup_caller_pane_path}` to specify the
+working directory of popups, which will be substituted with the path of the caller session and the
+path of the caller pane, respectively. They serve as context-aware alternatives to `#{session_path}`
+and `#{pane_current_path}`, and are therefore recommended for use instead of the latter.
 
 If you have set popup keybindings in your `.tmux.conf`, which should be loaded in both your default
 server and the popup server, there's no need to worry about the toggle keys. For instance, if `M-t`
@@ -90,7 +95,6 @@ Options:
 
   --name <name>               Popup name [Default: "default"]
   --id <id>                   Popup ID, default to the expanded ID format
-  --toggle-mode <mode>        Action to handle nested calls [Default: "switch"]
   --toggle-key <key>          Bind additional keys to close the opened popup
   -[BCE]                      Flags passed to display-popup
   -[bcdehsStTwxy] <value>     Options passed to display-popup
@@ -99,21 +103,16 @@ Popup Options:
 
   Override global popup options on the fly.
 
-  --socket-name <value>       Socket name
   --id-format <value>         Popup ID format
   --on-init <hook>            Command to run on popup initialization
   --before-open <hook>        Hook to run before opening the popup
   --after-close <hook>        Hook to run after closing the popup
+  --toggle-mode <mode>        Action to handle nested calls [Default: "switch"]
+  --socket-name <value>       Socket name
 
 Examples:
 
-  toggle.sh -Ed'#{pane_current_path}' --name=bash bash
-```
-
-**Example**:
-
-```tmux
-bind -n M-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
+  toggle.sh -Ed'{popup_caller_pane_path}' --name=bash bash
 ```
 
 ### `@popup-focus`

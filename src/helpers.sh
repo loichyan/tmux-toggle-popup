@@ -20,7 +20,7 @@ die_badopt() {
 showopt() {
 	local v
 	v=$(tmux show -gqv "$1")
-	echo "${v:-"$2"}"
+	echo "${v:-$2}"
 }
 
 # Fetches tmux options in batch. Each argument may be specified in the syntax
