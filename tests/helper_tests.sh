@@ -32,15 +32,27 @@ expected="var1=value1/var2=value2/var2=value2/var1=value1"
 test_interpolate var1="var1=value1" var2="var2=value2"
 
 # Simulates a tmux response.
+declare input=() delimiter="EOF"
 tmux() {
-	echo "value1"
-	echo "value2"
-	echo "value3"
+	printf "%s\nEOF\n" "${input[@]}"
 }
 
 echo "test: batch_get_options"
-expected=$(printf "%s\n" format1 format2 format3)
-batch_get_options var1=format1 var2=format2 var3=format3
+input=("value1" "value2" "value3")
+batch_get_options var1= var2= var3=
 assert_eq "$var1" "value1"
 assert_eq "$var2" "value2"
 assert_eq "$var3" "value3"
+
+echo "test: batch_get_multiline_options"
+input=(
+	$'\nline1\n'
+	$'line1\nline2'
+	$'line1\n\nline2'
+	$'\nline1\n\nline2\nline3\n\n'
+)
+batch_get_options var1= var2= var3= var4=
+assert_eq "$var1" "line1"
+assert_eq "$var2" "line1 line2"
+assert_eq "$var3" "line1 line2"
+assert_eq "$var4" "line1 line2 line3"
