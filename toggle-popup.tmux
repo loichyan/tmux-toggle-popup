@@ -5,6 +5,7 @@
 # Authors:  Loi Chyan <loichyan@foxmail.com>
 # License:  MIT OR Apache-2.0
 
+set -e
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=./src/helpers.sh
@@ -18,7 +19,6 @@ handle_exports() {
 		set -g "@popup-focus" "$CURRENT_DIR/src/focus.sh" \;
 }
 
-declare autostart socket_name default_shell
 handle_autostart() {
 	# Do not start itself within a popup server
 	if [[ $autostart == "on" && -z $TMUX_POPUP_SERVER ]]; then
@@ -31,6 +31,7 @@ handle_autostart() {
 	fi
 }
 
+declare autostart socket_name default_shell
 main() {
 	batch_get_options \
 		autostart="#{@popup-autostart}" \

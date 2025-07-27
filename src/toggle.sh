@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -e
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=./helpers.sh
@@ -157,9 +158,7 @@ main() {
 	fi
 
 	# Run hook: before-open
-	if parse_cmds "$before_open"; then
-		tmux -C "${cmds[@]}" >/dev/null
-	fi
+	if parse_cmds "$before_open"; then tmux "${cmds[@]}"; fi
 
 	# This session is the caller, so use it's path
 	caller_path=${session_path}
@@ -167,9 +166,9 @@ main() {
 	prepare_open "open"
 
 	open_script=""
-	open_script+="tmux set default-shell '$default_shell' ; "
-	open_script+="export SHELL='$default_shell' ; "
-	open_script+="exec $(escape tmux -L "$socket_name" "${open_cmds[@]}") >/dev/null"
+	open_script+="tmux set default-shell '$default_shell'"
+	open_script+="; export SHELL='$default_shell'"
+	open_script+="; exec $(escape tmux -L "$socket_name" "${open_cmds[@]}")"
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
 	# shell commands. However, our scripts are written in `sh`, which may not be
@@ -181,13 +180,11 @@ main() {
 	# Undo temporary changes on the popup server
 	if [[ ${#on_cleanup} -gt 0 ]]; then
 		# Ignore error if the server has already stopped
-		tmux -NCL "$socket_name" "${on_cleanup[@]}" &>/dev/null || true
+		tmux -NL "$socket_name" "${on_cleanup[@]}" 2>/dev/null || true
 	fi
 
 	# Run hook: after-close
-	if parse_cmds "$after_close"; then
-		tmux -C "${cmds[@]}" >/dev/null
-	fi
+	if parse_cmds "$after_close"; then tmux "${cmds[@]}"; fi
 }
 
 main "$@"

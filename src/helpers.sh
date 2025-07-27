@@ -36,8 +36,10 @@ batch_get_options() {
 	delimiter=${delimiter:-"EOF@$RANDOM"} # generate a random delimiter
 	set -- "${vars[@]}"
 	while IFS= read -r line; do
-		if [[ $line != "$delimiter" ]]; then
-			[[ -n $line ]] && val+=("$line")
+		if [[ -z $line ]]; then
+			:
+		elif [[ $line != "$delimiter" ]]; then
+			val+=("$line")
 		else
 			printf -v "$1" "%s" "${val[*]}" # replace line breaks with spaces
 			val=()
