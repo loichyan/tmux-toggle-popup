@@ -56,10 +56,15 @@ escape_session_name() {
 }
 
 # Parses tmux commands, assigning the tokens to an array named `cmds`.
+#
+# It returns 1 if the given string does not contain any valid tmux commands.
 declare cmds
 parse_cmds() {
+	if [[ -z $1 || $1 == "nop" ]]; then
+		return 1
+	fi
 	# shellcheck disable=SC2034
-	IFS=$'\n' read -d '' -ra cmds < <(echo "$*" | xargs printf "%s\n") || true
+	IFS=$'\n' read -d '' -ra cmds < <(echo "$1" | xargs printf "%s\n") || true
 }
 
 # Expands the provided tmux FORMAT string.

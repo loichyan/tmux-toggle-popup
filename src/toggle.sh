@@ -75,8 +75,9 @@ prepare_open() {
 		on_cleanup+=(unbind $k \;)
 	done
 
-	parse_cmds "$on_init"
-	open_cmds+=("${cmds[@]}")
+	if parse_cmds "$on_init"; then
+		open_cmds+=("${cmds[@]}")
+	fi
 }
 
 declare name id id_format toggle_keys open_args open_dir program display_args
@@ -156,8 +157,7 @@ main() {
 	fi
 
 	# Run hook: before-open
-	if [[ -n $before_open ]]; then
-		parse_cmds "$before_open"
+	if parse_cmds "$before_open"; then
 		tmux -C "${cmds[@]}" >/dev/null
 	fi
 
@@ -185,8 +185,7 @@ main() {
 	fi
 
 	# Run hook: after-close
-	if [[ -n $after_close ]]; then
-		parse_cmds "$after_close"
+	if parse_cmds "$after_close"; then
 		tmux -C "${cmds[@]}" >/dev/null
 	fi
 }
