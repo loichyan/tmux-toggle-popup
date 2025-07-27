@@ -27,19 +27,23 @@ showopt() {
 # `key=format`, where `format` is a tmux FORMAT to retrieve the intended option,
 # and its value is assigned to a variable named `key`.
 batch_get_options() {
-	local vars=() formats=() key val
+	local vars=() formats=() val=() line
 	while [[ $# -gt 0 ]]; do
-		key=${1%%=*}
-		val=${1#*=}
-		vars+=("$key")
-		formats+=("$val")
+		vars+=("${1%%=*}")
+		formats+=("${1#*=}")
 		shift
 	done
+	delimiter=${delimiter:-"EOF@$RANDOM"} # generate a random delimiter
 	set -- "${vars[@]}"
-	while IFS= read -r val; do
-		printf -v "$1" "%s" "$val"
-		shift
-	done < <(tmux display -p "$(printf "%s\n" "${formats[@]}")")
+	while IFS= read -r line; do
+		if [[ $line != "$delimiter" ]]; then
+			[[ -n $line ]] && val+=("$line")
+		else
+			printf -v "$1" "%s" "${val[*]}" # replace line breaks with spaces
+			val=()
+			shift
+		fi
+	done < <(tmux display -p "$(printf "%s\n$delimiter\n" "${formats[@]}")")
 }
 
 # Escapes all given arguments.
