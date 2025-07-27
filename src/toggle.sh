@@ -21,9 +21,9 @@ usage() {
 		  -[BCE]                      Flags passed to display-popup
 		  -[bcdehsStTwxy] <value>     Options passed to display-popup
 
-		Popup Options:
+		Global Options:
 
-		  Override global popup options on the fly.
+		  Override the global options on the fly.
 
 		  --id-format <value>         Popup ID format [Default: "$DEFAULT_ID_FORMAT"]
 		  --on-init <hook>            Command to run on popup initialization [Default: "$DEFAULT_ON_INIT"]
