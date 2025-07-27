@@ -55,7 +55,7 @@ jobs:
       - name: Doc | Update PR numbers
         if: github.event_name == 'pull_request'
         run: |
-          sed -i 's/\([^`]\){{PRNUM}}\([^`]\)/\1${{ github.event.number }}\2/g' CHANGELOG.md
+          sed -i 's/\([^`]\?\){{PRNUM}}\([^`]\?\)/\1${{ github.event.number }}\2/g' CHANGELOG.md
 
       - name: Post Doc | Commit changes
         if: github.event_name == 'pull_request'
