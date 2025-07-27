@@ -39,7 +39,7 @@ batch_get_options() {
 		if [[ $line != "$delimiter" ]]; then
 			[[ -n $line ]] && val+=("$line")
 		else
-			printf -v "$1" "%s" "${val[*]}"
+			printf -v "$1" "%s" "${val[*]}" # replace line breaks with spaces
 			val=()
 			shift
 		fi
