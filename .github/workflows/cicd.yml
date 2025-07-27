@@ -44,6 +44,8 @@ jobs:
     name: Update changelog
     needs: [check]
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: write # need to commit changes
     runs-on: ubuntu-latest
     steps:
       - name: Setup | Checkout
