@@ -37,7 +37,7 @@ are noticeable to end-users since the last release. For developers, this project
 ### Added
 
 - Support using `{popup_caller_path}` and `{popup_caller_pane_path}` to open popups ([#35])
-- Support using `nop` to disable a hook explicitly ([#{{PRNUM}}])
+- Support using `nop` to disable a hook explicitly ([#36])
 
 ### Changed
 
@@ -46,7 +46,7 @@ are noticeable to end-users since the last release. For developers, this project
 [#33]: https://github.com/loichyan/tmux-toggle-popup/pull/33
 [#34]: https://github.com/loichyan/tmux-toggle-popup/pull/34
 [#35]: https://github.com/loichyan/tmux-toggle-popup/pull/35
-[#{{PRNUM}}]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
+[#36]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
 
 ## [0.4.1] - 2025-05-07
 
