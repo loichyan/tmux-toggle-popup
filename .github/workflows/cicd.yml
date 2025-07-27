@@ -50,6 +50,7 @@ jobs:
     steps:
       - name: Setup | Checkout
         uses: actions/checkout@v4
+        with: { ref: "${{ github.head_ref }}" }
 
       - name: Doc | Update PR numbers
         if: github.event_name == 'pull_request'
