@@ -40,12 +40,21 @@ jobs:
       - name: Check | Test suite
         run: ./run_tests.sh
 
-      - name: Post Check | Update PR numbers
+  changelog:
+    name: Update changelog
+    needs: [check]
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Checkout
+        uses: actions/checkout@v4
+
+      - name: Doc | Update PR numbers
         if: github.event_name == 'pull_request'
         run: |
           sed -i 's/\([^`]\){{PRNUM}}\([^`]\)/\1${{ github.event.number }}\2/g' CHANGELOG.md
 
-      - name: Post Check | Commit changes
+      - name: Post Doc | Commit changes
         if: github.event_name == 'pull_request'
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
@@ -61,7 +70,7 @@ jobs:
   # 4. Publish the release when it's ready.
   release:
     name: Create GitHub release
-    needs: [check]
+    needs: [check, changelog]
     if: startsWith(github.head_ref, 'release/') && github.repository == 'loichyan/tmux-toggle-popup'
     permissions:
       contents: write # need to update release
