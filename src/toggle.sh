@@ -168,6 +168,7 @@ main() {
 
 	open_script=""
 	open_script+="tmux set default-shell '$default_shell' ; "
+	open_script+="export SHELL='$default_shell' ; "
 	open_script+="exec $(escape tmux -L "$socket_name" "${open_cmds[@]}") >/dev/null"
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
@@ -175,7 +176,7 @@ main() {
 	# recognized by some shells that are incompatible with it. Here we change
 	# the default shell to `/bin/sh` and then revert immediately.
 	tmux set default-shell "/bin/sh" \; \
-		popup "${display_args[@]}" -e TMUX_POPUP_SERVER="$socket_name" "$open_script"
+		popup -e TMUX_POPUP_SERVER="$socket_name" "${display_args[@]}" "$open_script"
 
 	# Undo temporary changes on the popup server
 	if [[ ${#on_cleanup} -gt 0 ]]; then
