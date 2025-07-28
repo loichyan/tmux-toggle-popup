@@ -3,7 +3,7 @@ set -euo pipefail
 
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-for test in "$CURRENT_DIR"/tests/*_tests.sh; do
+while read -r test; do
 	echo "test: $(basename "$test")"
 	command "$test"
-done
+done < <(find "$CURRENT_DIR/src/" -name "*_tests.sh")
