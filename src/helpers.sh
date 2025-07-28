@@ -56,7 +56,7 @@ escape() {
 }
 
 # Replace special chars with '_' in a session name.
-# See: https://github.com/tmux/tmux/blob/ef68debc8d9e0e5567d328766f705bb1f42b7c51/session.c#L242
+# See <https://github.com/tmux/tmux/blob/ef68debc8d9e0e5567d328766f705bb1f42b7c51/session.c#L242>
 escape_session_name() {
 	echo "${1//[.:]/_}"
 }

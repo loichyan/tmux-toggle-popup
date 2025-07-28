@@ -41,13 +41,11 @@ usage() {
 
 # Prepares the tmux commands to open a popup. After called,
 #
-# - `open_cmds` is used to create the popup session
+# - `open_cmds` is used to initialize the popup session
 # - `on_cleanup` is used to undo temporary changes on the popup server
-# - `popup_id` is set to the expanded popup session name
+# - `popup_id` is set to the name of the target popup session
 declare open_cmds on_cleanup popup_id
 prepare_open() {
-	open_cmds=()
-
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
 	if [[ -n $open_dir ]]; then
@@ -55,6 +53,7 @@ prepare_open() {
 			popup_caller_pane_path="$caller_pane_path" "$open_dir")")
 	fi
 
+	open_cmds=()
 	if [[ $1 == "open" ]]; then
 		open_cmds+=(new -As "$popup_id" "${open_args[@]}" "${program[@]}" \;)
 	else
@@ -64,6 +63,7 @@ prepare_open() {
 		open_cmds+=(switch -t "$popup_id" \;)
 	fi
 
+	# Export internal variables
 	open_cmds+=(set @__popup_name "$name" \;)
 	open_cmds+=(set @__popup_id_format "$id_format" \;)
 	open_cmds+=(set @__popup_caller_path "$caller_path" \;)
@@ -175,9 +175,9 @@ main() {
 	open_script+="; exec tmux -L '$socket_name' $(escape "${open_cmds[@]}") >/dev/null"
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
-	# shell commands. However, our scripts require sh(1), which may not be
-	# parsed correctly by some shells that are incompatible with it. Here we
-	# change the default shell to `/bin/sh` and then revert immediately.
+	# shell commands. However, our scripts require `sh(1)` and may not be parsed
+	# correctly by some incompatible shells. In this case, we change the default
+	# shell to `/bin/sh` and then revert it immediately.
 	tmux set default-shell "/bin/sh" \; popup "${display_args[@]}" "$open_script"
 
 	# Undo temporary changes on the popup server
