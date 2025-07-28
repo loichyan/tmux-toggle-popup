@@ -32,7 +32,7 @@ expected="var1=value1/var2=value2/var2=value2/var1=value1"
 test_interpolate var1="var1=value1" var2="var2=value2"
 
 # Simulates a tmux response.
-declare input=() delimiter="EOF"
+declare input delimiter="EOF"
 tmux() {
 	printf "%s\nEOF\n" "${input[@]}"
 }
