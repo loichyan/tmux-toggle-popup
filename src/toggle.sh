@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -e
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=./helpers.sh
@@ -63,7 +64,7 @@ prepare_open() {
 		open_cmds+=(switch -t "$popup_id" \;)
 	fi
 
-	open_cmds+=(set @__popup_opened "$name" \;)
+	open_cmds+=(set @__popup_name "$name" \;)
 	open_cmds+=(set @__popup_id_format "$id_format" \;)
 	open_cmds+=(set @__popup_caller_path "$caller_path" \;)
 	open_cmds+=(set @__popup_caller_pane_path "$caller_pane_path" \;)
@@ -92,7 +93,7 @@ main() {
 		after_close="#{@popup-after-close}" \
 		toggle_mode="#{@popup-toggle-mode}" \
 		socket_name="#{@popup-socket-name}" \
-		opened_name="#{@__popup_opened}" \
+		opened_name="#{@__popup_name}" \
 		caller_id_format="#{@__popup_id_format}" \
 		caller_path="#{@__popup_caller_path}" \
 		caller_pane_path="#{@__popup_caller_pane_path}" \
@@ -157,9 +158,7 @@ main() {
 	fi
 
 	# Run hook: before-open
-	if parse_cmds "$before_open"; then
-		tmux -C "${cmds[@]}" >/dev/null
-	fi
+	if parse_cmds "$before_open"; then tmux "${cmds[@]}"; fi
 
 	# This session is the caller, so use it's path
 	caller_path=${session_path}
@@ -167,27 +166,28 @@ main() {
 	prepare_open "open"
 
 	open_script=""
-	open_script+="tmux set default-shell '$default_shell' ; "
-	open_script+="export SHELL='$default_shell' ; "
-	open_script+="exec $(escape tmux -L "$socket_name" "${open_cmds[@]}") >/dev/null"
+	# Revert to the user's default shell.
+	open_script+="tmux set default-shell '$default_shell'"
+	# Set $TMUX_POPUP_SERVER so as to identify the popup server,
+	# and propagate user's default shell.
+	open_script+="; export TMUX_POPUP_SERVER='$socket_name' SHELL='$default_shell'"
+	# Suppress stdout to hide the `[detached] ...` message
+	open_script+="; exec tmux -L '$socket_name' $(escape "${open_cmds[@]}") >/dev/null"
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
-	# shell commands. However, our scripts are written in `sh`, which may not be
-	# recognized by some shells that are incompatible with it. Here we change
-	# the default shell to `/bin/sh` and then revert immediately.
-	tmux set default-shell "/bin/sh" \; \
-		popup -e TMUX_POPUP_SERVER="$socket_name" "${display_args[@]}" "$open_script"
+	# shell commands. However, our scripts require sh(1), which may not be
+	# parsed correctly by some shells that are incompatible with it. Here we
+	# change the default shell to `/bin/sh` and then revert immediately.
+	tmux set default-shell "/bin/sh" \; popup "${display_args[@]}" "$open_script"
 
 	# Undo temporary changes on the popup server
 	if [[ ${#on_cleanup} -gt 0 ]]; then
 		# Ignore error if the server has already stopped
-		tmux -NCL "$socket_name" "${on_cleanup[@]}" &>/dev/null || true
+		tmux -NL "$socket_name" "${on_cleanup[@]}" 2>/dev/null || true
 	fi
 
 	# Run hook: after-close
-	if parse_cmds "$after_close"; then
-		tmux -C "${cmds[@]}" >/dev/null
-	fi
+	if parse_cmds "$after_close"; then tmux "${cmds[@]}"; fi
 }
 
 main "$@"
