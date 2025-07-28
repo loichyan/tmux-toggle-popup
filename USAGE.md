@@ -105,7 +105,7 @@ how each option works.
 **Description**: The socket name of the server where all *popup sessions* reside.
 
 Generally, it's not recommended to open popups in the default server, as this plugin may start many
-sessions depend on your use, which can be quite annoying when you open the session selector. When
+sessions depending on your use, which can be quite annoying when you open the session selector. When
 starting the designated server, the environment variable `$TMUX_POPUP_SERVER` is set to the server
 name. This is particularly useful for distinguishing *popup servers* from the default working server
 in your *.tmux.conf*.
@@ -114,10 +114,10 @@ in your *.tmux.conf*.
 
 ```tmux
 # Load configurations specified for popup servers
-if '[ -n "$TMUX_POPUP_SERVER" ]' {
+%if "$TMUX_POPUP_SERVER"
     set -g exit-empty off
     set -g status off
-}
+%endif
 ```
 
 ### `@popup-id-format`
