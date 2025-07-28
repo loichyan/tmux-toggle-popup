@@ -64,7 +64,7 @@ prepare_open() {
 		open_cmds+=(switch -t "$popup_id" \;)
 	fi
 
-	open_cmds+=(set @__popup_opened "$name" \;)
+	open_cmds+=(set @__popup_name "$name" \;)
 	open_cmds+=(set @__popup_id_format "$id_format" \;)
 	open_cmds+=(set @__popup_caller_path "$caller_path" \;)
 	open_cmds+=(set @__popup_caller_pane_path "$caller_pane_path" \;)
@@ -93,7 +93,7 @@ main() {
 		after_close="#{@popup-after-close}" \
 		toggle_mode="#{@popup-toggle-mode}" \
 		socket_name="#{@popup-socket-name}" \
-		opened_name="#{@__popup_opened}" \
+		opened_name="#{@__popup_name}" \
 		caller_id_format="#{@__popup_id_format}" \
 		caller_path="#{@__popup_caller_path}" \
 		caller_pane_path="#{@__popup_caller_pane_path}" \
@@ -172,7 +172,7 @@ main() {
 	# and propagate user's default shell.
 	open_script+="; export TMUX_POPUP_SERVER='$socket_name' SHELL='$default_shell'"
 	# Suppress stdout to hide the `[detached] ...` message
-	open_script+="; exec tmux $(escape -L "$socket_name" "${open_cmds[@]}") >/dev/null"
+	open_script+="; exec tmux -L '$socket_name' $(escape "${open_cmds[@]}") >/dev/null"
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
 	# shell commands. However, our scripts require sh(1), which may not be
