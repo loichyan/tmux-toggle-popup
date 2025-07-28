@@ -15,14 +15,6 @@ die_badopt() {
 	esac
 }
 
-# Returns the value of the specified option or the second argument as the
-# fallback value if the option is empty.
-showopt() {
-	local v
-	v=$(tmux show -gqv "$1")
-	echo "${v:-$2}"
-}
-
 # Fetches tmux options in batch. Each argument may be specified in the syntax
 # `key=format`, where `format` is a tmux FORMAT to retrieve the intended option,
 # and its value is assigned to a variable named `key`.
