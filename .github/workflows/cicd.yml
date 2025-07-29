@@ -52,7 +52,7 @@ jobs:
         uses: actions/checkout@v4
         with: { ref: "${{ github.head_ref }}" }
 
-      - name: Doc | Update PR numbers
+      - name: Doc | Update changelog
         if: github.event_name == 'pull_request'
         run: |
           sed -i \
@@ -64,7 +64,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
-          commit_message: "docs: update pull request numbers"
+          commit_message: "docs: expand variables in changelog"
           commit_user_name: github-actions[bot]
           commit_user_email: github-actions[bot]@users.noreply.github.com
           commit_author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
