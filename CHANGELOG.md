@@ -37,7 +37,7 @@ are noticeable to end-users since the last release. For developers, this project
 
 ## [Unreleased]
 
-## [0.4.2] - {{DATE}}
+## [0.4.2] - 2025-07-29
 
 This release comes with a few noticeable performance improvements for `@popup-toggle`. Thanks to the
 techniques introduced in [#33], the latency of popup toggles has been reduced by 40% to 60% on
