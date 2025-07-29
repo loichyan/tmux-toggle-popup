@@ -52,16 +52,19 @@ jobs:
         uses: actions/checkout@v4
         with: { ref: "${{ github.head_ref }}" }
 
-      - name: Doc | Update PR numbers
+      - name: Doc | Update changelog
         if: github.event_name == 'pull_request'
         run: |
-          sed -i 's/\([^`]\?\){{PRNUM}}\([^`]\?\)/\1${{ github.event.number }}\2/g' CHANGELOG.md
+          sed -i \
+            -e 's/{{PRNUM}}/${{ github.event.number }}/g' \
+            -e "s/{{DATE}}/$(date -u +'%Y-%m-%d')/g" \
+            CHANGELOG.md
 
       - name: Post Doc | Commit changes
         if: github.event_name == 'pull_request'
         uses: stefanzweifel/git-auto-commit-action@v6
         with:
-          commit_message: "docs: update pull request numbers"
+          commit_message: "docs: expand variables in changelog"
           commit_user_name: github-actions[bot]
           commit_user_email: github-actions[bot]@users.noreply.github.com
           commit_author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
@@ -93,15 +96,14 @@ jobs:
           release_tag: ${{ steps.configure.outputs.tag }}
           release_body: ${{ github.event.pull_request.body }}
         run: |
-          if gh release view "$release_tag" &>/dev/null; then
+          if gh release view "$release_tag" >/dev/null; then
             echo "update existing release $release_tag"
-            command="edit"
+            gh release edit "$release_tag" --notes="$release_body"
           else
             echo "create new release $release_tag"
-            command="create"
+            gh release create "$release_tag" \
+              --target="$GITHUB_BASE_REF" \
+              --draft=true \
+              --title="${release_tag#v} ($(date -u +'%Y-%m-%d'))" \
+              --notes="$release_body"
           fi
-          gh release "$command" "$release_tag" \
-            --target="$GITHUB_BASE_REF" \
-            --draft=true \
-            --title="${release_tag#v} ($(date -u +'%Y-%m-%d'))" \
-            --notes="$release_body"

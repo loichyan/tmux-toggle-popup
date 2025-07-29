@@ -16,8 +16,11 @@ are noticeable to end-users since the last release. For developers, this project
 
 - (**breaking**) Always place breaking changes at the top.
 - Append other changes in chronological order under the relevant subsections.
-- Additionally, you may use `{{PPNUM}}` as a placeholder for the number of a new pull
-  request, which will be substituted with the actual number through GitHub Actions.
+- Additionally, you may use `{{VAR}}` as placeholders for several context
+  variables in a new pull request, which will be substituted with actual values
+  through GitHub Actions. These include:
+  - `PRNUM`: the number of the pull request
+  - `DATE`: the date in `yyyy-mm-dd` format whenever the pull request is updated
 
 ### Changed
 
@@ -33,6 +36,12 @@ are noticeable to end-users since the last release. For developers, this project
 -->
 
 ## [Unreleased]
+
+## [0.4.2] - 2025-07-29
+
+This release comes with a few noticeable performance improvements for `@popup-toggle`. Thanks to the
+techniques introduced in [#33], the latency of popup toggles has been reduced by 40% to 60% on
+average.
 
 ### Added
 
@@ -157,7 +166,9 @@ using the newly added arguments of `@popup-toggle`.
 🎉 Initial release. See
 [README](https://github.com/loichyan/tmux-toggle-popup/blob/v0.1.0/README.md) for more details.
 
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..HEAD
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.2..HEAD
+[0.4.2]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.1..v0.4.2
+[0.4.1]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..v0.4.1
 [0.4.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..v0.4.0
 [0.3.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0
