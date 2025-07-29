@@ -37,6 +37,10 @@ are noticeable to end-users since the last release. For developers, this project
 
 ## [Unreleased]
 
+This release comes with a few noticeable performance improvements for `@popup-toggle`. Thanks to the
+techniques introduced in [#33], the latency of popup toggles has been reduced by 40% to 60% on
+average.
+
 ### Added
 
 - Support using `{popup_caller_path}` and `{popup_caller_pane_path}` to open popups ([#35])
@@ -160,7 +164,9 @@ using the newly added arguments of `@popup-toggle`.
 🎉 Initial release. See
 [README](https://github.com/loichyan/tmux-toggle-popup/blob/v0.1.0/README.md) for more details.
 
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..HEAD
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.2..HEAD
+[0.4.2]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.1..v0.4.2
+[0.4.1]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..v0.4.1
 [0.4.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..v0.4.0
 [0.3.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0
