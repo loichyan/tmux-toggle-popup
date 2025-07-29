@@ -16,8 +16,11 @@ are noticeable to end-users since the last release. For developers, this project
 
 - (**breaking**) Always place breaking changes at the top.
 - Append other changes in chronological order under the relevant subsections.
-- Additionally, you may use `{{PPNUM}}` as a placeholder for the number of a new pull
-  request, which will be substituted with the actual number through GitHub Actions.
+- Additionally, you may use `{{VAR}}` as placeholders for several context
+  variables in a new pull request, which will be substituted with actual values
+  through GitHub Actions. These include:
+  - `PRNUM`: the number of the pull request
+  - `DATE`: the date in `yyyy-mm-dd` format whenever the pull request is updated
 
 ### Changed
 
