@@ -1,2 +1,2 @@
-[*.sh]
+[*.{conf,sh,tmux}]
 indent_style = tab
