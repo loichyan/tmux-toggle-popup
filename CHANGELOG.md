@@ -37,6 +37,14 @@ are noticeable to end-users since the last release. For developers, this project
 
 ## [Unreleased]
 
+### Added
+
+- Distribute this plugin to nixpkgs ([#42], [NixOS/nixpkgs#428294], thanks [@szaffarano])
+
+[#42]: https://github.com/loichyan/tmux-toggle-popup/pull/42
+[NixOS/nixpkgs#428294]: https://github.com/NixOS/nixpkgs/pull/428294
+[@szaffarano]: https://github.com/szaffarano
+
 ## [0.4.2] - 2025-07-29
 
 This release comes with a few noticeable performance improvements for `@popup-toggle`. Thanks to the
