@@ -50,12 +50,12 @@ config.programs.tmux = {
   enable = true;
 
   # ...
-  
+
   plugins = with pkgs; [
     tmuxPlugins.tmux-toggle-popup
     # ...
   ];
-  
+
   extraConfig = ''
     ...
     # popups
@@ -64,9 +64,7 @@ config.programs.tmux = {
     ...
   '';
 };
-
 ```
-
 
 ## 🚗 Quick start
 
