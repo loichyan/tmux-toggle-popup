@@ -43,6 +43,29 @@ run ~/clone/path/toggle-popup.tmux
 
 Reload tmux environment with: `tmux source ~/.tmux.conf`. You should now be able to use this plugin.
 
+### Nix (Home Manager)
+
+```nix
+config.programs.tmux = {
+  enable = true;
+
+  # ...
+
+  plugins = with pkgs; [
+    tmuxPlugins.tmux-toggle-popup
+    # ...
+  ];
+
+  extraConfig = ''
+    ...
+    # popups
+    bind C-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
+    bind C-g run "#{@popup-toggle} -Ed'#{pane_current_path}' -w90% -h90% --name=lazygit lazygit"
+    ...
+  '';
+};
+```
+
 ## 🚗 Quick start
 
 Create keybindings to toggle your default shell and
