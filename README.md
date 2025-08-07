@@ -41,7 +41,8 @@ Add this line to the bottom of `.tmux.conf`:
 run ~/clone/path/toggle-popup.tmux
 ```
 
-Reload tmux environment with: `tmux source ~/.tmux.conf`. You should now be able to use this plugin.
+Reload tmux environment with: `tmux source ~/.tmux.conf`. You should now be able
+to use this plugin.
 
 ### Nix (Home Manager)
 
@@ -84,6 +85,7 @@ Licensed under either of
 
 - Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
   <http://www.apache.org/licenses/LICENSE-2.0>)
-- MIT license ([LICENSE-MIT](LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
+- MIT license ([LICENSE-MIT](LICENSE-MIT) or
+  <http://opensource.org/licenses/MIT>)
 
 at your option.
