@@ -71,7 +71,7 @@ specify the start directory, which will **always** be substituted with the path
 of the *caller session* and the path of the *caller pane*, respectively. They
 serve as context-aware alternatives to `#{session_path}` and
 `#{pane_current_pane}`, and are therefore recommended for use in place of the
-latter.
+latter ones.
 
 ### `@popup-focus`
 
@@ -112,8 +112,7 @@ overrides.
 
 **Default**: `popup`
 
-**Description**: The socket name of the server where all *popup sessions*
-reside.
+**Description**: The socket name of the server to start *popup sessions*.
 
 Generally, it's not recommended to open popups in the default server, as this
 plugin may start many sessions depending on your use, which can be quite
@@ -125,7 +124,7 @@ working server in your *.tmux.conf*.
 **Example**:
 
 ```tmux
-# Load configurations specified for popup servers
+# Load configurations specific for popup servers
 %if "$TMUX_POPUP_SERVER"
     set -g exit-empty off
     set -g status off
@@ -176,16 +175,16 @@ collected and passed to tmux when the corresponding event fires. When writing
 hooks, keep the following rules in mind:
 
 1. Two commands must be delimited by a semicolon (`;`).
-2. Tokens can be protected by quotes (either `'` or `"`) from being split.
-3. Any character preceded by a backslash (`\`) is treated as a literal escape.
+2. Line breaks are replaced with spaces, therefore, as rule *(1)* states,
+   remember to put a semicolon after each command.
+3. Tokens can be protected by quotes (either `'` or `"`) from being split.
+4. Any character preceded by a backslash (`\`) is treated as a literal escape.
    For instance, `\n` is interpreted as `n` rather than a line break.
-4. For commands that take a command sequence as an argument, each command in
+5. For commands that take a command sequence as an argument, each command in
    that sequence must be delimited by `\;`, just as you would do in
    *.tmux.conf*. You can use either `\\;` or `'\;'` to input a `\;`.
    Additionally, you may also put the entire sequence in a pair of quotes, as
    the following example shows.
-5. Line breaks are replaced with spaces, so as rule *(1)* states, remember to
-   put a semicolon after each command.
 
 To disable a hook, you should set it to `nop` instead of an empty string.
 
@@ -221,3 +220,46 @@ set -ga @popup-on-init "
 **Default**: empty
 
 **Description**: Runs in the *caller session* after leaving a *popup window*.
+
+## 👩‍🍳 Recipes
+
+### Sharing tmux buffers
+
+```tmux
+%if "$TMUX_POPUP_SERVER"
+	set -g copy-command "tmux -Ldefault loadb -w -"
+	bind -T prefix ] run "tmux -Ldefault saveb - | tmux loadb -" \; pasteb -p
+	bind -T copy-mode-vi y send -X copy-pipe-and-cancel
+	bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel
+%endif
+```
+
+### Popups per workspace
+
+```tmux
+set -gF "#{b:pane_current_path}/{popup_name}"
+```
+
+### Popups in working server
+
+```tmux
+# Start popups in the working server
+set -gF @popup-socket-name "#{b:socket_path}"
+# Turn off statusline
+set -g  @popup-on-init "set status off"
+# Simplify the ID format
+set -g  @popup-id-format "popup/#{b:pane_current_path}/{popup_name}"
+# Filter out popup session in the session selector
+bind -T prefix s choose-tree -sf "#{!:#{m:popup/*,#{session_name}}}"
+```
+
+**Pros**:
+
+- Does not need to start another server.
+- Shares buffers across all sessions.
+
+**Cons**:
+
+- Needs to configure your session manager to exclude *popup sessions*.
+- May not play well with
+  [tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect).

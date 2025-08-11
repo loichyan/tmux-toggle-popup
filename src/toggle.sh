@@ -26,12 +26,12 @@ usage() {
 
 		  Override the global options on the fly.
 
-		  --id-format <value>         Popup ID format [Default: "$DEFAULT_ID_FORMAT"]
+		  --id-format <str>           Popup ID format [Default: "$DEFAULT_ID_FORMAT"]
 		  --on-init <hook>            Command to run on popup initialization [Default: "$DEFAULT_ON_INIT"]
 		  --before-open <hook>        Hook to run before opening the popup [Default: ""]
 		  --after-close <hook>        Hook to run after closing the popup [Default: ""]
 		  --toggle-mode <mode>        Action to handle nested calls [Default: "$DEFAULT_TOGGLE_MODE"]
-		  --socket-name <value>       Socket name [Default: "$DEFAULT_SOCKET_NAME"]
+		  --socket-name <name>        Socket name of the popup server [Default: "$DEFAULT_SOCKET_NAME"]
 
 		Examples:
 
