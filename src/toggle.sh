@@ -32,6 +32,7 @@ usage() {
 		  --after-close <hook>        Hook to run after closing the popup [Default: ""]
 		  --toggle-mode <mode>        Action to handle nested calls [Default: "$DEFAULT_TOGGLE_MODE"]
 		  --socket-name <name>        Socket name of the popup server [Default: "$DEFAULT_SOCKET_NAME"]
+		  --socket-path <path>        Socket path of the popup server [Default: ""]
 
 		Examples:
 
@@ -82,7 +83,7 @@ prepare_open() {
 }
 
 declare name id id_format toggle_keys open_args open_dir program display_args
-declare on_init before_open after_close toggle_mode socket_name
+declare on_init before_open after_close toggle_mode socket_name socket_path
 declare opened_name caller_id_format caller_path caller_pane_path
 declare default_id_format default_shell session_path pane_path
 main() {
@@ -93,6 +94,7 @@ main() {
 		after_close="#{@popup-after-close}" \
 		toggle_mode="#{@popup-toggle-mode}" \
 		socket_name="#{@popup-socket-name}" \
+		socket_path="#{@popup-socket-path}" \
 		opened_name="#{@__popup_name}" \
 		caller_id_format="#{@__popup_id_format}" \
 		caller_path="#{@__popup_caller_path}" \
@@ -157,6 +159,14 @@ main() {
 		fi
 	fi
 
+	if [[ -n $socket_path ]]; then
+		popup_socket=(-S "$socket_path")
+		popup_server=${socket_path##*/}
+	else
+		popup_socket=(-L "$socket_name")
+		popup_server=${socket_name}
+	fi
+
 	# Run hook: before-open
 	if parse_cmds "$before_open"; then tmux "${cmds[@]}"; fi
 
@@ -170,12 +180,12 @@ main() {
 	open_script+="tmux set default-shell '$default_shell'"
 	# Set $TMUX_POPUP_SERVER so as to identify the popup server,
 	# and propagate user's default shell.
-	open_script+="; export TMUX_POPUP_SERVER='$socket_name' SHELL='$default_shell'"
+	open_script+="; export TMUX_POPUP_SERVER='$popup_server' SHELL='$default_shell'"
 	# Suppress stdout to hide the `[detached] ...` message
-	open_script+="; exec tmux -L '$socket_name' $(escape "${open_cmds[@]}") >/dev/null"
+	open_script+="; exec tmux $(escape "${popup_socket[@]}" "${open_cmds[@]}") >/dev/null"
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
-	# shell commands. However, our scripts require `sh(1)` and may not be parsed
+	# shell commands. However, our scripts require sh(1) and may not be parsed
 	# correctly by some incompatible shells. In this case, we change the default
 	# shell to `/bin/sh` and then revert it immediately.
 	tmux set default-shell "/bin/sh" \; popup "${display_args[@]}" "$open_script"
@@ -183,7 +193,7 @@ main() {
 	# Undo temporary changes on the popup server
 	if [[ ${#on_cleanup} -gt 0 ]]; then
 		# Ignore error if the server has already stopped
-		tmux -NL "$socket_name" "${on_cleanup[@]}" 2>/dev/null || true
+		tmux -N "${popup_socket[@]}" "${on_cleanup[@]}" 2>/dev/null || true
 	fi
 
 	# Run hook: after-close
