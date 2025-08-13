@@ -44,7 +44,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 - Support specifying the socket path for the popup server ([#{PRNUM}])
 
 [#42]: https://github.com/loichyan/tmux-toggle-popup/pull/42
-[#{{PRNUM}}]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
+[#43]: https://github.com/loichyan/tmux-toggle-popup/pull/43
 [NixOS/nixpkgs#428294]: https://github.com/NixOS/nixpkgs/pull/428294
 [@szaffarano]: https://github.com/szaffarano
 
