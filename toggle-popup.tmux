@@ -22,8 +22,8 @@ handle_exports() {
 handle_autostart() {
 	# Do not start itself within a popup server
 	if [[ $autostart == "on" && -z $TMUX_POPUP_SERVER ]]; then
-		# Set $TMUX_POPUP_SERVER so as to identify the popup server,
-		# and propagate user's default shell.
+		# Set $TMUX_POPUP_SERVER to identify the popup server.
+		# Propagate user's default shell.
 		env \
 			TMUX_POPUP_SERVER="$socket_name" \
 			SHELL="$default_shell" \
