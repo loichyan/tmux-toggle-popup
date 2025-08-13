@@ -112,3 +112,18 @@ t_toggle_mode="force-open"
 t_opened_name="p_open_nested_1"
 begin_test "$test_name"
 test_toggle --name="p_open_nested_2"
+
+test_name="open_with_toggle_key"
+exit_codes=(0 0 0)
+t_toggle_mode="switch"
+t_opened_name=""
+begin_test "$test_name"
+test_toggle --name="p_toggle_key" --toggle-key="-T root M-p" --toggle-key="-n M-o"
+
+# Open nested popups should not clean toggle keys.
+test_name="open_nested_with_toggle_key"
+exit_codes=(0 0 0)
+t_toggle_mode="force-open"
+t_opened_name="p_nested_toggle_key_1"
+begin_test "$test_name"
+test_toggle --name="p_nested_toggle_key_2" --toggle-key="-n M-o"
