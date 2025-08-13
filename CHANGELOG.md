@@ -46,10 +46,12 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 ### Fixed
 
 - Support OSX's ancient Bash ([#44])
+- Forward all arguments when setting specified toggle keys ([#45])
 
 [#42]: https://github.com/loichyan/tmux-toggle-popup/pull/42
 [#43]: https://github.com/loichyan/tmux-toggle-popup/pull/43
 [#44]: https://github.com/loichyan/tmux-toggle-popup/pull/44
+[#45]: https://github.com/loichyan/tmux-toggle-popup/pull/45
 [NixOS/nixpkgs#428294]: https://github.com/NixOS/nixpkgs/pull/428294
 [@szaffarano]: https://github.com/szaffarano
 

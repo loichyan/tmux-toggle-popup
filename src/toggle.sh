@@ -73,7 +73,7 @@ prepare_open() {
 	# Create temporary toggle keys in the opened popup
 	# shellcheck disable=SC2206
 	for k in "${toggle_keys[@]}"; do
-		open_cmds+=(bind $k run "#{@popup-toggle} --name='$name' --toggle-mode='$toggle_mode'" \;)
+		open_cmds+=(bind $k run "#{@popup-toggle} $(escape "${args[@]}")" \;)
 		on_cleanup+=(unbind $k \;)
 	done
 
@@ -193,7 +193,7 @@ main() {
 	tmux set default-shell "/bin/sh" \; popup "${display_args[@]}" "$open_script"
 
 	# Undo temporary changes on the popup server
-	if [[ ${#on_cleanup} -gt 0 ]]; then
+	if [[ -z $opened_name && ${#on_cleanup} -gt 0 ]]; then
 		# Ignore error if the server has already stopped
 		tmux -N "${popup_socket[@]}" "${on_cleanup[@]}" 2>/dev/null || true
 	fi
@@ -202,4 +202,5 @@ main() {
 	if parse_cmds "$after_close"; then tmux "${cmds[@]}"; fi
 }
 
+args=("$@")
 main "$@"
