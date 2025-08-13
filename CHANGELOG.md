@@ -41,10 +41,15 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 - Distribute this plugin to nixpkgs ([#42], [NixOS/nixpkgs#428294], thanks
   [@szaffarano])
-- Support specifying the socket path for the popup server ([#{PRNUM}])
+- Support specifying the socket path for the popup server ([#43])
+
+### Fixed
+
+- Support OSX's ancient Bash ([#{{PRNUM}}])
 
 [#42]: https://github.com/loichyan/tmux-toggle-popup/pull/42
 [#43]: https://github.com/loichyan/tmux-toggle-popup/pull/43
+[#{{PRNUM}}]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
 [NixOS/nixpkgs#428294]: https://github.com/NixOS/nixpkgs/pull/428294
 [@szaffarano]: https://github.com/szaffarano
 
