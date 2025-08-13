@@ -5,6 +5,10 @@ caller/id/format
 <<<TMUX:END(1)
 
 >>>TMUX:BEGIN(2)
+new
+-ds
+caller/id/format
+;
 switch
 -t
 caller/id/format

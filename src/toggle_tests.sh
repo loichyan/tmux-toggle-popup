@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034
 
 set -eo pipefail
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -8,49 +9,54 @@ source "$CURRENT_DIR/helpers.sh"
 
 #=== test:tggles ===#
 
-declare delimiter=">>>END" inputs f_call_id f_output
-add_input() {
-	inputs+=("$(printf "%s\n$delimiter\n" "$@")")
+prepare_batch_options() {
+	fake_batch_options \
+		t_id_format="pane/path/{popup_name}" \
+		t_on_init="display 'on-init' ; run '#{@on_init}'" \
+		t_before_open="display 'before-open' ; run '#{@before_open}'" \
+		t_after_close="display 'after-close' ; run '#{@after_close}'" \
+		t_toggle_mode="switch" \
+		t_socket_name="popup_server1" \
+		t_socket_path="socket/path/popup_server2" \
+		t_opened_name="" \
+		t_caller_id_format="caller/id/format" \
+		t_caller_path="caller/session/pane" \
+		t_caller_pane_path="caller/pane/path" \
+		t_default_id_format="session/path/{popup_name}" \
+		t_default_shell="/usr/bin/fish" \
+		t_session_path="working/session/path" \
+		t_pane_path="working/pane/path"
 }
+
+declare delimiter=">>>END" exit_codes f_call_id f_output
 tmux() {
 	# Bump call ID
 	local call_id
 	call_id=$(cat "$f_call_id")
 	echo "$((call_id + 1))" >"$f_call_id"
 
+	# The first call is always `batch_get_options`.
+	# Discard its output since not particular useful.
+	if [[ $call_id == 0 ]]; then
+		prepare_batch_options
+		return
+	fi
+
 	# Appends arguments to output
 	{
-		echo ">>>tmux:begin($call_id)"
+		echo ">>>TMUX:BEGIN($call_id)"
 		printf "%s\n" "$@"
-		echo "<<<tmux:end($call_id)"
+		echo "<<<TMUX:END($call_id)"
 		echo
 	} >>"$f_output"
 
-	# Mock tmux response
-	echo -n "${inputs[$call_id]}"
+	# Fake tmux exit code
+	# shellcheck disable=SC2086
+	return ${exit_codes[$call_id]}
 }
 
-declare test_name mode opened_name
+declare test_name
 test_toggle() {
-	inputs=()
-	# batch_get_options
-	add_input \
-		"pane/path/{popup_name}" \
-		"display 'hook:begin' ; display 'on-init' ; display 'hook:end'" \
-		"display 'hook:begin' ; display 'before-open' ; display 'hook:end'" \
-		"display 'hook:begin' ; display 'after-close' ; display 'hook:end'" \
-		"$mode" \
-		"popup1" \
-		"socket/path/popup2" \
-		"$opened_name" \
-		"caller/id/format" \
-		"caller/session/pane" \
-		"caller/pane/path" \
-		"session/path/{popup_name}" \
-		"/usr/bin/fish" \
-		"working/session/path" \
-		"working/pane/path"
-
 	f_call_id=$(alloctmp)
 	f_output=$(alloctmp)
 	echo 0 >"$f_call_id"
@@ -66,31 +72,43 @@ test_toggle() {
 }
 
 test_name="open_popup"
-mode="switch"
-opened_name=""
+exit_codes=(0 0 0)
+t_toggle_mode="switch"
+t_opened_name=""
 begin_test "$test_name"
 test_toggle --name="p_open"
 
 test_name="close_popup"
-mode="switch"
-opened_name="p_close"
+exit_codes=(0 0 0)
+t_toggle_mode="switch"
+t_opened_name="p_close"
 begin_test "$test_name"
 test_toggle --name="p_close"
 
 test_name="switch_popup"
-mode="switch"
-opened_name="p_switch_1"
+exit_codes=(0 0 0)
+t_toggle_mode="switch"
+t_opened_name="p_switch_1"
+begin_test "$test_name"
+test_toggle --name="p_switch_2"
+
+test_name="switch_new_popup"
+exit_codes=(0 1 0)
+t_toggle_mode="switch"
+t_opened_name="p_switch_1"
 begin_test "$test_name"
 test_toggle --name="p_switch_2"
 
 test_name="force_close_popup"
-mode="force-close"
-opened_name="p_force_close_1"
+exit_codes=(0 0 0)
+t_toggle_mode="force-close"
+t_opened_name="p_force_close_1"
 begin_test "$test_name"
 test_toggle --name="p_force_close_2"
 
 test_name="open_nested_popup"
-mode="force-open"
-opened_name="p_open_nested_1"
+exit_codes=(0 0 0)
+t_toggle_mode="force-open"
+t_opened_name="p_open_nested_1"
 begin_test "$test_name"
 test_toggle --name="p_open_nested_2"
