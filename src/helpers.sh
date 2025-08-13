@@ -19,14 +19,14 @@ die_badopt() {
 # `key=format`, where `format` is a tmux FORMAT to retrieve the intended option,
 # and its value is assigned to a variable named `key`.
 batch_get_options() {
-	local vars=() formats=() val=() line
+	local keys=() formats=() val=() line
 	while [[ $# -gt 0 ]]; do
-		vars+=("${1%%=*}")
+		keys+=("${1%%=*}")
 		formats+=("${1#*=}")
 		shift
 	done
-	delimiter=${delimiter:-"EOF@$RANDOM"} # generate a random delimiter
-	set -- "${vars[@]}"
+	delimiter=${delimiter:-">>>END@$RANDOM"} # generate a random delimiter
+	set -- "${keys[@]}"
 	while IFS= read -r line; do
 		if [[ -z $line ]]; then
 			:
@@ -84,4 +84,52 @@ interpolate() {
 		shift
 	done
 	echo "$result"
+}
+
+#=== Test utils ===#
+
+failf() {
+	local source lineno
+	source=$(basename "${BASH_SOURCE[1]}")
+	lineno=${BASH_LINENO[1]}
+	printf "%s:%s: $1" "$source" "$lineno" "${@:2}"
+	exit 1
+}
+
+assert_eq() {
+	if [[ $1 != "$2" ]]; then
+		failf "assertion failed: left != right:\n\tleft: %s\n\tright: %s" "$1" "$2"
+	fi
+}
+
+begin_test() {
+	local source
+	source=$(basename "${BASH_SOURCE[1]}")
+	echo -e "[test] ${source%.*}::${1}"
+}
+
+# Allocates a temporary file, deleting on exit.
+alloctmp() {
+	local tempath
+	tempath=$(mktemp)
+	# shellcheck disable=SC2064
+	trap "rm '$tempath'" EXIT
+	echo "$tempath"
+}
+
+# Simulates the response of `batch_get_options`. It accepts arguments in the
+# same format as `batch_get_options`: each pair contains the variable name and
+# its default value. If a variable is set in the execution context, then its
+# value will be used.
+fake_batch_options() {
+	local key val
+	while [[ $# -gt 0 ]]; do
+		key=${1%%=*}
+		val=${1#*=}
+		if [[ -n ${!key} ]]; then
+			val=${!key}
+		fi
+		printf "%s\n$delimiter\n" "$val"
+		shift
+	done
 }

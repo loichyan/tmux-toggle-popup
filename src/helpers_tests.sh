@@ -1,28 +1,10 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eo pipefail
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=../src/helpers.sh
-source "$CURRENT_DIR/../src/helpers.sh"
-
-failf() {
-	local source lineno
-	source=$(basename "${BASH_SOURCE[1]}")
-	lineno=${BASH_LINENO[1]}
-	printf "%s:%s: $1" "$source" "$lineno" "${@:2}"
-	exit 1
-}
-
-assert_eq() {
-	if [[ $1 != "$2" ]]; then
-		failf "assertion failed: left != right:\n\tleft: %s\n\tright: %s" "$1" "$2"
-	fi
-}
-
-begin_test() {
-	echo -e "[test] helpers_tests::$1"
-}
+source "$CURRENT_DIR/helpers.sh"
 
 #=== test:parse_cmds ===#
 
@@ -34,14 +16,14 @@ test_parse_commands() {
 		failf "expected $# tokens to be parsed, got ${#cmds[@]}:%s" "$(printf "\n\t%s" "${cmds[@]}")"
 	fi
 
-	local -i i=0
+	local i=0
 	while [[ $# -gt 0 ]]; do
 		if [[ $1 != "${cmds[$i]}" ]]; then
 			git diff <(echo "$1") <(echo "${cmds[i]}")
 			failf "unexpected token at $((i + 1))"
 		fi
 		shift
-		i+=1
+		i=$((i + 1))
 	done
 }
 
@@ -73,10 +55,10 @@ test_parse_commands \
 
 #=== test:interpolate ===#
 
-declare expected output
+declare expected input
 test_interpolate() {
-	output=$(interpolate "${@}" "$format")
-	assert_eq "$expected" "$output"
+	input=$(interpolate "${@}" "$format")
+	assert_eq "$expected" "$input"
 }
 
 begin_test "no_interpolate_of_unknown"
@@ -97,10 +79,10 @@ test_interpolate var1="var1=value1" var2="var2=value2"
 #=== test:batch_get_options ===#
 
 # Simulates a tmux response.
-declare input delimiter="EOF"
+declare delimiter=">>>END" input
 declare var1 var2 var3 var4
 tmux() {
-	printf "%s\nEOF\n" "${input[@]}"
+	printf "%s\n$delimiter\n" "${input[@]}"
 }
 
 begin_test "batch_get_options"

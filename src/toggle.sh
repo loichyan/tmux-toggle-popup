@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eo pipefail
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=./helpers.sh
@@ -45,7 +45,7 @@ usage() {
 # - `open_cmds` is used to initialize the popup session
 # - `on_cleanup` is used to undo temporary changes on the popup server
 # - `popup_id` is set to the name of the target popup session
-declare open_cmds on_cleanup popup_id
+declare open_cmds=() on_cleanup=() popup_id
 prepare_open() {
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
@@ -82,7 +82,7 @@ prepare_open() {
 	fi
 }
 
-declare name id id_format toggle_keys open_args open_dir program display_args
+declare name id id_format toggle_keys=() open_args=() open_dir program=() display_args=()
 declare on_init before_open after_close toggle_mode socket_name socket_path
 declare opened_name caller_id_format caller_path caller_pane_path
 declare default_id_format default_shell session_path pane_path
@@ -148,12 +148,14 @@ main() {
 
 	if [[ -n $opened_name ]]; then
 		if [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
-			exec tmux detach >/dev/null
+			tmux detach >/dev/null
+			return
 		elif [[ $toggle_mode == "switch" ]]; then
 			# Inherit the caller's ID format in switch mode
 			id_format=${caller_id_format}
 			prepare_open "switch"
-			exec tmux "${open_cmds[@]}"
+			tmux "${open_cmds[@]}"
+			return
 		elif [[ $toggle_mode != "force-open" ]]; then
 			die "illegal toggle mode: $toggle_mode"
 		fi
