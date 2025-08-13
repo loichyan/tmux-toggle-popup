@@ -25,7 +25,7 @@ batch_get_options() {
 		formats+=("${1#*=}")
 		shift
 	done
-	delimiter=${delimiter:-"EOF@$RANDOM"} # generate a random delimiter
+	delimiter=${delimiter:-">>>END@$RANDOM"} # generate a random delimiter
 	set -- "${vars[@]}"
 	while IFS= read -r line; do
 		if [[ -z $line ]]; then
@@ -84,4 +84,34 @@ interpolate() {
 		shift
 	done
 	echo "$result"
+}
+
+#=== Test utils ===#
+
+failf() {
+	local source lineno
+	source=$(basename "${BASH_SOURCE[1]}")
+	lineno=${BASH_LINENO[1]}
+	printf "%s:%s: $1" "$source" "$lineno" "${@:2}"
+	exit 1
+}
+
+assert_eq() {
+	if [[ $1 != "$2" ]]; then
+		failf "assertion failed: left != right:\n\tleft: %s\n\tright: %s" "$1" "$2"
+	fi
+}
+
+begin_test() {
+	local source
+	source=$(basename "${BASH_SOURCE[1]}")
+	echo -e "[test] ${source%.*}::${1}"
+}
+
+alloctmp() {
+	local tempath
+	tempath=$(mktemp)
+	# shellcheck disable=SC2064
+	trap "rm '$tempath'" EXIT
+	echo "$tempath"
 }

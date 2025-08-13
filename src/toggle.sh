@@ -148,12 +148,14 @@ main() {
 
 	if [[ -n $opened_name ]]; then
 		if [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
-			exec tmux detach >/dev/null
+			tmux detach >/dev/null
+			return
 		elif [[ $toggle_mode == "switch" ]]; then
 			# Inherit the caller's ID format in switch mode
 			id_format=${caller_id_format}
 			prepare_open "switch"
-			exec tmux "${open_cmds[@]}"
+			tmux "${open_cmds[@]}"
+			return
 		elif [[ $toggle_mode != "force-open" ]]; then
 			die "illegal toggle mode: $toggle_mode"
 		fi
