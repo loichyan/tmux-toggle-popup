@@ -101,6 +101,33 @@ values. Most of these options are used to customize the behavior of
 `@popup-toggle`, which can also be specified as shell arguments for on-the-fly
 overrides.
 
+### `@popup-id-format`
+
+**Default**:
+`#{b:socket_path}/#{session_name}/#{b:pane_current_path}/{popup_name}`
+
+**Description**: A format string used to generate a unique ID for each *popup
+session*.
+
+This option is primarily used to define how *popup sessions* are shared across
+sessions, windows, and panes. You can use `{popup_name}` (not `#{popup_name}`)
+as a placeholder for the name of a popup. Below explains how the default value
+works:
+
+```text
+#{b:socket_path}/#{session_name}/#{b:pane_current_path}/{popup_name}
+  ^^^^^^^^^^^^^    ^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^
+  (1)              (2)             (3)                   (4)
+```
+
+1. Each server has its own popups. If only one server is used, this part can be
+   removed.
+2. Popups are also independent among different sessions.
+3. In each session, popups are shared within the same project, where a project
+   is identified by its working directory.
+4. Different popups do not share the same ID. This part is usually necessary
+   unless you have only one popup set up.
+
 ### `@popup-toggle-mode`
 
 **Default**: `switch`
@@ -131,32 +158,14 @@ working server in your *.tmux.conf*.
 %endif
 ```
 
-### `@popup-id-format`
+### `@popup-socket-path`
 
-**Default**:
-`#{b:socket_path}/#{session_name}/#{b:pane_current_path}/{popup_name}`
+**Default**: empty
 
-**Description**: A format string used to generate a unique ID for each *popup
-session*.
+**Description**: The socket path of the server to start *popup sessions*.
 
-This option is primarily used to define how *popup sessions* are shared across
-sessions, windows, and panes. You can use `{popup_name}` (not `#{popup_name}`)
-as a placeholder for the name of a popup. Below explains how the default value
-works:
-
-```text
-#{b:socket_path}/#{session_name}/#{b:pane_current_path}/{popup_name}
-  ^^^^^^^^^^^^^    ^^^^^^^^^^^^    ^^^^^^^^^^^^^^^^^^^   ^^^^^^^^^^
-  (1)              (2)             (3)                   (4)
-```
-
-1. Each server has its own popups. If only one server is used, this part can be
-   removed.
-2. Popups are also independent among different sessions.
-3. In each session, popups are shared within the same project, where a project
-   is identified by its working directory.
-4. Different popups do not share the same ID. This part is usually necessary
-   unless you have only one popup set up.
+This option takes precedence over `@popup-socket-name` if both are provided.
+When it takes effect, `$TMUX_POPUP_SERVER` is set to the basename of its value.
 
 ### `@popup-autostart`
 
@@ -225,6 +234,9 @@ set -ga @popup-on-init "
 
 ### Sharing tmux buffers
 
+Forward the output of copies from *popup sessoins* to the the *working session*
+and the input of pastes in reverse.
+
 ```tmux
 %if "$TMUX_POPUP_SERVER"
 	set -g copy-command "tmux -Ldefault loadb -w -"
@@ -236,6 +248,9 @@ set -ga @popup-on-init "
 
 ### Popups per workspace
 
+Share popups within the same workspace, regardless of which session you are
+working in.
+
 ```tmux
 set -gF "#{b:pane_current_path}/{popup_name}"
 ```
@@ -244,7 +259,7 @@ set -gF "#{b:pane_current_path}/{popup_name}"
 
 ```tmux
 # Start popups in the working server
-set -gF @popup-socket-name "#{b:socket_path}"
+set -gF @popup-socket-path "#{socket_path}"
 # Turn off statusline
 set -g  @popup-on-init "set status off"
 # Simplify the ID format
