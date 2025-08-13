@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eo pipefail
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=./helpers.sh
@@ -45,7 +45,7 @@ usage() {
 # - `open_cmds` is used to initialize the popup session
 # - `on_cleanup` is used to undo temporary changes on the popup server
 # - `popup_id` is set to the name of the target popup session
-declare open_cmds on_cleanup popup_id
+declare open_cmds=() on_cleanup=() popup_id
 prepare_open() {
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
@@ -82,7 +82,7 @@ prepare_open() {
 	fi
 }
 
-declare name id id_format toggle_keys open_args open_dir program display_args
+declare name id id_format toggle_keys=() open_args=() open_dir program=() display_args=()
 declare on_init before_open after_close toggle_mode socket_name socket_path
 declare opened_name caller_id_format caller_path caller_pane_path
 declare default_id_format default_shell session_path pane_path

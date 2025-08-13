@@ -34,14 +34,14 @@ test_parse_commands() {
 		failf "expected $# tokens to be parsed, got ${#cmds[@]}:%s" "$(printf "\n\t%s" "${cmds[@]}")"
 	fi
 
-	local -i i=0
+	local i=0
 	while [[ $# -gt 0 ]]; do
 		if [[ $1 != "${cmds[$i]}" ]]; then
 			git diff <(echo "$1") <(echo "${cmds[i]}")
 			failf "unexpected token at $((i + 1))"
 		fi
 		shift
-		i+=1
+		((i++))
 	done
 }
 
