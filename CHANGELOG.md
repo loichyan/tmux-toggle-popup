@@ -37,6 +37,13 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+## [0.4.3] - {{DATE}}
+
+This release resolves a long-standing issue with `@popup-toggle` on macOS's
+ancient built-in Bash ([#44]). Thanks to [u/Beautiful_Baseball76] for the
+feedback , which also motivated me to add a number of integration tests,
+although many are powered by some "dark" Bash magic =.=
+
 ### Added
 
 - Distribute this plugin to nixpkgs ([#42], [NixOS/nixpkgs#428294], thanks
@@ -50,7 +57,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ### Fixed
 
-- Support OSX's ancient Bash ([#44])
+- Support macOS's ancient built-in Bash ([#44])
 - Forward all arguments when setting specified toggle keys ([#45])
 
 [#42]: https://github.com/loichyan/tmux-toggle-popup/pull/42
@@ -60,6 +67,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 [#46]: https://github.com/loichyan/tmux-toggle-popup/pull/46
 [NixOS/nixpkgs#428294]: https://github.com/NixOS/nixpkgs/pull/428294
 [@szaffarano]: https://github.com/szaffarano
+[u/Beautiful_Baseball76]: https://www.reddit.com/user/Beautiful_Baseball76
 
 ## [0.4.2] - 2025-07-29
 
@@ -198,7 +206,8 @@ override popup global options on the fly using the newly added arguments of
 [README](https://github.com/loichyan/tmux-toggle-popup/blob/v0.1.0/README.md)
 for more details.
 
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.2..HEAD
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.3..HEAD
+[0.4.3]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.2..v0.4.3
 [0.4.2]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.1..v0.4.2
 [0.4.1]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..v0.4.1
 [0.4.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..v0.4.0
