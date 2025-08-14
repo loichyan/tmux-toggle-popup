@@ -19,7 +19,7 @@ test_parse_commands() {
 	local i=0
 	while [[ $# -gt 0 ]]; do
 		if [[ $1 != "${cmds[$i]}" ]]; then
-			git diff <(echo "${cmds[i]}") <(echo "$1")
+			git diff <(print "${cmds[i]}") <(print "$1")
 			failf "unexpected token at $((i + 1))"
 		fi
 		shift
