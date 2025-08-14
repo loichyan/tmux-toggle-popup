@@ -37,7 +37,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
-## [0.4.3] - {{DATE}}
+## [0.4.3] - 2025-08-14
 
 This release resolves a long-standing issue with `@popup-toggle` on macOS's
 ancient built-in Bash ([#44]). Thanks to [u/Beautiful_Baseball76] for the
