@@ -23,7 +23,7 @@ return_batch_options() {
 		t_socket_name="popup" \
 		t_socket_path="" \
 		t_opened_name="" \
-		t_caller_id_format="caller_id_format" \
+		t_caller_id_format="caller_id_format/{popup_name}" \
 		t_caller_path="caller_session_path" \
 		t_caller_pane_path="caller_pane_path" \
 		t_default_id_format="default_id_format/{popup_name}" \

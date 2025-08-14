@@ -1,16 +1,16 @@
 >>>TMUX:BEGIN[1]
 	has
 	-t
-	caller_id_format
+	caller_id_format/p_switch_2
 <<<TMUX:END[1]
 >>>TMUX:BEGIN[2]
 	new
 	-ds
-	caller_id_format
+	caller_id_format/p_switch_2
 	;
 	switch
 	-t
-	caller_id_format
+	caller_id_format/p_switch_2
 	;
 	set
 	@__popup_name
@@ -18,7 +18,7 @@
 	;
 	set
 	@__popup_id_format
-	caller_id_format
+	caller_id_format/{popup_name}
 	;
 	set
 	@__popup_caller_path

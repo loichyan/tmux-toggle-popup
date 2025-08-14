@@ -51,16 +51,16 @@ prepare_init() {
 	popup_id=$(escape_session_name "$popup_id")
 	if [[ -n $open_dir ]]; then
 		# Interpolate `{popup_caller_path}`, `{popup_caller_pane_path}`.
-		open_args+=(-c "$(interpolate popup_caller_path="$caller_path" \
+		init_args+=(-c "$(interpolate popup_caller_path="$caller_path" \
 			popup_caller_pane_path="$caller_pane_path" "$open_dir")")
 	fi
 
 	init_cmds=()
 	if [[ $1 == "open" ]]; then
-		init_cmds+=(new -As "$popup_id" "${open_args[@]}" "${program[@]}" \;)
+		init_cmds+=(new -As "$popup_id" "${init_args[@]}" "${program[@]}" \;)
 	else
 		if ! tmux has -t "$popup_id" 2>/dev/null; then
-			init_cmds+=(new -ds "$popup_id" "${open_args[@]}" "${program[@]}" \;)
+			init_cmds+=(new -ds "$popup_id" "${init_args[@]}" "${program[@]}" \;)
 		fi
 		init_cmds+=(switch -t "$popup_id" \;)
 	fi
@@ -83,7 +83,7 @@ prepare_init() {
 	fi
 }
 
-declare name id id_format toggle_keys=() open_args=() open_dir program=() display_args=()
+declare name id id_format toggle_keys=() init_args=() open_dir program=() display_args=()
 declare on_init before_open after_close toggle_mode socket_name socket_path
 declare opened_name caller_id_format caller_path caller_pane_path
 declare default_id_format default_shell session_path pane_path
@@ -120,7 +120,7 @@ main() {
 		# Forward working directory to popup sessions
 		d) open_dir=$OPTARG ;;
 		# Forward environment overrides to popup sessions
-		e) open_args+=("-e" "$OPTARG") ;;
+		e) init_args+=(-e "$OPTARG") ;;
 		name | id | id-format | toggle-key | \
 			on-init | before-open | after-close | \
 			toggle-mode | socket-name | socket-path)
