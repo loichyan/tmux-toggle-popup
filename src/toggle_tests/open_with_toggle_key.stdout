@@ -1,9 +1,6 @@
 >>>TMUX:BEGIN[1]
-	display
-	before-open
-	;
 	run
-	#{@before_open}
+	#{@popup_before_open}
 	;
 	set
 	default-shell
@@ -13,14 +10,14 @@
 	>>>TMUX:BEGIN[2]
 		set
 		default-shell
-		/usr/bin/fish
+		/default/shell
 	<<<TMUX:END[2]
 	>>>TMUX:BEGIN[3]
-		-S
-		socket/path/popup_server2
+		-L
+		popup
 		new
 		-As
-		pane/path/p_toggle_key
+		default_id_format/p_toggle_key
 		;
 		set
 		@__popup_name
@@ -28,15 +25,15 @@
 		;
 		set
 		@__popup_id_format
-		pane/path/{popup_name}
+		default_id_format/{popup_name}
 		;
 		set
 		@__popup_caller_path
-		working/session/path
+		working_session_path
 		;
 		set
 		@__popup_caller_pane_path
-		working/pane/path
+		working_pane_path
 		;
 		bind
 		-T
@@ -50,24 +47,18 @@
 		run
 		#{@popup-toggle} --name=p_toggle_key --toggle-key=-T\ root\ M-p --toggle-key=-n\ M-o
 		;
-		display
-		on-init
-		;
 		run
-		#{@on_init}
+		#{@popup_on_init}
 	<<<TMUX:END[3]
 	;
-	display
-	after-close
-	;
 	run
-	#{@after_close}
+	#{@popup_after_close}
 	;
 <<<TMUX:END[1]
 >>>TMUX:BEGIN[4]
 	-N
-	-S
-	socket/path/popup_server2
+	-L
+	popup
 	unbind
 	-T
 	root
