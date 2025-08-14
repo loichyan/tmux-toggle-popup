@@ -34,7 +34,7 @@ return_batch_options() {
 }
 
 normalize_output() {
-	sed -e 's/\s\+$//' -e 's/^.\+/\t&/'
+	sed -e 's/\s\+$//' -e $'s/^.\+/\t&/'
 }
 
 parse_output() {
