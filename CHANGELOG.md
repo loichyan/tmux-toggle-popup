@@ -53,7 +53,7 @@ although many are powered by some "dark" Bash magic =.=
 ### Changed
 
 - The `before-open` and `after-close` hooks are called in the same execution
-  that opens a popup window. This should rarely have side effects ([#46])
+  that opens the popup window. This should rarely have side effects ([#46])
 
 ### Fixed
 
