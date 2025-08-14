@@ -246,15 +246,6 @@ and the input of pastes in reverse.
 %endif
 ```
 
-### Popups per workspace
-
-Share popups within the same workspace, regardless of which session you are
-working in.
-
-```tmux
-set -gF "#{b:pane_current_path}/{popup_name}"
-```
-
 ### Popups in working server
 
 ```tmux
