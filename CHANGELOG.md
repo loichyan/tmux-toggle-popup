@@ -46,7 +46,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 ### Changed
 
 - The `before-open` and `after-close` hooks are called in the same execution
-  that opens a popup window. This should rarely have side effects ([#{{PRNUM}}])
+  that opens a popup window. This should rarely have side effects ([#46])
 
 ### Fixed
 
@@ -57,7 +57,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 [#43]: https://github.com/loichyan/tmux-toggle-popup/pull/43
 [#44]: https://github.com/loichyan/tmux-toggle-popup/pull/44
 [#45]: https://github.com/loichyan/tmux-toggle-popup/pull/45
-[#{{PRNUM}}]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
+[#46]: https://github.com/loichyan/tmux-toggle-popup/pull/46
 [NixOS/nixpkgs#428294]: https://github.com/NixOS/nixpkgs/pull/428294
 [@szaffarano]: https://github.com/szaffarano
 
