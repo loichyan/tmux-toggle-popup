@@ -1,3 +1,6 @@
->>>TMUX:BEGIN[1]
+>>>TMUX:BEGIN[1] {
+	TMUX_POPUP_SERVER=
+	SHELL=/system/shell
+}
 	detach
 <<<TMUX:END[1]

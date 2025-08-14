@@ -44,6 +44,8 @@ test_toggle() {
 
 # Ensure out fake executable tmux is picked at first.
 export PATH="$CURRENT_DIR/toggle_tests:$PATH"
+export SHELL="/system/shell"
+export TMUX_POPUP_SERVER=
 
 # Force subshell to ensure modifications are temporary.
 (
@@ -126,7 +128,7 @@ export PATH="$CURRENT_DIR/toggle_tests:$PATH"
 
 (
 	test_name="open_with_socket_path"
-	export t_socket_path="/path/to/popup_server"
+	export t_socket_path="/path/to/socket_path_server"
 	begin_test "$test_name" || exit 0
 	test_toggle --name='p_open_with_socket_path'
 ) || exit 1

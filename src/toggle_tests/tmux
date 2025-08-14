@@ -20,7 +20,7 @@ return_batch_options() {
 		t_before_open="run '#{@popup_before_open}'" \
 		t_after_close="run '#{@popup_after_close}'" \
 		t_toggle_mode="switch" \
-		t_socket_name="popup" \
+		t_socket_name="popup_test" \
 		t_socket_path="" \
 		t_opened_name="" \
 		t_caller_id_format="caller_id_format/{popup_name}" \
@@ -50,6 +50,13 @@ parse_output() {
 	done
 }
 
+dump_env() {
+	while [[ $# -gt 0 ]]; do
+		printf "%s=%s\n" "$1" "${!1}"
+		shift
+	done
+}
+
 declare call_id exit_code
 main() {
 	# The first call is always batch_get_options.
@@ -74,7 +81,9 @@ main() {
 
 	# Append arguments to output
 	{
-		echo ">>>TMUX:BEGIN[$call_id]"
+		echo ">>>TMUX:BEGIN[$call_id] {"
+		dump_env TMUX_POPUP_SERVER SHELL | normalize_output
+		echo "}"
 		parse_output "$@" | normalize_output
 		echo "<<<TMUX:END[$call_id]"
 	} | {
