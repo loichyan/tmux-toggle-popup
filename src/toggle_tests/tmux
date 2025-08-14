@@ -34,6 +34,7 @@ return_batch_options() {
 }
 
 normalize_output() {
+	# Remove trailing spaces; add indents.
 	awk '{ sub(/[[:space:]]+$/, ""); print "\t" $0 }'
 }
 
@@ -63,7 +64,13 @@ main() {
 	# Bump call ID
 	call_id=$(cat "$f_call_id")
 	echo "$((call_id + 1))" >"$f_call_id"
-	trace "call(${*:1:3} ...)"
+
+	# Trace tmux calls for debugging
+	if [[ -n $TEST_VERBOSE ]]; then
+		trace "call(${*})"
+	else
+		trace "call(${*:1:3} ...)"
+	fi
 
 	# Append arguments to output
 	{

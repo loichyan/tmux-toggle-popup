@@ -17,11 +17,11 @@
 		/path/to/popup_server
 		new
 		-As
-		p_open_with_socket_path
+		default_id_format/p_open_with_socket_path
 		;
 		set
 		@__popup_name
-		default
+		p_open_with_socket_path
 		;
 		set
 		@__popup_id_format

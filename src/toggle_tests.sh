@@ -48,92 +48,85 @@ export PATH="$CURRENT_DIR/toggle_tests:$PATH"
 # Force subshell to ensure modifications are temporary.
 (
 	test_name="open_popup"
-	begin_test "$test_name"
+	begin_test "$test_name" || exit 0
 	test_toggle --name="p_open"
 ) || exit 1
 
 (
 	test_name="open_with_overrides"
-	begin_test "$test_name"
+	begin_test "$test_name" || exit 0
 	test_toggle \
-		--name="p_open_with_overrides" \
-		--id-format="local_id_format/{popup_name}" \
-		--on-init="nop" \
-		--before-open="run '#{@popup-focus} --enter'" \
-		--after-close="run '#{@popup-focus} --leave'" \
-		--toggle-mode="force-close" \
-		--socket-name="local_socket_name" \
-		--socket-path="/local/socket_path/popup_server"
+		--name "p_open_with_overrides" \
+		--id-format "local_id_format/{popup_name}" \
+		--on-init "nop" \
+		--before-open "run '#{@popup-focus} --enter'" \
+		--after-close "run '#{@popup-focus} --leave'" \
+		--toggle-mode "force-close" \
+		--socket-name "local_socket_name" \
+		--socket-path "/local/socket_path/popup_server"
 ) || exit 1
 
 (
 	test_name="open_with_id"
-	begin_test "$test_name"
+	begin_test "$test_name" || exit 0
 	test_toggle --id='p_open_with_id'
 ) || exit 1
 
 (
-	export t_socket_path="/path/to/popup_server"
 	test_name="open_with_socket_path"
-	begin_test "$test_name"
-	test_toggle --id='p_open_with_socket_path'
+	export t_socket_path="/path/to/popup_server"
+	begin_test "$test_name" || exit 0
+	test_toggle --name='p_open_with_socket_path'
 ) || exit 1
 
 (
-	export t_opened_name="p_close"
-
 	test_name="close_popup"
-	begin_test "$test_name"
+	export t_opened_name="p_close"
+	begin_test "$test_name" || exit 0
 	test_toggle --name="p_close"
 ) || exit 1
-
 (
-	export t_opened_name="p_switch_1"
-
 	test_name="switch_popup"
-	begin_test "$test_name"
-	test_toggle --name="p_switch_2"
-) || exit 1
-
-(
 	export t_opened_name="p_switch_1"
-	exit_codes=(0 1 0 0)
-
-	test_name="switch_new_popup"
-	begin_test "$test_name"
+	begin_test "$test_name" || exit 0
 	test_toggle --name="p_switch_2"
 ) || exit 1
 
 (
+	test_name="switch_new_popup"
+	exit_codes=(0 1 0 0)
+	export t_opened_name="p_switch_1"
+	begin_test "$test_name" || exit 0
+	test_toggle --name="p_switch_2"
+) || exit 1
+
+(
+	test_name="force_close_popup"
 	export t_toggle_mode="force-close"
 	export t_opened_name="p_force_close_1"
-
-	test_name="force_close_popup"
-	begin_test "$test_name"
+	begin_test "$test_name" || exit 0
 	test_toggle --name="p_force_close_2"
 ) || exit 1
 
 (
+	test_name="open_nested_popup"
 	export t_toggle_mode="force-open"
 	export t_opened_name="p_open_nested_1"
-
-	test_name="open_nested_popup"
-	begin_test "$test_name"
+	begin_test "$test_name" || exit 0
 	test_toggle --name="p_open_nested_2"
 ) || exit 1
 
 (
 	test_name="open_with_toggle_key"
-	begin_test "$test_name"
+	begin_test "$test_name" || exit 0
 	test_toggle --name="p_toggle_key" --toggle-key="-T root M-p" --toggle-key="-n M-o"
 ) || exit 1
 
 # Open nested popups should not clean toggle keys.
 (
+	test_name="open_nested_with_toggle_key"
 	export t_toggle_mode="force-open"
 	export t_opened_name="p_nested_toggle_key_1"
-
-	test_name="open_nested_with_toggle_key"
-	begin_test "$test_name"
+	begin_test "$test_name" || exit 0
 	test_toggle --name="p_nested_toggle_key_2" --toggle-key="-n M-o"
 ) || exit 1

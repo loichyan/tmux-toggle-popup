@@ -113,7 +113,12 @@ assert_eq() {
 begin_test() {
 	local source
 	source=$(basename "${BASH_SOURCE[1]}")
-	echo "[test] ${source%.*}::${1}"
+	if [[ -z $TEST_FILTER || $1 =~ $TEST_FILTER ]]; then
+		echo "[test] ${source%.*}::${1}"
+	else
+		echo "[skip] ${source%.*}::${1}"
+		return 1
+	fi
 }
 
 # Simulates the response of `batch_get_options`. It accepts arguments in the
