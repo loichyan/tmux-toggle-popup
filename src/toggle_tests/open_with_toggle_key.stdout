@@ -1,4 +1,7 @@
->>>TMUX:BEGIN[1]
+>>>TMUX:BEGIN[1] {
+	TMUX_POPUP_SERVER=
+	SHELL=/system/shell
+}
 	run
 	#{@popup_before_open}
 	;
@@ -7,14 +10,20 @@
 	/bin/sh
 	;
 	display-popup
-	>>>TMUX:BEGIN[2]
+	>>>TMUX:BEGIN[2] {
+		TMUX_POPUP_SERVER=
+		SHELL=/system/shell
+	}
 		set
 		default-shell
 		/default/shell
 	<<<TMUX:END[2]
-	>>>TMUX:BEGIN[3]
+	>>>TMUX:BEGIN[3] {
+		TMUX_POPUP_SERVER=popup_test
+		SHELL=/default/shell
+	}
 		-L
-		popup
+		popup_test
 		new
 		-As
 		default_id_format/p_toggle_key
@@ -56,10 +65,13 @@
 	#{@popup_after_close}
 	;
 <<<TMUX:END[1]
->>>TMUX:BEGIN[4]
+>>>TMUX:BEGIN[4] {
+	TMUX_POPUP_SERVER=
+	SHELL=/system/shell
+}
 	-N
 	-L
-	popup
+	popup_test
 	unbind
 	-T
 	root

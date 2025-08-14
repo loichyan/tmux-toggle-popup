@@ -26,11 +26,13 @@
 		popup_test
 		new
 		-As
-		default_id_format/p_nested_toggle_key_2
+		default_id_format/p_open_with_directory
+		-c
+		working_pane_path
 		;
 		set
 		@__popup_name
-		p_nested_toggle_key_2
+		p_open_with_directory
 		;
 		set
 		@__popup_id_format
@@ -43,12 +45,6 @@
 		set
 		@__popup_caller_pane_path
 		working_pane_path
-		;
-		bind
-		-n
-		M-o
-		run
-		#{@popup-toggle} --name=p_nested_toggle_key_2 --toggle-key=-n\ M-o
 		;
 		run
 		#{@popup_on_init}

@@ -1,4 +1,7 @@
->>>TMUX:BEGIN[1]
+>>>TMUX:BEGIN[1] {
+	TMUX_POPUP_SERVER=
+	SHELL=/system/shell
+}
 	run
 	#{@popup_before_open}
 	;
@@ -7,21 +10,27 @@
 	/bin/sh
 	;
 	display-popup
-	>>>TMUX:BEGIN[2]
+	>>>TMUX:BEGIN[2] {
+		TMUX_POPUP_SERVER=
+		SHELL=/system/shell
+	}
 		set
 		default-shell
 		/default/shell
 	<<<TMUX:END[2]
-	>>>TMUX:BEGIN[3]
+	>>>TMUX:BEGIN[3] {
+		TMUX_POPUP_SERVER=socket_path_server
+		SHELL=/default/shell
+	}
 		-S
-		/path/to/popup_server
+		/path/to/socket_path_server
 		new
 		-As
-		p_open_with_socket_path
+		default_id_format/p_open_with_socket_path
 		;
 		set
 		@__popup_name
-		default
+		p_open_with_socket_path
 		;
 		set
 		@__popup_id_format

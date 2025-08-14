@@ -4,7 +4,7 @@
 }
 	has
 	-t
-	caller_id_format/p_switch_2
+	caller_id_format/p_switch_with_directory_2
 <<<TMUX:END[1]
 >>>TMUX:BEGIN[2] {
 	TMUX_POPUP_SERVER=
@@ -12,15 +12,17 @@
 }
 	new
 	-ds
-	caller_id_format/p_switch_2
+	caller_id_format/p_switch_with_directory_2
+	-c
+	caller_pane_path
 	;
 	switch
 	-t
-	caller_id_format/p_switch_2
+	caller_id_format/p_switch_with_directory_2
 	;
 	set
 	@__popup_name
-	p_switch_2
+	p_switch_with_directory_2
 	;
 	set
 	@__popup_id_format

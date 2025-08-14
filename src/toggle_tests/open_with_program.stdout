@@ -1,7 +1,4 @@
->>>TMUX:BEGIN[1] {
-	TMUX_POPUP_SERVER=
-	SHELL=/system/shell
-}
+>>>TMUX:BEGIN[1]
 	run
 	#{@popup_before_open}
 	;
@@ -10,27 +7,27 @@
 	/bin/sh
 	;
 	display-popup
-	>>>TMUX:BEGIN[2] {
-		TMUX_POPUP_SERVER=
-		SHELL=/system/shell
-	}
+	>>>TMUX:BEGIN[2]
 		set
 		default-shell
 		/default/shell
 	<<<TMUX:END[2]
-	>>>TMUX:BEGIN[3] {
-		TMUX_POPUP_SERVER=popup_test
-		SHELL=/default/shell
-	}
+	>>>TMUX:BEGIN[3]
 		-L
-		popup_test
+		popup
 		new
 		-As
-		default_id_format/p_nested_toggle_key_2
+		default_id_format/p_open_with_program
+		my_fancy_program
+		--with
+		--some
+		flags
+		--
+		this is good
 		;
 		set
 		@__popup_name
-		p_nested_toggle_key_2
+		p_open_with_program
 		;
 		set
 		@__popup_id_format
@@ -43,12 +40,6 @@
 		set
 		@__popup_caller_pane_path
 		working_pane_path
-		;
-		bind
-		-n
-		M-o
-		run
-		#{@popup-toggle} --name=p_nested_toggle_key_2 --toggle-key=-n\ M-o
 		;
 		run
 		#{@popup_on_init}

@@ -20,10 +20,10 @@ return_batch_options() {
 		t_before_open="run '#{@popup_before_open}'" \
 		t_after_close="run '#{@popup_after_close}'" \
 		t_toggle_mode="switch" \
-		t_socket_name="popup" \
+		t_socket_name="popup_test" \
 		t_socket_path="" \
 		t_opened_name="" \
-		t_caller_id_format="caller_id_format" \
+		t_caller_id_format="caller_id_format/{popup_name}" \
 		t_caller_path="caller_session_path" \
 		t_caller_pane_path="caller_pane_path" \
 		t_default_id_format="default_id_format/{popup_name}" \
@@ -34,6 +34,7 @@ return_batch_options() {
 }
 
 normalize_output() {
+	# Remove trailing spaces; add indents.
 	awk '{ sub(/[[:space:]]+$/, ""); print "\t" $0 }'
 }
 
@@ -45,6 +46,13 @@ parse_output() {
 		else
 			println "$1"
 		fi
+		shift
+	done
+}
+
+dump_env() {
+	while [[ $# -gt 0 ]]; do
+		printf "%s=%s\n" "$1" "${!1}"
 		shift
 	done
 }
@@ -63,11 +71,19 @@ main() {
 	# Bump call ID
 	call_id=$(cat "$f_call_id")
 	echo "$((call_id + 1))" >"$f_call_id"
-	trace "call(${*:1:3} ...)"
+
+	# Trace tmux calls for debugging
+	if [[ -n $TEST_VERBOSE ]]; then
+		trace "call(${*})"
+	else
+		trace "call(${*:1:3} ...)"
+	fi
 
 	# Append arguments to output
 	{
-		echo ">>>TMUX:BEGIN[$call_id]"
+		echo ">>>TMUX:BEGIN[$call_id] {"
+		dump_env TMUX_POPUP_SERVER SHELL | normalize_output
+		echo "}"
 		parse_output "$@" | normalize_output
 		echo "<<<TMUX:END[$call_id]"
 	} | {
