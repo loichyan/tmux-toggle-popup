@@ -1,0 +1,43 @@
+>>>TMUX:BEGIN[1]
+	run
+	#{@popup-focus} --enter
+	;
+	set
+	default-shell
+	/bin/sh
+	;
+	display-popup
+	>>>TMUX:BEGIN[2]
+		set
+		default-shell
+		/default/shell
+	<<<TMUX:END[2]
+	>>>TMUX:BEGIN[3]
+		-S
+		/local/socket_path/popup_server
+		new
+		-As
+		local_id_format/p_open_with_overrides
+		;
+		set
+		@__popup_name
+		p_open_with_overrides
+		;
+		set
+		@__popup_id_format
+		local_id_format/{popup_name}
+		;
+		set
+		@__popup_caller_path
+		working_session_path
+		;
+		set
+		@__popup_caller_pane_path
+		working_pane_path
+		;
+	<<<TMUX:END[3]
+	;
+	run
+	#{@popup-focus} --leave
+	;
+<<<TMUX:END[1]

@@ -53,6 +53,33 @@ export PATH="$CURRENT_DIR/toggle_tests:$PATH"
 ) || exit 1
 
 (
+	test_name="open_with_overrides"
+	begin_test "$test_name"
+	test_toggle \
+		--name="p_open_with_overrides" \
+		--id-format="local_id_format/{popup_name}" \
+		--on-init="nop" \
+		--before-open="run '#{@popup-focus} --enter'" \
+		--after-close="run '#{@popup-focus} --leave'" \
+		--toggle-mode="force-close" \
+		--socket-name="local_socket_name" \
+		--socket-path="/local/socket_path/popup_server"
+) || exit 1
+
+(
+	test_name="open_with_id"
+	begin_test "$test_name"
+	test_toggle --id='p_open_with_id'
+) || exit 1
+
+(
+	export t_socket_path="/path/to/popup_server"
+	test_name="open_with_socket_path"
+	begin_test "$test_name"
+	test_toggle --id='p_open_with_socket_path'
+) || exit 1
+
+(
 	export t_opened_name="p_close"
 
 	test_name="close_popup"
