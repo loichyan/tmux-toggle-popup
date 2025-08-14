@@ -38,7 +38,7 @@ test_toggle() {
 		mkdir -p "$(dirname "$f_expected")"
 		cp "$f_output" "$f_expected"
 	else
-		git diff --exit-code "$f_output" "$f_expected"
+		git diff --exit-code "$f_expected" "$f_output"
 	fi
 }
 
