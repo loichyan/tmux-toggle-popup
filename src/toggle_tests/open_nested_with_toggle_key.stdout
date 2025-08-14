@@ -36,6 +36,7 @@
 		working_pane_path
 		;
 		bind
+		-n
 		M-o
 		run
 		#{@popup-toggle} --name=p_nested_toggle_key_2 --toggle-key=-n\ M-o

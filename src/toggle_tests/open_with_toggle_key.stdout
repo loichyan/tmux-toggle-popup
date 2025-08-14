@@ -43,6 +43,7 @@
 		#{@popup-toggle} --name=p_toggle_key --toggle-key=-T\ root\ M-p --toggle-key=-n\ M-o
 		;
 		bind
+		-n
 		M-o
 		run
 		#{@popup-toggle} --name=p_toggle_key --toggle-key=-T\ root\ M-p --toggle-key=-n\ M-o
@@ -65,6 +66,7 @@
 	M-p
 	;
 	unbind
+	-n
 	M-o
 	;
 <<<TMUX:END[4]

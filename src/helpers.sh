@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
 
+print() {
+	printf '%s' "$*"
+}
+
+println() {
+	printf '%s\n' "$*"
+}
+
 # Prints an error message and exits.
 die() {
-	echo "$*" >&2
+	println "$@" >&2
 	exit 1
 }
 
@@ -50,7 +58,7 @@ escape() {
 # Replace special chars with '_' in a session name.
 # See <https://github.com/tmux/tmux/blob/ef68debc8d9e0e5567d328766f705bb1f42b7c51/session.c#L242>
 escape_session_name() {
-	echo "${1//[.:]/_}"
+	print "${1//[.:]/_}"
 }
 
 # Parses tmux commands, assigning the tokens to an array named `cmds`.
@@ -62,7 +70,7 @@ parse_cmds() {
 		return 1
 	fi
 	# shellcheck disable=SC2034
-	IFS=$'\n' read -d '' -ra cmds < <(echo "$1" | xargs printf "%s\n") || true
+	IFS=$'\n' read -d '' -ra cmds < <(print "$1" | xargs printf "%s\n") || true
 }
 
 # Expands the provided tmux FORMAT string.
@@ -83,7 +91,7 @@ interpolate() {
 		result=${result//"{$key}"/$val}
 		shift
 	done
-	echo "$result"
+	print "$result"
 }
 
 #=== Test utils ===#
@@ -105,7 +113,7 @@ assert_eq() {
 begin_test() {
 	local source
 	source=$(basename "${BASH_SOURCE[1]}")
-	echo -e "[test] ${source%.*}::${1}"
+	echo "[test] ${source%.*}::${1}"
 }
 
 # Simulates the response of `batch_get_options`. It accepts arguments in the
