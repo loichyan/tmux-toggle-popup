@@ -3,7 +3,7 @@
 set -eo pipefail
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-# shellcheck source=../src/helpers.sh
+# shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
 
 #=== test:parse_cmds ===#
@@ -19,7 +19,7 @@ test_parse_commands() {
 	local i=0
 	while [[ $# -gt 0 ]]; do
 		if [[ $1 != "${cmds[$i]}" ]]; then
-			git diff <(echo "$1") <(echo "${cmds[i]}")
+			git diff <(echo "${cmds[i]}") <(echo "$1")
 			failf "unexpected token at $((i + 1))"
 		fi
 		shift

@@ -1,4 +1,3 @@
->>>TMUX:BEGIN(1)
-detach
-<<<TMUX:END(1)
-
+>>>TMUX:BEGIN[1]
+	detach
+<<<TMUX:END[1]
