@@ -108,15 +108,6 @@ begin_test() {
 	echo -e "[test] ${source%.*}::${1}"
 }
 
-# Allocates a temporary file, deleting on exit.
-alloctmp() {
-	local tempath
-	tempath=$(mktemp)
-	# shellcheck disable=SC2064
-	trap "rm '$tempath'" EXIT
-	echo "$tempath"
-}
-
 # Simulates the response of `batch_get_options`. It accepts arguments in the
 # same format as `batch_get_options`: each pair contains the variable name and
 # its default value. If a variable is set in the execution context, then its

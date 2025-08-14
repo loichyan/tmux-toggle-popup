@@ -1,129 +1,112 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2030
+# shellcheck disable=SC2031
 # shellcheck disable=SC2034
 
 set -eo pipefail
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-# shellcheck source=../src/helpers.sh
+# shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
 
-#=== test:tggles ===#
-
-prepare_batch_options() {
-	fake_batch_options \
-		t_id_format="pane/path/{popup_name}" \
-		t_on_init="display 'on-init' ; run '#{@on_init}'" \
-		t_before_open="display 'before-open' ; run '#{@before_open}'" \
-		t_after_close="display 'after-close' ; run '#{@after_close}'" \
-		t_toggle_mode="switch" \
-		t_socket_name="popup_server1" \
-		t_socket_path="socket/path/popup_server2" \
-		t_opened_name="" \
-		t_caller_id_format="caller/id/format" \
-		t_caller_path="caller/session/pane" \
-		t_caller_pane_path="caller/pane/path" \
-		t_default_id_format="session/path/{popup_name}" \
-		t_default_shell="/usr/bin/fish" \
-		t_session_path="working/session/path" \
-		t_pane_path="working/pane/path"
-}
-
-declare delimiter=">>>END" exit_codes f_call_id f_output
-tmux() {
-	# Bump call ID
-	local call_id
-	call_id=$(cat "$f_call_id")
-	echo "$((call_id + 1))" >"$f_call_id"
-
-	# The first call is always `batch_get_options`.
-	# Discard its output since not particular useful.
-	if [[ $call_id == 0 ]]; then
-		prepare_batch_options
-		return
-	fi
-
-	# Appends arguments to output
-	{
-		echo ">>>TMUX:BEGIN($call_id)"
-		printf "%s\n" "$@"
-		echo "<<<TMUX:END($call_id)"
-		echo
-	} >>"$f_output"
-
-	# Fake tmux exit code
-	# shellcheck disable=SC2086
-	return ${exit_codes[$call_id]}
-}
-
-declare test_name
+declare delimiter=">>>END" exit_codes=(0 0 0 0) test_name
 test_toggle() {
-	f_call_id=$(alloctmp)
-	f_output=$(alloctmp)
-	echo 0 >"$f_call_id"
-	source "$CURRENT_DIR/toggle.sh"
+	local i workdir f_call_id f_input f_output f_expected
 
-	local expected="$CURRENT_DIR/toggle_tests/$test_name.stdout"
+	# Prepare inputs
+	workdir=$(mktemp -d)
+	# shellcheck disable=SC2064
+	trap "rm -rf '$workdir'" EXIT
+
+	f_call_id="$workdir/call_id"
+	f_input="$workdir/iutput"
+	f_output="$workdir/output"
+
+	i=0
+	for code in "${exit_codes[@]}"; do
+		echo "$code" >"${f_input}_${i}"
+		i=$((i + 1))
+	done
+
+	# Do call popup-toggle
+	export delimiter f_call_id f_input f_output
+	command "$CURRENT_DIR/toggle.sh" "$@"
+
+	# Validate outputs
+	f_expected="$CURRENT_DIR/toggle_tests/$test_name.stdout"
 	if [[ $TEST_OVERWRITE = 1 ]]; then
-		mkdir -p "$(dirname "$expected")"
-		cp "$f_output" "$expected"
+		mkdir -p "$(dirname "$f_expected")"
+		cp "$f_output" "$f_expected"
 	else
-		git diff --exit-code "$f_output" "$expected"
+		git diff --exit-code "$f_output" "$f_expected"
 	fi
 }
 
-test_name="open_popup"
-exit_codes=(0 0 0)
-t_toggle_mode="switch"
-t_opened_name=""
-begin_test "$test_name"
-test_toggle --name="p_open"
+# Ensure out fake executable tmux is picked at first.
+export PATH="$CURRENT_DIR/toggle_tests:$PATH"
 
-test_name="close_popup"
-exit_codes=(0 0 0)
-t_toggle_mode="switch"
-t_opened_name="p_close"
-begin_test "$test_name"
-test_toggle --name="p_close"
+# Force subshell to ensure modifications are temporary.
+(
+	test_name="open_popup"
+	begin_test "$test_name"
+	test_toggle --name="p_open"
+) || exit 1
 
-test_name="switch_popup"
-exit_codes=(0 0 0)
-t_toggle_mode="switch"
-t_opened_name="p_switch_1"
-begin_test "$test_name"
-test_toggle --name="p_switch_2"
+(
+	export t_opened_name="p_close"
 
-test_name="switch_new_popup"
-exit_codes=(0 1 0)
-t_toggle_mode="switch"
-t_opened_name="p_switch_1"
-begin_test "$test_name"
-test_toggle --name="p_switch_2"
+	test_name="close_popup"
+	begin_test "$test_name"
+	test_toggle --name="p_close"
+) || exit 1
 
-test_name="force_close_popup"
-exit_codes=(0 0 0)
-t_toggle_mode="force-close"
-t_opened_name="p_force_close_1"
-begin_test "$test_name"
-test_toggle --name="p_force_close_2"
+(
+	export t_opened_name="p_switch_1"
 
-test_name="open_nested_popup"
-exit_codes=(0 0 0)
-t_toggle_mode="force-open"
-t_opened_name="p_open_nested_1"
-begin_test "$test_name"
-test_toggle --name="p_open_nested_2"
+	test_name="switch_popup"
+	begin_test "$test_name"
+	test_toggle --name="p_switch_2"
+) || exit 1
 
-test_name="open_with_toggle_key"
-exit_codes=(0 0 0)
-t_toggle_mode="switch"
-t_opened_name=""
-begin_test "$test_name"
-test_toggle --name="p_toggle_key" --toggle-key="-T root M-p" --toggle-key="-n M-o"
+(
+	export t_opened_name="p_switch_1"
+	exit_codes=(0 1 0 0)
+
+	test_name="switch_new_popup"
+	begin_test "$test_name"
+	test_toggle --name="p_switch_2"
+) || exit 1
+
+(
+	export t_toggle_mode="force-close"
+	export t_opened_name="p_force_close_1"
+
+	test_name="force_close_popup"
+	begin_test "$test_name"
+	test_toggle --name="p_force_close_2"
+) || exit 1
+
+(
+	export t_toggle_mode="force-open"
+	export t_opened_name="p_open_nested_1"
+
+	test_name="open_nested_popup"
+	begin_test "$test_name"
+	test_toggle --name="p_open_nested_2"
+) || exit 1
+
+(
+	test_name="open_with_toggle_key"
+	begin_test "$test_name"
+	test_toggle --name="p_toggle_key" --toggle-key="-T root M-p" --toggle-key="-n M-o"
+) || exit 1
 
 # Open nested popups should not clean toggle keys.
-test_name="open_nested_with_toggle_key"
-exit_codes=(0 0 0)
-t_toggle_mode="force-open"
-t_opened_name="p_nested_toggle_key_1"
-begin_test "$test_name"
-test_toggle --name="p_nested_toggle_key_2" --toggle-key="-n M-o"
+(
+	export t_toggle_mode="force-open"
+	export t_opened_name="p_nested_toggle_key_1"
+
+	test_name="open_nested_with_toggle_key"
+	begin_test "$test_name"
+	test_toggle --name="p_nested_toggle_key_2" --toggle-key="-n M-o"
+) || exit 1

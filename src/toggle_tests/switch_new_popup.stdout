@@ -1,38 +1,36 @@
->>>TMUX:BEGIN(1)
-has
--t
-caller/id/format
-<<<TMUX:END(1)
-
->>>TMUX:BEGIN(2)
-new
--ds
-caller/id/format
-;
-switch
--t
-caller/id/format
-;
-set
-@__popup_name
-p_switch_2
-;
-set
-@__popup_id_format
-caller/id/format
-;
-set
-@__popup_caller_path
-caller/session/pane
-;
-set
-@__popup_caller_pane_path
-caller/pane/path
-;
-display
-on-init
-;
-run
-#{@on_init}
-<<<TMUX:END(2)
-
+>>>TMUX:BEGIN[1]
+	has
+	-t
+	caller/id/format
+<<<TMUX:END[1]
+>>>TMUX:BEGIN[2]
+	new
+	-ds
+	caller/id/format
+	;
+	switch
+	-t
+	caller/id/format
+	;
+	set
+	@__popup_name
+	p_switch_2
+	;
+	set
+	@__popup_id_format
+	caller/id/format
+	;
+	set
+	@__popup_caller_path
+	caller/session/pane
+	;
+	set
+	@__popup_caller_pane_path
+	caller/pane/path
+	;
+	display
+	on-init
+	;
+	run
+	#{@on_init}
+<<<TMUX:END[2]

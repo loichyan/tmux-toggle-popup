@@ -3,7 +3,7 @@
 set -eo pipefail
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-# shellcheck source=../src/helpers.sh
+# shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
 
 #=== test:parse_cmds ===#

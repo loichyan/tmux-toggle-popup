@@ -1,22 +1,54 @@
->>>TMUX:BEGIN(1)
-display
-before-open
-;
-run
-#{@before_open}
-;
-set
-default-shell
-/bin/sh
-;
-display-popup
-tmux set default-shell '/usr/bin/fish' ;export TMUX_POPUP_SERVER='popup_server2' ;export SHELL='/usr/bin/fish' ;exec tmux -S socket/path/popup_server2 new -As pane/path/p_open \; set @__popup_name p_open \; set @__popup_id_format pane/path/\{popup_name\} \; set @__popup_caller_path working/session/path \; set @__popup_caller_pane_path working/pane/path \; display on-init \; run \#\{@on_init\}  >/dev/null
-;
-display
-after-close
-;
-run
-#{@after_close}
-;
-<<<TMUX:END(1)
-
+>>>TMUX:BEGIN[1]
+	display
+	before-open
+	;
+	run
+	#{@before_open}
+	;
+	set
+	default-shell
+	/bin/sh
+	;
+	display-popup
+	>>>TMUX:BEGIN[2]
+		set
+		default-shell
+		/usr/bin/fish
+	<<<TMUX:END[2]
+	>>>TMUX:BEGIN[3]
+		-S
+		socket/path/popup_server2
+		new
+		-As
+		pane/path/p_open
+		;
+		set
+		@__popup_name
+		p_open
+		;
+		set
+		@__popup_id_format
+		pane/path/{popup_name}
+		;
+		set
+		@__popup_caller_path
+		working/session/path
+		;
+		set
+		@__popup_caller_pane_path
+		working/pane/path
+		;
+		display
+		on-init
+		;
+		run
+		#{@on_init}
+	<<<TMUX:END[3]
+	;
+	display
+	after-close
+	;
+	run
+	#{@after_close}
+	;
+<<<TMUX:END[1]

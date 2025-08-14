@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+# shellcheck source=../helpers.sh
+source "$CURRENT_DIR/../helpers.sh"
+
+# Input variables
+declare delimiter f_call_id f_input f_output
+
+trace() {
+	printf "\ttmux[$call_id]:%s\n" "$@" >&2
+}
+
+return_batch_options() {
+	fake_batch_options \
+		t_id_format="pane/path/{popup_name}" \
+		t_on_init="display 'on-init' ; run '#{@on_init}'" \
+		t_before_open="display 'before-open' ; run '#{@before_open}'" \
+		t_after_close="display 'after-close' ; run '#{@after_close}'" \
+		t_toggle_mode="switch" \
+		t_socket_name="popup_server1" \
+		t_socket_path="socket/path/popup_server2" \
+		t_opened_name="" \
+		t_caller_id_format="caller/id/format" \
+		t_caller_path="caller/session/pane" \
+		t_caller_pane_path="caller/pane/path" \
+		t_default_id_format="session/path/{popup_name}" \
+		t_default_shell="/usr/bin/fish" \
+		t_session_path="working/session/path" \
+		t_pane_path="working/pane/path"
+	exit
+}
+
+normalize_output() {
+	sed -e 's/\s\+$//' -e 's/^.\+/\t&/'
+}
+
+parse_output() {
+	while [[ $# -gt 0 ]]; do
+		if [[ $1 == tmux* ]]; then
+			# Fake a sh exec, redirecting output of nested tmux calls.
+			nested_call=1 sh -c "$1" 3>&1
+		else
+			echo "$1"
+		fi
+		shift
+	done
+}
+
+declare call_id exit_code
+main() {
+	# The first call is always batch_get_options.
+	# Discard its output since not particular useful.
+	if [[ ! -f $f_call_id ]]; then
+		call_id=0
+		trace "batch_get_options"
+		echo 1 >"$f_call_id"
+		return_batch_options
+	fi
+
+	# Bump call ID
+	call_id=$(cat "$f_call_id")
+	echo "$((call_id + 1))" >"$f_call_id"
+	trace "call(${*:1:3} ...)"
+
+	# Append arguments to output
+	{
+		echo ">>>TMUX:BEGIN[$call_id]"
+		parse_output "$@" | normalize_output
+		echo "<<<TMUX:END[$call_id]"
+	} | {
+		if [[ -n $nested_call ]]; then
+			cat >&3
+		else
+			cat >>"$f_output"
+		fi
+	}
+
+	# Fake tmux exit code
+	read -r exit_code <"${f_input}_${call_id}"
+	# shellcheck disable=SC2086
+	exit $exit_code
+}
+
+main "$@"
