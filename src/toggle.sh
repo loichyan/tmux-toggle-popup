@@ -122,7 +122,8 @@ main() {
 		# Forward environment overrides to popup sessions
 		e) open_args+=("-e" "$OPTARG") ;;
 		name | id | id-format | toggle-key | \
-			on-init | before-open | after-close | toggle-mode | socket-name)
+			on-init | before-open | after-close | \
+			toggle-mode | socket-name | socket-path)
 			OPTARG=${OPTARG:${#OPT}}
 			if [[ ${OPTARG::1} == '=' ]]; then
 				# Handle syntax: `--name=value`
