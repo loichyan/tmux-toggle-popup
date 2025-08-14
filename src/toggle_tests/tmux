@@ -34,7 +34,7 @@ return_batch_options() {
 }
 
 normalize_output() {
-	sed -e 's/\s\+$//' -e $'s/^.\+/\t&/'
+	awk '{ sub(/[[:space:]]+$/, ""); print "\t" $0 }'
 }
 
 parse_output() {
