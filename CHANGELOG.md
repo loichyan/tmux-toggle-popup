@@ -43,6 +43,11 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
   [@szaffarano])
 - Support specifying the socket path for the popup server ([#43])
 
+### Changed
+
+- The `before-open` and `after-close` hooks are called in the same execution
+  that opens a popup window. This should rarely have side effects ([#46])
+
 ### Fixed
 
 - Support OSX's ancient Bash ([#44])
@@ -52,6 +57,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 [#43]: https://github.com/loichyan/tmux-toggle-popup/pull/43
 [#44]: https://github.com/loichyan/tmux-toggle-popup/pull/44
 [#45]: https://github.com/loichyan/tmux-toggle-popup/pull/45
+[#46]: https://github.com/loichyan/tmux-toggle-popup/pull/46
 [NixOS/nixpkgs#428294]: https://github.com/NixOS/nixpkgs/pull/428294
 [@szaffarano]: https://github.com/szaffarano
 

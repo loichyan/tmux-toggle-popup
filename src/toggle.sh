@@ -40,45 +40,46 @@ usage() {
 	EOF
 }
 
-# Prepares the tmux commands to open a popup. After called,
+# Prepares the tmux commands to initialize a popup session. After called,
 #
-# - `open_cmds` is used to initialize the popup session
+# - `init_cmds` is used to initialize the popup session
 # - `on_cleanup` is used to undo temporary changes on the popup server
 # - `popup_id` is set to the name of the target popup session
-declare open_cmds=() on_cleanup=() popup_id
-prepare_open() {
+declare init_cmds=() on_cleanup=() popup_id
+prepare_init() {
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
 	if [[ -n $open_dir ]]; then
+		# Interpolate `{popup_caller_path}`, `{popup_caller_pane_path}`.
 		open_args+=(-c "$(interpolate popup_caller_path="$caller_path" \
 			popup_caller_pane_path="$caller_pane_path" "$open_dir")")
 	fi
 
-	open_cmds=()
+	init_cmds=()
 	if [[ $1 == "open" ]]; then
-		open_cmds+=(new -As "$popup_id" "${open_args[@]}" "${program[@]}" \;)
+		init_cmds+=(new -As "$popup_id" "${open_args[@]}" "${program[@]}" \;)
 	else
 		if ! tmux has -t "$popup_id" 2>/dev/null; then
-			open_cmds+=(new -ds "$popup_id" "${open_args[@]}" "${program[@]}" \;)
+			init_cmds+=(new -ds "$popup_id" "${open_args[@]}" "${program[@]}" \;)
 		fi
-		open_cmds+=(switch -t "$popup_id" \;)
+		init_cmds+=(switch -t "$popup_id" \;)
 	fi
 
 	# Export internal variables
-	open_cmds+=(set @__popup_name "$name" \;)
-	open_cmds+=(set @__popup_id_format "$id_format" \;)
-	open_cmds+=(set @__popup_caller_path "$caller_path" \;)
-	open_cmds+=(set @__popup_caller_pane_path "$caller_pane_path" \;)
+	init_cmds+=(set @__popup_name "$name" \;)
+	init_cmds+=(set @__popup_id_format "$id_format" \;)
+	init_cmds+=(set @__popup_caller_path "$caller_path" \;)
+	init_cmds+=(set @__popup_caller_pane_path "$caller_pane_path" \;)
 
 	# Create temporary toggle keys in the opened popup
 	# shellcheck disable=SC2206
 	for k in "${toggle_keys[@]}"; do
-		open_cmds+=(bind $k run "#{@popup-toggle} $(escape "${args[@]}")" \;)
+		init_cmds+=(bind $k run "#{@popup-toggle} $(escape "${args[@]}")" \;)
 		on_cleanup+=(unbind $k \;)
 	done
 
 	if parse_cmds "$on_init"; then
-		open_cmds+=("${cmds[@]}")
+		init_cmds+=("${cmds[@]}")
 	fi
 }
 
@@ -153,8 +154,8 @@ main() {
 		elif [[ $toggle_mode == "switch" ]]; then
 			# Inherit the caller's ID format in switch mode
 			id_format=${caller_id_format}
-			prepare_open "switch"
-			tmux "${open_cmds[@]}"
+			prepare_init "switch"
+			tmux "${init_cmds[@]}"
 			return
 		elif [[ $toggle_mode != "force-open" ]]; then
 			die "illegal toggle mode: $toggle_mode"
@@ -169,37 +170,47 @@ main() {
 		popup_server=${socket_name}
 	fi
 
-	# Run hook: before-open
-	if parse_cmds "$before_open"; then tmux "${cmds[@]}"; fi
+	# Command sequence to open the popup window, including hooks.
+	open_cmds=()
+
+	# Handle hook: before-open
+	if parse_cmds "$before_open"; then open_cmds+=("${cmds[@]}" \;); fi
 
 	# This session is the caller, so use it's path
 	caller_path=${session_path}
 	caller_pane_path=${pane_path}
-	prepare_open "open"
+	prepare_init "open"
 
+	# Script to initialize the popup session inside a popup window.
 	open_script=""
-	# Revert to the user's default shell.
-	open_script+="tmux set default-shell '$default_shell'"
-	# Set $TMUX_POPUP_SERVER so as to identify the popup server,
-	# and propagate user's default shell.
-	open_script+="; export TMUX_POPUP_SERVER='$popup_server' SHELL='$default_shell'"
-	# Suppress stdout to hide the `[detached] ...` message
-	open_script+="; exec tmux $(escape "${popup_socket[@]}" "${open_cmds[@]}") >/dev/null"
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
 	# shell commands. However, our scripts require sh(1) and may not be parsed
 	# correctly by some incompatible shells. In this case, we change the default
 	# shell to `/bin/sh` and then revert it immediately.
-	tmux set default-shell "/bin/sh" \; popup "${display_args[@]}" "$open_script"
+	open_script+="tmux set default-shell '$default_shell' ;"
+	open_cmds+=(set default-shell "/bin/sh" \;)
+
+	# Set $TMUX_POPUP_SERVER to identify the popup server.
+	# Propagate user's default shell.
+	open_script+="export TMUX_POPUP_SERVER='$popup_server' ;"
+	open_script+="export SHELL='$default_shell' ;"
+
+	# Suppress stdout to hide the `[detached] ...` message
+	open_script+="exec tmux $(escape "${popup_socket[@]}" "${init_cmds[@]}") >/dev/null"
+	open_cmds+=(display-popup "${display_args[@]}" "$open_script" \;)
+
+	# Handle hook: after-close
+	if parse_cmds "$after_close"; then open_cmds+=("${cmds[@]}" \;); fi
+
+	# Do open the popup window
+	tmux "${open_cmds[@]}"
 
 	# Undo temporary changes on the popup server
 	if [[ -z $opened_name && ${#on_cleanup} -gt 0 ]]; then
 		# Ignore error if the server has already stopped
 		tmux -N "${popup_socket[@]}" "${on_cleanup[@]}" 2>/dev/null || true
 	fi
-
-	# Run hook: after-close
-	if parse_cmds "$after_close"; then tmux "${cmds[@]}"; fi
 }
 
 args=("$@")
