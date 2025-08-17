@@ -123,20 +123,20 @@ export TMUX_POPUP_SERVER=
 (
 	test_name="open_with_id"
 	begin_test "$test_name" || exit 0
-	test_toggle --id='p_open_with_id'
+	test_toggle --id="p_open_with_id"
 ) || exit 1
 
 (
 	test_name="open_with_socket_path"
 	export t_socket_path="/path/to/socket_path_server"
 	begin_test "$test_name" || exit 0
-	test_toggle --name='p_open_with_socket_path'
+	test_toggle --name="p_open_with_socket_path"
 ) || exit 1
 
 (
 	test_name="open_with_directory"
 	begin_test "$test_name" || exit 0
-	test_toggle --name="p_open_with_directory" -d'{popup_caller_pane_path}'
+	test_toggle --name="p_open_with_directory" -d"{popup_caller_pane_path}"
 ) || exit 1
 
 (
@@ -163,5 +163,14 @@ export TMUX_POPUP_SERVER=
 	exit_codes=(0 1 0 0)
 	export t_opened_name="p_switch_with_directory_1"
 	begin_test "$test_name" || exit 0
-	test_toggle --name="p_switch_with_directory_2" -d'{popup_caller_pane_path}'
+	test_toggle --name="p_switch_with_directory_2" -d"{popup_caller_pane_path}"
+) || exit 1
+
+# ID is taken as the opened name when it is specified.
+(
+	test_name="open_nested_with_id"
+	exit_codes=(0 1 0 0)
+	export t_opened_name="default"
+	begin_test "$test_name" || exit 0
+	test_toggle --id="p_open_nested_with_id" --toggle-mode=force-open
 ) || exit 1

@@ -148,6 +148,9 @@ main() {
 	done
 	program=("${@:$OPTIND}")
 
+	# If ID specified, use it as the popup name.
+	if [[ -n $id ]]; then name=${id}; fi
+
 	if [[ -n $opened_name ]]; then
 		if [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
 			tmux detach >/dev/null

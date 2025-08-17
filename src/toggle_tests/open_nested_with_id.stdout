@@ -26,11 +26,11 @@
 		popup_test
 		new
 		-As
-		p_open_with_id
+		p_open_nested_with_id
 		;
 		set
 		@__popup_name
-		p_open_with_id
+		p_open_nested_with_id
 		;
 		set
 		@__popup_id_format
