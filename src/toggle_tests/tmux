@@ -81,11 +81,11 @@ main() {
 
 	# Append arguments to output
 	{
-		echo ">>>TMUX:BEGIN[$call_id] {"
+		echo "TMUX:BEGIN[$call_id] {"
 		dump_env TMUX_POPUP_SERVER SHELL | normalize_output
 		echo "}"
 		parse_output "$@" | normalize_output
-		echo "<<<TMUX:END[$call_id]"
+		echo "TMUX:END[$call_id]"
 	} | {
 		if [[ -n $nested_call ]]; then
 			cat >&3

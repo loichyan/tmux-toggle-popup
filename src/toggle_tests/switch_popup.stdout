@@ -1,12 +1,12 @@
->>>TMUX:BEGIN[1] {
+TMUX:BEGIN[1] {
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
 	has
 	-t
 	caller_id_format/p_switch_2
-<<<TMUX:END[1]
->>>TMUX:BEGIN[2] {
+TMUX:END[1]
+TMUX:BEGIN[2] {
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
@@ -32,4 +32,4 @@
 	;
 	run
 	#{@popup_on_init}
-<<<TMUX:END[2]
+TMUX:END[2]
