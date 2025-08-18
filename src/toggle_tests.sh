@@ -30,7 +30,7 @@ test_toggle() {
 
 	# Do call popup-toggle
 	export delimiter f_call_id f_input f_output
-	command "$CURRENT_DIR/toggle.sh" "$@"
+	command "$CURRENT_DIR/toggle.sh" "$@" || exit 1
 
 	# Validate outputs
 	f_expected="$CURRENT_DIR/toggle_tests/$test_name.stdout"
@@ -169,7 +169,6 @@ export TMUX_POPUP_SERVER=
 # ID is taken as the opened name when it is specified.
 (
 	test_name="open_nested_with_id"
-	exit_codes=(0 1 0 0)
 	export t_opened_name="default"
 	begin_test "$test_name" || exit 0
 	test_toggle --id="p_open_nested_with_id" --toggle-mode=force-open

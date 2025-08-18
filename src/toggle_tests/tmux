@@ -69,7 +69,7 @@ main() {
 	fi
 
 	# Bump call ID
-	call_id=$(cat "$f_call_id")
+	read -r call_id <"$f_call_id"
 	echo "$((call_id + 1))" >"$f_call_id"
 
 	# Trace tmux calls for debugging
