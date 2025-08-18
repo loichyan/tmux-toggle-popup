@@ -26,13 +26,11 @@ TMUX:BEGIN[1] {
 		popup_test
 		new
 		-As
-		default_id_format/p_open_with_directory
-		-c
-		working_pane_path
+		p_open_nested_with_id
 		;
 		set
 		@__popup_name
-		p_open_with_directory
+		p_open_nested_with_id
 		;
 		set
 		@__popup_id_format

@@ -1,4 +1,4 @@
->>>TMUX:BEGIN[1] {
+TMUX:BEGIN[1] {
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
@@ -10,15 +10,15 @@
 	/bin/sh
 	;
 	display-popup
-	>>>TMUX:BEGIN[2] {
+	TMUX:BEGIN[2] {
 		TMUX_POPUP_SERVER=
 		SHELL=/system/shell
 	}
 		set
 		default-shell
 		/default/shell
-	<<<TMUX:END[2]
-	>>>TMUX:BEGIN[3] {
+	TMUX:END[2]
+	TMUX:BEGIN[3] {
 		TMUX_POPUP_SERVER=popup_server
 		SHELL=/default/shell
 	}
@@ -44,9 +44,9 @@
 		@__popup_caller_pane_path
 		working_pane_path
 		;
-	<<<TMUX:END[3]
+	TMUX:END[3]
 	;
 	run
 	#{@popup-focus} --leave
 	;
-<<<TMUX:END[1]
+TMUX:END[1]
