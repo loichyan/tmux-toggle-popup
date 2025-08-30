@@ -37,6 +37,17 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+## [0.4.4] - {{DATE}}
+
+This release doesn't include major updates but fixes a bug that occurred when
+using multiple popups specified with `--id`.
+
+### Fixed
+
+- Resolve name conflicts when using `--id` ([#52])
+
+[#52]: https://github.com/loichyan/tmux-toggle-popup/pull/52
+
 ## [0.4.3] - 2025-08-14
 
 This release resolves a long-standing issue with `@popup-toggle` on macOS's
@@ -206,11 +217,12 @@ override popup global options on the fly using the newly added arguments of
 [README](https://github.com/loichyan/tmux-toggle-popup/blob/v0.1.0/README.md)
 for more details.
 
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.3..HEAD
-[0.4.3]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.2..v0.4.3
-[0.4.2]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.1..v0.4.2
-[0.4.1]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..v0.4.1
-[0.4.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..v0.4.0
-[0.3.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.2.0..v0.3.0
-[0.2.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0
 [0.1.0]: https://github.com/loichyan/tmux-toggle-popup/releases/tag/v0.1.0
+[0.2.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0
+[0.3.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.2.0..v0.3.0
+[0.4.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..v0.4.0
+[0.4.1]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.0..v0.4.1
+[0.4.2]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.1..v0.4.2
+[0.4.3]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.2..v0.4.3
+[0.4.4]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.3..v0.4.4
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.4..HEAD
