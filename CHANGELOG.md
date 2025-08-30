@@ -37,7 +37,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
-## [0.4.4] - {{DATE}}
+## [0.4.4] - 2025-08-30
 
 This release doesn't include major updates but fixes a bug that occurred when
 using multiple popups specified with `--id`.
