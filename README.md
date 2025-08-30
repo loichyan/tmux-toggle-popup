@@ -2,16 +2,9 @@
 
 A handy plugin to create toggleable popups.
 
-[toggle-popup-demo.webm](https://github.com/user-attachments/assets/faf45582-50c5-4efb-86cb-1f1d0e4d95a9)
+[![tmux-toggle-popup.webm](https://loichyan.github.io/dotfiles/assets/tmux-toggle-popup-thumbnail.jpg)](https://loichyan.github.io/dotfiles/assets/tmux-toggle-popup.webm)
 
-<details>
-<summary>Information</summary>
-
-- font: [0xProto](https://github.com/0xType/0xProto)
-- tmux: [tmux-base16](https://github.com/loichyan/tmux-base16)
-- Neovim: [Meowim](https://github.com/loichyan/Meowim)
-
-</details>
+[Information](https://github.com/loichyan/dotfiles/tree/snapshot#information)
 
 ## 📦 Installation
 
