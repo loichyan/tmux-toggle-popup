@@ -217,7 +217,7 @@ override popup global options on the fly using the newly added arguments of
 [README](https://github.com/loichyan/tmux-toggle-popup/blob/v0.1.0/README.md)
 for more details.
 
-[0.1.0]: https://github.com/loichyan/tmux-toggle-popup/releases/tag/v0.1.0
+[0.1.0]: https://github.com/loichyan/tmux-toggle-popup/tree/v0.1.0
 [0.2.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.1.0..v0.2.0
 [0.3.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.2.0..v0.3.0
 [0.4.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.3.0..v0.4.0
