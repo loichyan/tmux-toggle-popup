@@ -43,9 +43,8 @@ usage() {
 # Prepares the tmux commands to initialize a popup session. After called,
 #
 # - `init_cmds` is used to initialize the popup session
-# - `on_cleanup` is used to undo temporary changes on the popup server
 # - `popup_id` is set to the name of the target popup session
-declare init_cmds=() on_cleanup=() popup_id
+declare init_cmds=() on_setup=() to_bind=() to_init=() on_cleanup=() popup_id
 prepare_init() {
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
@@ -66,20 +65,40 @@ prepare_init() {
 	fi
 
 	# Export internal variables
-	init_cmds+=(set @__popup_name "$name" \;)
-	init_cmds+=(set @__popup_id_format "$id_format" \;)
-	init_cmds+=(set @__popup_caller_path "$caller_path" \;)
-	init_cmds+=(set @__popup_caller_pane_path "$caller_pane_path" \;)
+	on_setup+=(set @__popup_name "$name" \;)
+	on_setup+=(set @__popup_id_format "$id_format" \;)
+	on_setup+=(set @__popup_caller_path "$caller_path" \;)
+	on_setup+=(set @__popup_caller_pane_path "$caller_pane_path" \;)
 
 	# Create temporary toggle keys in the opened popup
 	# shellcheck disable=SC2206
 	for k in "${toggle_keys[@]}"; do
-		init_cmds+=(bind $k run "#{@popup-toggle} $(escape "${args[@]}")" \;)
+		to_bind+=(bind $k run "#{@popup-toggle} --name ${popup_id} --id ${popup_id}" \;)
 		on_cleanup+=(unbind $k \;)
 	done
 
+	if [ "${on_setup[-1]}" == ";" ]; then
+		unset 'on_setup[-1]' # Remove trailing semicolon
+	fi
+
 	if parse_cmds "$on_init"; then
-		init_cmds+=("${cmds[@]}")
+		to_init+=("${cmds[@]}")
+	fi
+
+	if [ "${init_cmds[-1]}" == ";" ]; then
+		unset 'init_cmds[-1]' # Remove trailing semicolon
+	fi
+	if [ "${on_setup[-1]}" == ";" ]; then
+		unset 'on_setup[-1]' # Remove trailing semicolon
+	fi
+	if [ "${to_bind[-1]}" == ";" ]; then
+		unset 'to_bind[-1]' # Remove trailing semicolon
+	fi
+	if [ "${to_init[-1]}" == ";" ]; then
+		unset 'to_init[-1]' # Remove trailing semicolon
+	fi
+	if [ "${on_cleanup[-1]}" == ";" ]; then
+		unset 'on_cleanup[-1]' # Remove trailing semicolon
 	fi
 }
 
@@ -202,18 +221,25 @@ main() {
 
 	# Put the command sequence in a file if it can exceed the buffer limit.
 	# See https://github.com/tmux/tmux/blob/bb4866047a192388a991566ebf6d9cd3d8b8fee5/client.c#L376
-	init_cmds_str=$(escape "${init_cmds[@]}")
+
+	init_cmds_str="$(escape "${init_cmds[@]}" ";" "${on_setup[@]}" ";" "${to_bind[@]}" ";" "${to_init[@]}")"
 	if [[ ${#init_cmds_str} -gt 8192 ]]; then
 		temp=$(mktemp)
 		# shellcheck disable=SC2064
 		trap "rm -f '$temp'" EXIT
-		print "$init_cmds_str" >"$temp"
-		init_cmds_str="source '$temp'" # source that file instead of the entire sequence
+		print "$(escape "${init_cmds[@]}") ; ${on_setup[*]} ; $(escape "${to_bind[@]}") ; ${to_init[*]}" >"$temp"
+		init_cmds_str="source '$temp';" # source that file instead of the entire sequence
 	fi
 
 	# Suppress stdout to hide the `[detached] ...` message
-	open_script+="exec tmux $(escape "${popup_socket[@]}") $init_cmds_str >/dev/null"
+	open_script+="exec tmux $(escape "${popup_socket[@]}") ${init_cmds_str} >/dev/null"
 	open_cmds+=(display-popup "${display_args[@]}" "$open_script" \;)
+
+	# TODO: FOR DEBUGGING PLEASE REMOVE ME AFTER
+	echo "${open_cmds[*]}" &>/tmp/yattara.out
+	if [ -f "$temp" ]; then
+		cat "$temp" >/tmp/yattara.tmux
+	fi
 
 	# Handle hook: after-close
 	if parse_cmds "$after_close"; then open_cmds+=("${cmds[@]}" \;); fi
@@ -228,5 +254,4 @@ main() {
 	fi
 }
 
-args=("$@")
 main "$@"
