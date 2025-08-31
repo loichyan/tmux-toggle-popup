@@ -200,8 +200,19 @@ main() {
 	open_script+="export TMUX_POPUP_SERVER='$popup_server' ;"
 	open_script+="export SHELL='$default_shell' ;"
 
+	# Put the command sequence in a file if it can exceed the buffer limit.
+	# See https://github.com/tmux/tmux/blob/bb4866047a192388a991566ebf6d9cd3d8b8fee5/client.c#L376
+	init_cmds_str=$(escape "${init_cmds[@]}")
+	if [[ ${#init_cmds_str} -gt 8192 ]]; then
+		temp=$(mktemp)
+		# shellcheck disable=SC2064
+		trap "rm -f '$temp'" EXIT
+		print "$init_cmds_str" >"$temp"
+		init_cmds_str="source '$temp'" # source that file instead of the entire sequence
+	fi
+
 	# Suppress stdout to hide the `[detached] ...` message
-	open_script+="exec tmux $(escape "${popup_socket[@]}" "${init_cmds[@]}") >/dev/null"
+	open_script+="exec tmux $(escape "${popup_socket[@]}") $init_cmds_str >/dev/null"
 	open_cmds+=(display-popup "${display_args[@]}" "$open_script" \;)
 
 	# Handle hook: after-close
