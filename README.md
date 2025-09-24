@@ -14,9 +14,10 @@ A handy plugin to create toggleable popups.
 - Bash >= **3.2.57**
 
 > [!NOTE]
-> This plugin is tested on macOS's built-in Bash through GitHub Actions. That
-> said, if you are experiencing issues on macOS, please try upgrading your Bash
-> to a newer version or open an issue.
+>
+> This plugin has been tested on macOS's built-in Bash through GitHub Actions.
+> However, if you are experiencing issues on macOS, please try upgrading your
+> Bash to a newer version or open an issue.
 
 ### With [tmux Plugin Manager](https://github.com/tmux-plugins/tpm) (recommended)
 
@@ -90,6 +91,7 @@ set -g @plugin "loichyan/tmux-toggle-popup"
 ```
 
 > [!TIP]
+>
 > Whenever you update the *.tmux.conf*, remember to reload it in both your
 > working session and the popup session; otherwise, keybinding or style changes
 > may not reflect in popup sessions.

@@ -269,3 +269,33 @@ bind -T prefix s choose-tree -sf "#{!:#{m:popup/*,#{session_name}}}"
 - Needs to configure your session manager to exclude *popup sessions*.
 - May not play well with
   [tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect).
+
+### Popups with a predefined layout
+
+Put this in your *.tmux.conf*:
+
+```tmux
+bind -n M-t run "#{@popup-toggle} --on-init='source $HOME/.tmux/layout.conf' program1 ...arguments"
+```
+
+and:
+
+```tmux
+# ~/.tmux/layout.conf
+# `on-init` runs each time we enter the popup session, but we only need to set
+# up the layout at the first time.
+if -F "#{!:#{@popup_did_init}}" {
+   split-window -h program2 ...arguments
+   select-layout -t1 main-vertical-mirrored
+   set @popup_did_init 1
+}
+```
+
+> [!NOTE]
+>
+> Whenever you need to interact with the popup session, do it through the
+> `on-init` hook rather than `#{@popup-toggle} some_script.sh`. This is because,
+> when running `some_script.sh`, the environments that determine which server
+> and session tmux(1) targets still refer to your working session. Consequently,
+> tmux commands in `some_script.sh` do not affect the popup session but rather
+> your working session.
