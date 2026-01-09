@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2153
+# shellcheck disable=SC2154
 
 print() {
 	printf '%s' "$*"
@@ -10,7 +12,11 @@ println() {
 
 # Prints an error message and exits.
 die() {
-	println "$@" >&2
+	if [[ -n $TMUX ]]; then
+		tmux run "printf '%s\n' $(escape "$*")"
+	else
+		println "$@" >&2
+	fi
 	exit 1
 }
 
@@ -26,6 +32,11 @@ die_badopt() {
 # Fetches tmux options in batch. Each argument may be specified in the syntax
 # `key=format`, where `format` is a tmux FORMAT to retrieve the intended option,
 # and its value is assigned to a variable named `key`.
+#
+# Additionally, `$target` may be used to specify the pane in which the format
+# string will be expanded. It should be provided in the format
+# `<target_socket_path>:<target_pane_id>`.
+declare target
 batch_get_options() {
 	local keys=() formats=() val=() line
 	while [[ $# -gt 0 ]]; do
@@ -34,6 +45,15 @@ batch_get_options() {
 		shift
 	done
 	delimiter=${delimiter:-">>>END@$RANDOM"} # generate a random delimiter
+
+	local target_socket target_pane display_cmd
+	IFS=':' read -r target_socket target_pane <<<"$target"
+	if [[ -n $target_socket ]]; then
+		display_cmd=(-S "$target_socket" display -t "$target_pane" -p)
+	else
+		display_cmd=(display -p)
+	fi
+
 	set -- "${keys[@]}"
 	while IFS= read -r line; do
 		if [[ -z $line ]]; then
@@ -45,7 +65,7 @@ batch_get_options() {
 			val=()
 			shift
 		fi
-	done < <(tmux display -p "$(printf "%s\n$delimiter\n" "${formats[@]}")")
+	done < <(tmux "${display_cmd[@]}" "$(printf "%s\n$delimiter\n" "${formats[@]}")")
 }
 
 # Escapes all given arguments.

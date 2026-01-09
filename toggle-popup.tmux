@@ -25,7 +25,7 @@ main() {
 		set -goq @popup-socket-name "$DEFAULT_SOCKET_NAME" \;
 
 	local autostart socket_name default_shell
-	batch_get_options \
+	target='' batch_get_options \
 		autostart="#{@popup-autostart}" \
 		socket_name="#{@popup-socket-name}" \
 		default_shell="#{default-shell}"
