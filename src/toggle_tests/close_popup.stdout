@@ -1,4 +1,5 @@
 TMUX:BEGIN[1] {
+	TMUX=tmux-test
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
