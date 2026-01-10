@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -eo pipefail
+# Use `tmux display` to ensure we see the latest environments.
+IFS=':' read -r caller_socket _caller_pane < <(tmux display -p '#{__tmux_popup_caller}')
+if [[ -n "$caller_socket" ]]; then
+	exec tmux -S "$caller_socket" "$@"
+else
+	exec tmux "$@"
+fi

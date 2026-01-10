@@ -18,6 +18,7 @@ main() {
 	tmux \
 		set -g @popup-toggle "$CURRENT_DIR/src/toggle.sh" \; \
 		set -g @popup-focus "$CURRENT_DIR/src/focus.sh" \; \
+		set -g @popup-proxy "$CURRENT_DIR/bin/proxy" \; \
 		set -goq @popup-autostart "off" \; \
 		set -goq @popup-id-format "$DEFAULT_ID_FORMAT" \; \
 		set -goq @popup-on-init "$DEFAULT_ON_INIT" \; \
