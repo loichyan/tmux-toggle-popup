@@ -42,6 +42,12 @@ though this is not particularly useful.
 A command is an executable shell script exported by this plugin, which you can
 bind keys to. You can use the `--help` flag to view the usage of each command.
 
+Some commands are located in `bin/`, allowing you to use them as standalone
+executables. If this plugin is installed at `~/.tmux/plugins/tmux-toggle-popup`,
+you can run such commands directly with
+`~/.tmux/plugins/tmux-toggle-popup/bin/<command>`. For commands not in `bin/`,
+it's recommended to run them using `tmux run '#{@popup-<command>}'`.
+
 ### `@popup-toggle`
 
 **Description**: The core command to manage *popup sessions*. It supports all
@@ -68,13 +74,33 @@ Each argument passed to `@popup-toggle` will be expanded as a tmux format string
 before parsing. The arguments are always expanded in the *caller session*, even
 when invoked in the *popup session*. This ensures that the expansion produces
 the same result in `switch` mode when `@popup-toggle` is called in a *popup
-session*. For more details about this feature, please refer to [#{{PRNUM}}]. In
-brief, it's recommended to use
-`run "#{@popup-toggle} -d'##{pane_current_path}'"` instead of
-`-d'#{pane_current_path}'`, and the same applies to other variables like
-`#{session_name}` and `#{session_path}`.
+session*. For more details about this feature, please refer to [#58]. In brief,
+it's recommended to use `run "#{@popup-toggle} -d'##{pane_current_path}'"`
+instead of `-d'#{pane_current_path}'`, and the same applies to other variables
+like `#{session_name}` and `#{session_path}`.
 
-[#{{PRNUM}}]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
+[#58]: https://github.com/loichyan/tmux-toggle-popup/pull/58
+
+### `@popup-proxy`
+
+**Description**: A helper command for executing tmux commands in the *caller
+session*. It accepts a tmux command sequence and forwards it to tmux(1).
+
+This command is helpful for syncing environments and buffers between the *popup
+session* and the *caller session*. If executed outside a *popup session*, it
+will pass the provided commands directly to tmux. This command can be used as a
+standalone executable.
+
+**Example**: See the [recipe for sharing tmux buffers](#sharing-tmux-buffers).
+
+### `@popup-sync-buffer`
+
+**Description**: A helper command to sync tmux buffers from the *caller
+session*. It uses `@popup-proxy` internally for synchronization. You can this
+before running `paste-buffer` in a *popup session* so that the content from the
+latest buffer of the *caller session* is pasted.
+
+**Example**: See the [recipe for sharing tmux buffers](#sharing-tmux-buffers).
 
 ### `@popup-focus`
 
@@ -246,16 +272,18 @@ set -ga @popup-on-init "
 
 ### Sharing tmux buffers <a id="sharing-tmux-buffers"></a>
 
-Forward the output of copies from *popup sessoins* to the the *working session*
-and the input of pastes in reverse.
+Forward the output of copies from *popup sessions* to the *working session* and
+the input of pastes in reverse.
 
 ```tmux
-%if "$TMUX_POPUP_SERVER"
-	set -g copy-command "tmux -Ldefault loadb -w -"
-	bind -T prefix ] run "tmux -Ldefault saveb - | tmux loadb -" \; pasteb -p
-	bind -T copy-mode-vi y send -X copy-pipe-and-cancel
+if -F "$TMUX_POPUP_SERVER" {
+	set -gF copy-command '#{@popup-proxy} loadb -w -'
+    # Sync buffer with the caller session before pasting.
+	bind -T prefix ] run '#{@popup-sync-buffer}' \; pasteb -p
+    # tmux uses copy-pipe-* commands by default, so below may be unnecessary.
 	bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel
-%endif
+	bind -T copy-mode-vi y send -X copy-pipe-and-cancel
+}
 ```
 
 ### Popups in working server
