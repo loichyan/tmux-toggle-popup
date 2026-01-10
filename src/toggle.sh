@@ -59,10 +59,10 @@ prepare_init() {
 	if [[ $1 == "open" ]]; then
 		init_cmds+=(new -As "$popup_id" "${init_args[@]}" "${program[@]}" \;)
 	else
-		if ! tmux has -t "$popup_id" 2>/dev/null; then
+		if ! tmux has -t "=$popup_id" 2>/dev/null; then
 			init_cmds+=(new -ds "$popup_id" "${init_args[@]}" "${program[@]}" \;)
 		fi
-		init_cmds+=(switch -t "$popup_id" \;)
+		init_cmds+=(switchc -t "$popup_id" \;)
 	fi
 
 	# Export internal variables
