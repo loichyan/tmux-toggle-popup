@@ -2,7 +2,7 @@
 
 # Name:     tmux-toggle-popup
 # Version:  0.4.4
-# Authors:  Loi Chyan <loichyan@foxmail.com>
+# Authors:  Loi Chyan <loichyan@outlook.com>
 # License:  MIT OR Apache-2.0
 
 set -eo pipefail
