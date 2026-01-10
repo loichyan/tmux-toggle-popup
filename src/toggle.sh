@@ -100,16 +100,10 @@ main() {
 		caller_id_format="#{@__popup_id_format}" \
 		caller_path="#{@__popup_caller_path}" \
 		caller_pane_path="#{@__popup_caller_pane_path}" \
-		default_id_format="$DEFAULT_ID_FORMAT" \
 		default_shell="#{default-shell}" \
 		session_path="#{session_path}" \
 		pane_path="#{pane_current_path}"
-	# Load default values
 	name=${name:-$DEFAULT_NAME}
-	id_format="${id_format:-$default_id_format}"
-	on_init=${on_init:-$DEFAULT_ON_INIT}
-	toggle_mode=${toggle_mode:-$DEFAULT_TOGGLE_MODE}
-	socket_name=${socket_name:-$DEFAULT_SOCKET_NAME}
 
 	declare OPT OPTARG OPTIND=1
 	while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do

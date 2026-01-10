@@ -15,7 +15,7 @@ trace() {
 
 return_batch_options() {
 	fake_batch_options \
-		t_id_format="" \
+		t_id_format="default_id_format/{popup_name}" \
 		t_on_init="run '#{@popup_on_init}'" \
 		t_before_open="run '#{@popup_before_open}'" \
 		t_after_close="run '#{@popup_after_close}'" \
@@ -26,7 +26,6 @@ return_batch_options() {
 		t_caller_id_format="caller_id_format/{popup_name}" \
 		t_caller_path="caller_session_path" \
 		t_caller_pane_path="caller_pane_path" \
-		t_default_id_format="default_id_format/{popup_name}" \
 		t_default_shell="/default/shell" \
 		t_session_path="working_session_path" \
 		t_pane_path="working_pane_path"
