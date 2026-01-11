@@ -76,10 +76,16 @@ latter ones.
 ### `@popup-focus`
 
 **Description**: A helper command to manually send focus events. This is
-intended as a workaround for
-[tmux/tmux#3991](https://github.com/tmux/tmux/issues/3991), which has been fixed
-in
-[tmux/tmux@a869693](https://github.com/tmux/tmux/commit/a869693405f99c8ca8e2da32a08534489ce165f2).
+intended as a workaround for [tmux/tmux#3991], which has been fixed in
+[tmux/tmux@a869693].
+
+[tmux/tmux#3991]: https://github.com/tmux/tmux/issues/3991
+[tmux/tmux@a869693]: https://github.com/tmux/tmux/commit/a869693405f99c8ca8e2da32a08534489ce165f2
+
+> [!NOTE]
+>
+> The fix has been included in tmux v3.6, so this command is no longer
+> necessary.
 
 You can use `--leave` or `--enter` to send the focus enter event and the focus
 leave event, respectively. It also accepts a list of programs that should
