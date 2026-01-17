@@ -73,8 +73,10 @@ Create keybindings to toggle your default shell and
 [lazygit](https://github.com/jesseduffield/lazygit):
 
 ```tmux
-bind -n M-t run "#{@popup-toggle} -w75% -h75% -Ed'{popup_caller_pane_path}'"
-bind -n M-g run "#{@popup-toggle} -w90% -h90% -Ed'{popup_caller_pane_path}' --name=lazygit lazygit"
+bind -n M-t run "#{@popup-toggle} -w75% -h75% -Ed'##{pane_current_path}'"
+bind -n M-g run "#{@popup-toggle} -w90% -h90% -Ed'##{pane_current_path}' --name=lazygit lazygit"
+#                                                 ^^ This variable will be expanded during execution.
+#                                                    Please see USAGE.md for more details.
 
 # Turn on autostart to boost the first call of @popup-toggle.
 set -g  @popup-autostart on

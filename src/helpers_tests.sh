@@ -9,7 +9,7 @@ CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
 
-#=== test:parse_cmds ===#
+#-- test:parse_cmds ------------------------------------------------------------
 
 test_parse_commands() {
 	parse_cmds "$1"
@@ -64,7 +64,7 @@ test_parse_commands() {
 		"display 'random text' ; display 'and more'"
 ) || exit 1
 
-#=== test:interpolate ===#
+#-- test:interpolate -----------------------------------------------------------
 
 declare expected input
 test_interpolate() {
@@ -93,7 +93,7 @@ test_interpolate() {
 	test_interpolate var1="var1=value1" var2="var2=value2"
 ) || exit 1
 
-#=== test:batch_get_options ===#
+#-- test:batch_get_options -----------------------------------------------------
 
 # Simulates a tmux response.
 declare delimiter=">>>END" input

@@ -39,7 +39,7 @@ usage() {
 
 		Examples:
 
-		  toggle.sh -Ed'{popup_caller_pane_path}' --name=bash bash
+		  toggle.sh -Ed'##{pane_current_path}' --name=bash bash
 	EOF
 }
 

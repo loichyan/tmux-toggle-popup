@@ -114,7 +114,7 @@ interpolate() {
 	print "$result"
 }
 
-#=== Test utils ===#
+#-- Test utils -----------------------------------------------------------------
 
 failf() {
 	local source lineno

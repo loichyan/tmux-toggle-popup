@@ -37,6 +37,20 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+### Added
+
+- (**breaking**) Support expanding arguments of `@popup-toggle` as format
+  strings. Arguments that include `#{}` must be escaped as `##{}` to prevent
+  expansion ([#{{PRNUM}}])
+
+### Removed
+
+- (**breaking**) Remove placeholder `{popup_caller_path}` and
+  `{popup_caller_pane_path}`. Use `##{session_path}` and `##{pane_current_path}`
+  instead ([#{{PRNUM}}])
+
+[#{{PRNUM}}]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
+
 ## [0.4.4] - 2025-08-30
 
 This release doesn't include major updates but fixes a bug that occurred when

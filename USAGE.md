@@ -1,6 +1,6 @@
 # 🌀 Usage
 
-<h2 id="lifecycle"> 🔄 Lifecycle </h2>
+## 🔄 Lifecycle <a id="lifecycle"></a>
 
 <!--
 Some terms are emphasized in italics. Most of them are referred in the this section.
@@ -64,14 +64,17 @@ can include any options supported by `bind-key`. For example, you can use
 `--toggle-key '-Troot M-t'` or `--toggle-key '-n M-t'` to bind `M-t` without the
 prefix key.
 
-A *popup session* starts in the path of its *caller session*, which is the
-default behavior of `display-popup`. You can use `-d <path>` to override this.
-Additionally, you may use `{popup_caller_path}` or `{popup_caller_pane_path}` to
-specify the start directory, which will **always** be substituted with the path
-of the *caller session* and the path of the *caller pane*, respectively. They
-serve as context-aware alternatives to `#{session_path}` and
-`#{pane_current_pane}`, and are therefore recommended for use in place of the
-latter ones.
+Each argument passed to `@popup-toggle` will be expanded as a tmux format string
+before parsing. The arguments are always expanded in the *caller session*, even
+when invoked in the *popup session*. This ensures that the expansion produces
+the same result in `switch` mode when `@popup-toggle` is called in a *popup
+session*. For more details about this feature, please refer to [#{{PRNUM}}]. In
+brief, it's recommended to use
+`run "#{@popup-toggle} -d'##{pane_current_path}'"` instead of
+`-d'#{pane_current_path}'`, and the same applies to other variables like
+`#{session_name}` and `#{session_path}`.
+
+[#{{PRNUM}}]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
 
 ### `@popup-focus`
 
@@ -99,6 +102,9 @@ is sent regardless.
 set -g @popup-before-open 'run "#{@popup-focus} --leave nvim emacs"'
 set -g @popup-after-close 'run "#{@popup-focus} --enter nvim emacs"'
 ```
+
+[tmux/tmux#3991]: https://github.com/tmux/tmux/issues/3991
+[tmux/tmux@a869693]: https://github.com/tmux/tmux/commit/a869693405f99c8ca8e2da32a08534489ce165f2
 
 ## ⚙️ Options
 
@@ -238,7 +244,7 @@ set -ga @popup-on-init "
 
 ## 👩‍🍳 Recipes
 
-### Sharing tmux buffers
+### Sharing tmux buffers <a id="sharing-tmux-buffers"></a>
 
 Forward the output of copies from *popup sessoins* to the the *working session*
 and the input of pastes in reverse.
