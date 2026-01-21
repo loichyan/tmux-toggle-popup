@@ -13,7 +13,7 @@ A handy plugin to create toggleable popups.
 - tmux >= **3.4** (not tested on earlier versions)
 - Bash >= **3.2.57**
 
-> [!NOTE]
+> [!Note]
 >
 > This plugin has been tested on macOS's built-in Bash through GitHub Actions.
 > However, if you are experiencing issues on macOS, please try upgrading your
@@ -60,8 +60,8 @@ config.programs.tmux = {
   extraConfig = ''
     ...
     # popups
-    bind C-t run "#{@popup-toggle} -Ed'#{pane_current_path}' -w75% -h75%"
-    bind C-g run "#{@popup-toggle} -Ed'#{pane_current_path}' -w90% -h90% --name=lazygit lazygit"
+    bind C-t run "#{@popup-toggle} -Ed'##{pane_current_path}' -w75% -h75%"
+    bind C-g run "#{@popup-toggle} -Ed'##{pane_current_path}' -w90% -h90% --name=lazygit lazygit"
     ...
   '';
 };
@@ -92,7 +92,7 @@ set -g @plugin "tmux-plugins/tmux-continuum"
 set -g @plugin "loichyan/tmux-toggle-popup"
 ```
 
-> [!TIP]
+> [!Tip]
 >
 > Whenever you update the *.tmux.conf*, remember to reload it in both your
 > working session and the popup session; otherwise, keybinding or style changes

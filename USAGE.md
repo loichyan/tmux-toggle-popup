@@ -111,7 +111,7 @@ intended as a workaround for [tmux/tmux#3991], which has been fixed in
 [tmux/tmux#3991]: https://github.com/tmux/tmux/issues/3991
 [tmux/tmux@a869693]: https://github.com/tmux/tmux/commit/a869693405f99c8ca8e2da32a08534489ce165f2
 
-> [!NOTE]
+> [!Note]
 >
 > The fix has been included in tmux v3.6, so this command is no longer
 > necessary.
@@ -216,38 +216,29 @@ affect subsequent calls.
 
 ## 🪝 Hooks
 
-A hook is used to run tmux commands on certain events. Each hook is preprocessed
-by *xargs(1)*, which splits it into a token stream. The token stream is
-collected and passed to tmux when the corresponding event fires. When writing
-hooks, keep the following rules in mind:
+A hook is used to run tmux commands on certain events. Each hook is sent to tmux
+using `run-shell -C <hook>`. Here are some general tips for writing hooks:
 
-1. Two commands must be delimited by a semicolon (`;`).
-2. Line breaks are replaced with spaces, therefore, as rule *(1)* states,
-   remember to put a semicolon after each command.
-3. Tokens can be protected by quotes (either `'` or `"`) from being split.
-4. Any character preceded by a backslash (`\`) is treated as a literal escape.
-   For instance, `\n` is interpreted as `n` rather than a line break.
-5. For commands that take a command sequence as an argument, each command in
-   that sequence must be delimited by `\;`, just as you would do in
-   *.tmux.conf*. You can use either `\\;` or `'\;'` to input a `\;`.
-   Additionally, you may also put the entire sequence in a pair of quotes, as
-   the following example shows.
-
-To disable a hook, you should set it to `nop` instead of an empty string.
+1. Separate two commands with a semicolon (`;`).
+2. For commands that accept a command sequence as an argument, like `bind-key`,
+   separate each command in the sequence with `\;`.
+3. To disable a hook, set it to `nop` or an empty string.
 
 **Example**:
 
 ```tmux
-# Hide the statusline and setup additional key bindings
-set -g  @popup-on-init 'set status off'
-# In single quotes, no escape sequence will be recognized.
-set -ga @popup-on-init '
-  ; bind -n M-1 confirm -p"inside a popup?" "run true" \\; display -d3000 "of course!"
+# tmux transforms everything inside braces into a single string that it can
+# parse. This string is then sent to tmux through `run-shell -C` right after we
+# we enter the popup session.
+set -g @popup-on-init {
+    set status off
+    bind -n M-t confirm -p "inside a popup?" "run true" \; display -d3000 "of course!"
+}
+# Outside tmux.conf, we need to manually escape and separate each command.
+set -g @popup-on-init '
+    set status off;
+    bind -n M-t confirm -p "inside a popup?" "run true" \; display -d3000 "of course!";
 '
-# While in double quotes, escape sequences work as usual.
-set -ga @popup-on-init "
-  ; bind -n M-2 \"confirm -p'inside a popup?' 'run true' ; display -d3000 'of course!'\"
-"
 ```
 
 ### `@popup-on-init`
@@ -331,7 +322,7 @@ if -F "#{!:#{@popup_did_init}}" {
 }
 ```
 
-> [!NOTE]
+> [!Note]
 >
 > Whenever you need to interact with the popup session, do it through the
 > `on-init` hook rather than `#{@popup-toggle} some_script.sh`. This is because,

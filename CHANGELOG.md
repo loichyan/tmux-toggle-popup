@@ -45,6 +45,11 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 - Add `@popup-proxy` to run tmux commands in the caller session ([#59])
 - Add `@popup-sync-buffer` to sync tmux buffers before pasting ([#59])
 
+### Changed
+
+- (**breaking**) Use `run-shell -C` to execute hooks. Escape sequences are
+  respected, so `\;` can be used directly ([#{{PRNUM}}])
+
 ### Removed
 
 - (**breaking**) Remove placeholder `{popup_caller_path}` and
