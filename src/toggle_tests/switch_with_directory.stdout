@@ -4,7 +4,7 @@ TMUX:BEGIN[1] {
 }
 	has
 	-t
-	caller_id_format/p_switch_with_directory_2
+	=caller_id_format/p_switch_with_directory_2
 TMUX:END[1]
 TMUX:BEGIN[2] {
 	TMUX_POPUP_SERVER=
@@ -16,7 +16,7 @@ TMUX:BEGIN[2] {
 	-c
 	caller_pane_path
 	;
-	switch
+	switchc
 	-t
 	caller_id_format/p_switch_with_directory_2
 	;
