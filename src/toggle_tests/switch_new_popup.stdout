@@ -27,5 +27,7 @@ TMUX:BEGIN[2] {
 	%current_pane_id:tmux-test
 	;
 	run
-	#{@popup_on_init}
+	-C
+	run '#{@popup_on_init}'
+	;
 TMUX:END[2]

@@ -4,7 +4,8 @@ TMUX:BEGIN[1] {
 	SHELL=/system/shell
 }
 	run
-	#{@popup-focus} --enter
+	-C
+	run '#{@popup-focus} --enter'
 	;
 	set
 	default-shell
@@ -40,6 +41,7 @@ TMUX:BEGIN[1] {
 	TMUX:END[3]
 	;
 	run
-	#{@popup-focus} --leave
+	-C
+	run '#{@popup-focus} --leave'
 	;
 TMUX:END[1]

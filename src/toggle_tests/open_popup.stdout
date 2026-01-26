@@ -4,7 +4,8 @@ TMUX:BEGIN[1] {
 	SHELL=/system/shell
 }
 	run
-	#{@popup_before_open}
+	-C
+	run '#{@popup_before_open}'
 	;
 	set
 	default-shell
@@ -38,10 +39,13 @@ TMUX:BEGIN[1] {
 		%current_pane_id:tmux-test
 		;
 		run
-		#{@popup_on_init}
+		-C
+		run '#{@popup_on_init}'
+		;
 	TMUX:END[3]
 	;
 	run
-	#{@popup_after_close}
+	-C
+	run '#{@popup_after_close}'
 	;
 TMUX:END[1]
