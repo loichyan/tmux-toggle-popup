@@ -48,7 +48,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 ### Changed
 
 - (**breaking**) Use `run-shell -C` to execute hooks. Escape sequences are
-  respected, so `\;` can be used directly ([#{{PRNUM}}])
+  respected, so `\;` can be used directly ([#60])
 
 ### Removed
 
