@@ -4,5 +4,5 @@ TMUX:BEGIN[1] {
 	SHELL=/system/shell
 }
 	run
-	printf '%s\n' \'\{popup_caller_path\}\'\ and\ \'\{popup_caller_pane_path\}\'\ has\ been\ removed.\ Please\ use\ \'##\{session_path\}\'\ and\ \'##\{pane_current_path\}\'\ instead.
+	printf '%s\n' \'\{popup_caller_path\}\'\ and\ \'\{popup_caller_pane_path\}\'\ has\ been\ removed.\ Please\ use\ \'##\{session_path\}\'\ and\ \'##\{pane_current_path\}\'\ instead.\ For\ more\ information\,\ see\ \<https://github.com/loichyan/tmux-toggle-popup/pull/58\>.
 TMUX:END[1]
