@@ -35,10 +35,10 @@ die_badopt() {
 #
 # Additionally, `$target` may be used to specify the pane in which the format
 # string will be expanded. It should be provided in the format
-# `<target_socket_path>:<target_pane_id>`.
+# `<target_pane_id>:<target_TMUX>`.
 declare target
 batch_get_options() {
-	local keys=() formats=() val=() line
+	local keys=() formats=()
 	while [[ $# -gt 0 ]]; do
 		keys+=("${1%%=*}")
 		formats+=("${1#*=}")
@@ -46,14 +46,11 @@ batch_get_options() {
 	done
 	delimiter=${delimiter:-">>>END@$RANDOM"} # generate a random delimiter
 
-	local target_socket target_pane display_cmd
-	IFS=':' read -r target_socket target_pane <<<"$target"
-	if [[ -n $target_socket ]]; then
-		display_cmd=(-S "$target_socket" display -t "$target_pane" -p)
-	else
-		display_cmd=(display -p)
-	fi
+	local target_pane target_tmux args=()
+	IFS=':' read -r target_pane target_tmux <<<"$target"
+	if [[ -n $target_pane ]]; then args+=(-t "$target_pane"); fi
 
+	local val=() line
 	set -- "${keys[@]}"
 	while IFS= read -r line; do
 		if [[ -z $line ]]; then
@@ -65,7 +62,7 @@ batch_get_options() {
 			val=()
 			shift
 		fi
-	done < <(tmux "${display_cmd[@]}" "$(printf "%s\n$delimiter\n" "${formats[@]}")")
+	done < <(TMUX=${target_tmux:-$TMUX} tmux display "${args[@]}" -p "$(printf "%s\n$delimiter\n" "${formats[@]}")")
 }
 
 # Escapes all given arguments.

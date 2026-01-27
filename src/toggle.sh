@@ -66,7 +66,7 @@ prepare_init() {
 
 	init_cmds+=(
 		# Keep the information about popup caller up-to-date
-		setenv __tmux_popup_caller "${popup_caller:-"$current_socket_path:$current_pane_id"}" \;
+		setenv __tmux_popup_caller "${popup_caller:-"$current_pane_id:$TMUX"}" \;
 	)
 
 	# Create temporary toggle keys in the opened popup
@@ -83,10 +83,10 @@ prepare_init() {
 
 declare name id id_format toggle_keys=() init_args=() display_args=()
 declare on_init before_open after_close toggle_mode socket_name socket_path
-declare default_shell popup_caller opened_name current_socket_path current_pane_id
+declare default_shell popup_caller opened_name current_pane_id
 main() {
 	# Load internal variables
-	popup_caller=${__tmux_popup_caller}
+	popup_caller=${__tmux_popup_caller} # content: {pane_id}:$TMUX
 	opened_name=${__tmux_popup_name}
 
 	# Expand each argument as a tmux format string before actually parsing.
@@ -106,7 +106,6 @@ main() {
 		socket_name="#{@popup-socket-name}" \
 		socket_path="#{@popup-socket-path}" \
 		default_shell="#{default-shell}" \
-		current_socket_path="#{socket_path}" \
 		current_pane_id="#{pane_id}" \
 		"${batch_expand_args[@]}"
 
