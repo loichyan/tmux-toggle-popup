@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -eo pipefail
+# Use `tmux display` to ensure we see the latest environments.
+IFS=':' read -r _ caller < <(tmux display -p '#{__tmux_popup_caller}')
+TMUX=${caller:-$TMUX} exec tmux "$@"
