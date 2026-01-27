@@ -42,8 +42,8 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 - (**breaking**) Support expanding arguments of `@popup-toggle` as format
   strings. Arguments that include `#{}` must be escaped as `##{}` to prevent
   unexpected expansion ([#58])
-- Add `@popup-proxy` to run tmux commands in the caller session ([#{{PRNUM}}])
-- Add `@popup-sync-buffer` to sync tmux buffers before pasting ([#{{PRNUM}}])
+- Add `@popup-proxy` to run tmux commands in the caller session ([#59])
+- Add `@popup-sync-buffer` to sync tmux buffers before pasting ([#59])
 
 ### Removed
 
@@ -52,7 +52,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
   instead ([#58])
 
 [#58]: https://github.com/loichyan/tmux-toggle-popup/pull/58
-[#{{{PRNUM}}}]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
+[#{59}]: https://github.com/loichyan/tmux-toggle-popup/pull/59
 
 ## [0.4.4] - 2025-08-30
 
