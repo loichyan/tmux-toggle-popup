@@ -129,7 +129,8 @@ main() {
 			# Report deprecated placeholders
 			if [[ $OPTARG =~ \{popup_caller(_pane)?_path\} ]]; then
 				die "'{popup_caller_path}' and '{popup_caller_pane_path}' has been removed." \
-					"Please use '##{session_path}' and '##{pane_current_path}' instead."
+					"Please use '##{session_path}' and '##{pane_current_path}' instead." \
+					"For more information, see <https://github.com/loichyan/tmux-toggle-popup/pull/58>."
 			fi
 			init_args+=(-c "$OPTARG")
 			;;

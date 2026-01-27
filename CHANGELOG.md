@@ -41,7 +41,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 - (**breaking**) Support expanding arguments of `@popup-toggle` as format
   strings. Arguments that include `#{}` must be escaped as `##{}` to prevent
-  expansion ([#58])
+  unexpected expansion ([#58])
 
 ### Removed
 
