@@ -277,12 +277,12 @@ the input of pastes in reverse.
 
 ```tmux
 if -F "$TMUX_POPUP_SERVER" {
-	set -gF copy-command '#{@popup-proxy} loadb -w -'
-    # Sync buffer with the caller session before pasting.
-	bind -T prefix ] run '#{@popup-sync-buffer}' \; pasteb -p
-    # tmux uses copy-pipe-* commands by default, so below may be unnecessary.
-	bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel
-	bind -T copy-mode-vi y send -X copy-pipe-and-cancel
+   set -g copy-command '~/path/to/this/plugin/bin/proxy loadb -w -'
+   # Sync buffer with the caller session before pasting.
+   bind -T prefix ] run '#{@popup-sync-buffer}' \; pasteb -p
+   # tmux uses copy-pipe-* commands by default, so below may be unnecessary.
+   bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel
+   bind -T copy-mode-vi y send -X copy-pipe-and-cancel
 }
 ```
 
