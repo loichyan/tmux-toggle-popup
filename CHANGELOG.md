@@ -47,8 +47,8 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ### Changed
 
-- (**breaking**) Use `run-shell -C` to execute hooks. Escape sequences are
-  respected, so `\;` can be used directly ([#60])
+- (**breaking**) Use `run-shell -C` to execute hooks. Escape sequences are now
+  handled by tmux, so `\;` can be used directly ([#60])
 
 ### Removed
 
@@ -57,7 +57,8 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
   instead ([#58])
 
 [#58]: https://github.com/loichyan/tmux-toggle-popup/pull/58
-[#{59}]: https://github.com/loichyan/tmux-toggle-popup/pull/59
+[#59]: https://github.com/loichyan/tmux-toggle-popup/pull/59
+[#60]: https://github.com/loichyan/tmux-toggle-popup/pull/60
 
 ## [0.4.4] - 2025-08-30
 
