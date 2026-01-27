@@ -24,7 +24,7 @@ TMUX:BEGIN[2] {
 	;
 	setenv
 	__tmux_popup_caller
-	/current/socket/path:%current_pane_id
+	%current_pane_id:tmux-test
 	;
 	run
 	#{@popup_on_init}
