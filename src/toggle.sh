@@ -76,9 +76,8 @@ prepare_init() {
 		on_cleanup+=(unbind $k \;)
 	done
 
-	if parse_cmds "$on_init"; then
-		init_cmds+=("${cmds[@]}")
-	fi
+	# Handle hook: on-init
+	if check_hook "$on_init"; then init_cmds+=(run -C "$on_init" \;); fi
 }
 
 declare name id id_format toggle_keys=() init_args=() display_args=()
@@ -197,26 +196,27 @@ main() {
 	open_script=""
 
 	# Handle hook: before-open
-	if parse_cmds "$before_open"; then open_cmds+=("${cmds[@]}" \;); fi
+	if check_hook "$before_open"; then open_cmds+=(run -C "$before_open" \;); fi
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
 	# shell commands. However, our scripts require sh(1) and may not be parsed
 	# correctly by some incompatible shells. In this case, we change the default
 	# shell to `/bin/sh` and then revert it immediately.
-	open_script+="tmux set default-shell '$default_shell' ;"
+	open_script+="tmux set default-shell '$default_shell';"
 	open_cmds+=(set default-shell "/bin/sh" \;)
 
 	# Set $TMUX_POPUP_SERVER to identify the popup server.
-	open_script+="export TMUX_POPUP_SERVER='$popup_server' SHELL='$default_shell' ;"
+	open_script+="export TMUX_POPUP_SERVER='$popup_server' SHELL='$default_shell';"
 
 	# Suppress stdout to hide the `[detached] ...` message
-	open_script+="exec tmux $(escape "${popup_socket[@]}" "${init_cmds[@]}") >/dev/null ;"
+	open_script+="exec $(escape tmux "${popup_socket[@]}" "${init_cmds[@]}")>/dev/null;"
 	open_cmds+=(display-popup "${display_args[@]}" "$open_script" \;)
 
 	# Handle hook: after-close
-	if parse_cmds "$after_close"; then open_cmds+=("${cmds[@]}" \;); fi
+	if check_hook "$after_close"; then open_cmds+=(run -C "$after_close" \;); fi
 
 	# Do open the popup window
+	# printf '%s\n'
 	tmux "${open_cmds[@]}"
 
 	# Undo temporary changes on the popup server

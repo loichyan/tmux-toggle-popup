@@ -78,16 +78,11 @@ escape_session_name() {
 	print "${1//[.:]/_}"
 }
 
-# Parses tmux commands, assigning the tokens to an array named `cmds`.
-#
-# It returns 1 if the given string does not contain any valid tmux commands.
-declare cmds
-parse_cmds() {
+# Returns whether a hook is enabled.
+check_hook() {
 	if [[ -z $1 || $1 == "nop" ]]; then
 		return 1
 	fi
-	# shellcheck disable=SC2034
-	IFS=$'\n' read -d '' -ra cmds < <(print "$1" | xargs printf "%s\n") || true
 }
 
 # Expands the provided tmux FORMAT string.

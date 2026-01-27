@@ -9,61 +9,6 @@ CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
 
-#-- test:parse_cmds ------------------------------------------------------------
-
-test_parse_commands() {
-	parse_cmds "$1"
-	shift
-
-	if [[ $# -ne ${#cmds[@]} ]]; then
-		failf "expected $# tokens to be parsed, got ${#cmds[@]}:%s" "$(printf "\n\t%s" "${cmds[@]}")"
-	fi
-
-	local i=0
-	while [[ $# -gt 0 ]]; do
-		if [[ $1 != "${cmds[$i]}" ]]; then
-			git diff <(print "${cmds[i]}") <(print "$1")
-			failf "unexpected token at $((i + 1))"
-		fi
-		shift
-		i=$((i + 1))
-	done
-}
-
-(
-	begin_test "delimited_by_semis" || exit 0
-	test_parse_commands \
-		'set status off ; set exit-empty off' \
-		'set' 'status' 'off' ';' \
-		'set' 'exit-empty' 'off'
-) || exit 1 || exit 1
-
-(
-	begin_test "delimited_by_line_breaks" || exit 0
-	test_parse_commands \
-		'set status off
-	 set exit-empty off' \
-		'set' 'status' 'off' \
-		'set' 'exit-empty' 'off'
-) || exit 1 || exit 1
-
-(
-	begin_test "escaped_multiple_commands" || exit 0
-	test_parse_commands \
-		'bind -n M-1 display random\ text \\; display and\ more' \
-		'bind' '-n' 'M-1' \
-		'display' 'random text' '\;' \
-		'display' 'and more'
-) || exit 1
-
-(
-	begin_test "quoted_multiple_commands" || exit 0
-	test_parse_commands \
-		"bind -n M-2 \"display 'random text' ; display 'and more'\"" \
-		'bind' '-n' 'M-2' \
-		"display 'random text' ; display 'and more'"
-) || exit 1
-
 #-- test:interpolate -----------------------------------------------------------
 
 declare expected input
