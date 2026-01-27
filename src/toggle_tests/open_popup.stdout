@@ -1,4 +1,5 @@
 TMUX:BEGIN[1] {
+	TMUX=tmux-test
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
@@ -11,6 +12,7 @@ TMUX:BEGIN[1] {
 	;
 	display-popup
 	TMUX:BEGIN[2] {
+		TMUX=tmux-test
 		TMUX_POPUP_SERVER=
 		SHELL=/system/shell
 	}
@@ -19,6 +21,7 @@ TMUX:BEGIN[1] {
 		/default/shell
 	TMUX:END[2]
 	TMUX:BEGIN[3] {
+		TMUX=tmux-test
 		TMUX_POPUP_SERVER=popup_test
 		SHELL=/default/shell
 	}
@@ -27,22 +30,12 @@ TMUX:BEGIN[1] {
 		new
 		-As
 		default_id_format/p_open
+		-e
+		__tmux_popup_name=p_open
 		;
-		set
-		@__popup_name
-		p_open
-		;
-		set
-		@__popup_id_format
-		default_id_format/{popup_name}
-		;
-		set
-		@__popup_caller_path
-		working_session_path
-		;
-		set
-		@__popup_caller_pane_path
-		working_pane_path
+		setenv
+		__tmux_popup_caller
+		/current/socket/path:%current_pane_id
 		;
 		run
 		#{@popup_on_init}

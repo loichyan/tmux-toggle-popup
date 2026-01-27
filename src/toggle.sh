@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2153
+# shellcheck disable=SC2154
+# shellcheck disable=SC2155
 
 set -eo pipefail
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -36,7 +39,7 @@ usage() {
 
 		Examples:
 
-		  toggle.sh -Ed'{popup_caller_pane_path}' --name=bash bash
+		  toggle.sh -Ed'##{pane_current_path}' --name=bash bash
 	EOF
 }
 
@@ -49,27 +52,22 @@ declare init_cmds=() on_cleanup=() popup_id
 prepare_init() {
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
-	if [[ -n $open_dir ]]; then
-		# Interpolate `{popup_caller_path}`, `{popup_caller_pane_path}`.
-		init_args+=(-c "$(interpolate popup_caller_path="$caller_path" \
-			popup_caller_pane_path="$caller_pane_path" "$open_dir")")
-	fi
 
 	init_cmds=()
 	if [[ $1 == "open" ]]; then
-		init_cmds+=(new -As "$popup_id" "${init_args[@]}" "${program[@]}" \;)
+		init_cmds+=(new -As "$popup_id" "${init_args[@]}" \;)
 	else
+		# Start target session before attaching to it
 		if ! tmux has -t "=$popup_id" 2>/dev/null; then
-			init_cmds+=(new -ds "$popup_id" "${init_args[@]}" "${program[@]}" \;)
+			init_cmds+=(new -ds "$popup_id" "${init_args[@]}" \;)
 		fi
 		init_cmds+=(switchc -t "$popup_id" \;)
 	fi
 
-	# Export internal variables
-	init_cmds+=(set @__popup_name "$name" \;)
-	init_cmds+=(set @__popup_id_format "$id_format" \;)
-	init_cmds+=(set @__popup_caller_path "$caller_path" \;)
-	init_cmds+=(set @__popup_caller_pane_path "$caller_pane_path" \;)
+	init_cmds+=(
+		# Keep the information about popup caller up-to-date
+		setenv __tmux_popup_caller "${popup_caller:-"$current_socket_path:$current_pane_id"}" \;
+	)
 
 	# Create temporary toggle keys in the opened popup
 	# shellcheck disable=SC2206
@@ -83,12 +81,23 @@ prepare_init() {
 	fi
 }
 
-declare name id id_format toggle_keys=() init_args=() open_dir program=() display_args=()
+declare name id id_format toggle_keys=() init_args=() display_args=()
 declare on_init before_open after_close toggle_mode socket_name socket_path
-declare opened_name caller_id_format caller_path caller_pane_path
-declare default_id_format default_shell session_path pane_path
+declare default_shell popup_caller opened_name current_socket_path current_pane_id
 main() {
-	batch_get_options \
+	# Load internal variables
+	popup_caller=${__tmux_popup_caller}
+	opened_name=${__tmux_popup_name}
+
+	# Expand each argument as a tmux format string before actually parsing.
+	local i=1 batch_expand_args=()
+	while [[ $i -le $# ]]; do
+		batch_expand_args+=("argv_$i=${!i}")
+		i=$((i + 1))
+	done
+
+	# Expand format strings in the caller pane to ensure consistency.
+	target=$popup_caller batch_get_options \
 		id_format="#{E:@popup-id-format}" \
 		on_init="#{@popup-on-init}" \
 		before_open="#{@popup-before-open}" \
@@ -96,14 +105,18 @@ main() {
 		toggle_mode="#{@popup-toggle-mode}" \
 		socket_name="#{@popup-socket-name}" \
 		socket_path="#{@popup-socket-path}" \
-		opened_name="#{@__popup_name}" \
-		caller_id_format="#{@__popup_id_format}" \
-		caller_path="#{@__popup_caller_path}" \
-		caller_pane_path="#{@__popup_caller_pane_path}" \
 		default_shell="#{default-shell}" \
-		session_path="#{session_path}" \
-		pane_path="#{pane_current_path}"
-	name=${name:-$DEFAULT_NAME}
+		current_socket_path="#{socket_path}" \
+		current_pane_id="#{pane_id}" \
+		"${batch_expand_args[@]}"
+
+	local i=1 k expanded_args=()
+	while [[ $i -le $# ]]; do
+		k="argv_$i"
+		expanded_args+=("${!k}")
+		i=$((i + 1))
+	done
+	set -- "${expanded_args[@]}" # now all arguments are expanded
 
 	declare OPT OPTARG OPTIND=1
 	while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
@@ -112,7 +125,15 @@ main() {
 		[BCE]) display_args+=("-$OPT") ;;
 		[bchsStTwxy]) display_args+=("-$OPT" "$OPTARG") ;;
 		# Forward working directory to popup sessions
-		d) open_dir=$OPTARG ;;
+		d)
+			# Report deprecated placeholders
+			if [[ $OPTARG =~ \{popup_caller(_pane)?_path\} ]]; then
+				die "'{popup_caller_path}' and '{popup_caller_pane_path}' has been removed." \
+					"Please use '##{session_path}' and '##{pane_current_path}' instead." \
+					"For more information, see <https://github.com/loichyan/tmux-toggle-popup/pull/58>."
+			fi
+			init_args+=(-c "$OPTARG")
+			;;
 		# Forward environment overrides to popup sessions
 		e) init_args+=(-e "$OPTARG") ;;
 		name | id | id-format | toggle-key | \
@@ -140,26 +161,16 @@ main() {
 		*) die_badopt ;;
 		esac
 	done
-	program=("${@:$OPTIND}")
 
 	# If ID specified, use it as the popup name.
 	if [[ -n $id ]]; then name=${id}; fi
+	name=${name:-$DEFAULT_NAME}
+	init_args+=(
+		-e __tmux_popup_name="$name" # set variable to identify opened popups
+		"${@:$OPTIND}"               # forward program to start popup session
+	)
 
-	if [[ -n $opened_name ]]; then
-		if [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
-			tmux detach >/dev/null
-			return
-		elif [[ $toggle_mode == "switch" ]]; then
-			# Inherit the caller's ID format in switch mode
-			id_format=${caller_id_format}
-			prepare_init "switch"
-			tmux "${init_cmds[@]}"
-			return
-		elif [[ $toggle_mode != "force-open" ]]; then
-			die "illegal toggle mode: $toggle_mode"
-		fi
-	fi
-
+	# Determine which server to start popups.
 	if [[ -n $socket_path ]]; then
 		popup_socket=(-S "$socket_path")
 		popup_server=${socket_path##*/}
@@ -168,19 +179,26 @@ main() {
 		popup_server=${socket_name}
 	fi
 
+	if [[ -z $opened_name ]]; then
+		prepare_init "open"
+	elif [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
+		tmux detach >/dev/null
+		return
+	elif [[ $toggle_mode == "switch" ]]; then
+		prepare_init "switch"
+		tmux "${init_cmds[@]}"
+		return
+	elif [[ $toggle_mode != "force-open" ]]; then
+		die "illegal toggle mode: $toggle_mode"
+	fi
+
 	# Command sequence to open the popup window, including hooks.
 	open_cmds=()
+	# Script to initialize the popup session inside a popup window.
+	open_script=""
 
 	# Handle hook: before-open
 	if parse_cmds "$before_open"; then open_cmds+=("${cmds[@]}" \;); fi
-
-	# This session is the caller, so use it's path
-	caller_path=${session_path}
-	caller_pane_path=${pane_path}
-	prepare_init "open"
-
-	# Script to initialize the popup session inside a popup window.
-	open_script=""
 
 	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
 	# shell commands. However, our scripts require sh(1) and may not be parsed
@@ -190,12 +208,10 @@ main() {
 	open_cmds+=(set default-shell "/bin/sh" \;)
 
 	# Set $TMUX_POPUP_SERVER to identify the popup server.
-	# Propagate user's default shell.
-	open_script+="export TMUX_POPUP_SERVER='$popup_server' ;"
-	open_script+="export SHELL='$default_shell' ;"
+	open_script+="export TMUX_POPUP_SERVER='$popup_server' SHELL='$default_shell' ;"
 
 	# Suppress stdout to hide the `[detached] ...` message
-	open_script+="exec tmux $(escape "${popup_socket[@]}" "${init_cmds[@]}") >/dev/null"
+	open_script+="exec tmux $(escape "${popup_socket[@]}" "${init_cmds[@]}") >/dev/null ;"
 	open_cmds+=(display-popup "${display_args[@]}" "$open_script" \;)
 
 	# Handle hook: after-close
