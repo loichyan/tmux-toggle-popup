@@ -82,7 +82,7 @@ prepare_init() {
 
 declare name id id_format toggle_keys=() init_args=() display_args=()
 declare on_init before_open after_close toggle_mode socket_name socket_path
-declare default_shell popup_caller opened_name current_pane_id
+declare popup_caller opened_name current_pane_id
 main() {
 	# Load internal variables
 	popup_caller=${__tmux_popup_caller} # content: {pane_id}:$TMUX
@@ -104,7 +104,6 @@ main() {
 		toggle_mode="#{@popup-toggle-mode}" \
 		socket_name="#{@popup-socket-name}" \
 		socket_path="#{@popup-socket-path}" \
-		default_shell="#{default-shell}" \
 		current_pane_id="#{pane_id}" \
 		"${batch_expand_args[@]}"
 
@@ -192,31 +191,23 @@ main() {
 
 	# Command sequence to open the popup window, including hooks.
 	open_cmds=()
-	# Script to initialize the popup session inside a popup window.
-	open_script=""
 
 	# Handle hook: before-open
 	if check_hook "$before_open"; then open_cmds+=(run -C "$before_open" \;); fi
 
-	# Starting from version 3.5, tmux uses the user's `default-shell` to execute
-	# shell commands. However, our scripts require sh(1) and may not be parsed
-	# correctly by some incompatible shells. In this case, we change the default
-	# shell to `/bin/sh` and then revert it immediately.
-	open_script+="tmux set default-shell '$default_shell';"
-	open_cmds+=(set default-shell "/bin/sh" \;)
-
-	# Set $TMUX_POPUP_SERVER to identify the popup server.
-	open_script+="export TMUX_POPUP_SERVER='$popup_server' SHELL='$default_shell';"
-
-	# Suppress stdout to hide the `[detached] ...` message
-	open_script+="exec $(escape tmux "${popup_socket[@]}" "${init_cmds[@]}")>/dev/null;"
-	open_cmds+=(display-popup "${display_args[@]}" "$open_script" \;)
+	# Add commands that actually open the popup.
+	open_cmds+=(
+		display-popup "${display_args[@]}"
+		-e TMUX_POPUP_SERVER="$popup_server" # used to identify the popup server
+		/bin/sh -c
+		"exec $(escape tmux "${popup_socket[@]}" "${init_cmds[@]}")>/dev/null"
+		\;
+	)
 
 	# Handle hook: after-close
 	if check_hook "$after_close"; then open_cmds+=(run -C "$after_close" \;); fi
 
-	# Do open the popup window
-	# printf '%s\n'
+	# Do open the popup window.
 	tmux "${open_cmds[@]}"
 
 	# Undo temporary changes on the popup server
