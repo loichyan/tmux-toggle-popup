@@ -7,10 +7,6 @@ TMUX:BEGIN[1] {
 	-C
 	run '#{@popup_before_open}'
 	;
-	set
-	default-shell
-	/bin/sh
-	;
 	display-popup
 	-x
 	R
@@ -21,15 +17,6 @@ TMUX:BEGIN[1] {
 	-h
 	70%
 	TMUX:BEGIN[2] {
-		TMUX=tmux-test
-		TMUX_POPUP_SERVER=
-		SHELL=/system/shell
-	}
-		set
-		default-shell
-		/default/shell
-	TMUX:END[2]
-	TMUX:BEGIN[3] {
 		TMUX=tmux-test
 		TMUX_POPUP_SERVER=popup_test
 		SHELL=/default/shell
@@ -50,7 +37,7 @@ TMUX:BEGIN[1] {
 		-C
 		run '#{@popup_on_init}'
 		;
-	TMUX:END[3]
+	TMUX:END[2]
 	;
 	run
 	-C

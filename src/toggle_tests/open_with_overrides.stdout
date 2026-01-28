@@ -7,21 +7,8 @@ TMUX:BEGIN[1] {
 	-C
 	run '#{@popup-focus} --enter'
 	;
-	set
-	default-shell
-	/bin/sh
-	;
 	display-popup
 	TMUX:BEGIN[2] {
-		TMUX=tmux-test
-		TMUX_POPUP_SERVER=
-		SHELL=/system/shell
-	}
-		set
-		default-shell
-		/default/shell
-	TMUX:END[2]
-	TMUX:BEGIN[3] {
 		TMUX=tmux-test
 		TMUX_POPUP_SERVER=popup_server
 		SHELL=/default/shell
@@ -38,7 +25,7 @@ TMUX:BEGIN[1] {
 		__tmux_popup_caller
 		%current_pane_id:tmux-test
 		;
-	TMUX:END[3]
+	TMUX:END[2]
 	;
 	run
 	-C
