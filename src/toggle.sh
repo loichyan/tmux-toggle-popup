@@ -56,13 +56,13 @@ prepare_init() {
 
 	init_cmds=()
 	if [[ $1 == 'open' ]]; then
-		init_cmds+=(new -As "$popup_id" "${init_args[@]}" \;)
+		init_cmds+=(new-session -As "$popup_id" "${init_args[@]}" \;)
 	else
 		# Start target session before attaching to it
-		if ! tmux has -t "=$popup_id" 2>/dev/null; then
-			init_cmds+=(new -ds "$popup_id" "${init_args[@]}" \;)
+		if ! tmux has-session -t "=$popup_id" 2>/dev/null; then
+			init_cmds+=(new-session -ds "$popup_id" "${init_args[@]}" \;)
 		fi
-		init_cmds+=(switchc -t "$popup_id" \;)
+		init_cmds+=(switch-client -t "$popup_id" \;)
 	fi
 
 	init_cmds+=(
@@ -73,12 +73,12 @@ prepare_init() {
 	# Create temporary toggle keys in the opened popup
 	# shellcheck disable=SC2206
 	for k in "${toggle_keys[@]}"; do
-		init_cmds+=(bind $k run "#{@popup-toggle} $(escape "${args[@]}")" \;)
-		on_cleanup+=(unbind $k \;)
+		init_cmds+=(bind-key $k run "#{@popup-toggle} $(escape "${args[@]}")" \;)
+		on_cleanup+=(unbind-key $k \;)
 	done
 
 	# Handle hook: on-init
-	if check_hook "$on_init"; then init_cmds+=(run -C "$on_init" \;); fi
+	if check_hook "$on_init"; then init_cmds+=(run-shell -C "$on_init" \;); fi
 }
 
 declare name id id_format toggle_keys=() init_args=() display_args=()
@@ -180,7 +180,7 @@ main() {
 	if [[ -z $opened_name ]]; then
 		prepare_init 'open'
 	elif [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
-		tmux detach >/dev/null
+		tmux detach-client >/dev/null
 		return
 	elif [[ $toggle_mode == 'switch' ]]; then
 		prepare_init 'switch'
@@ -194,7 +194,7 @@ main() {
 	open_cmds=()
 
 	# Handle hook: before-open
-	if check_hook "$before_open"; then open_cmds+=(run -C "$before_open" \;); fi
+	if check_hook "$before_open"; then open_cmds+=(run-shell -C "$before_open" \;); fi
 
 	# Add commands that actually open the popup.
 	open_cmds+=(
@@ -206,7 +206,7 @@ main() {
 	)
 
 	# Handle hook: after-close
-	if check_hook "$after_close"; then open_cmds+=(run -C "$after_close" \;); fi
+	if check_hook "$after_close"; then open_cmds+=(run-shell -C "$after_close" \;); fi
 
 	# Do open the popup window.
 	tmux "${open_cmds[@]}"

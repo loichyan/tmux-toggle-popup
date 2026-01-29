@@ -16,15 +16,15 @@ source "$CURRENT_DIR/src/variables.sh"
 main() {
 	# Set option defaults, and export public APIs.
 	tmux \
-		set -g @popup-toggle "$CURRENT_DIR/src/toggle.sh" \; \
-		set -g @popup-focus "$CURRENT_DIR/src/focus.sh" \; \
-		set -g @popup-proxy "$CURRENT_DIR/bin/proxy" \; \
-		set -g @popup-sync-buffer "$CURRENT_DIR/src/sync-buffer.sh" \; \
-		set -goq @popup-autostart 'off' \; \
-		set -goq @popup-id-format "$DEFAULT_ID_FORMAT" \; \
-		set -goq @popup-on-init "$DEFAULT_ON_INIT" \; \
-		set -goq @popup-toggle-mode "$DEFAULT_TOGGLE_MODE" \; \
-		set -goq @popup-socket-name "$DEFAULT_SOCKET_NAME" \;
+		set-option -g @popup-toggle "$CURRENT_DIR/src/toggle.sh" \; \
+		set-option -g @popup-focus "$CURRENT_DIR/src/focus.sh" \; \
+		set-option -g @popup-proxy "$CURRENT_DIR/bin/proxy" \; \
+		set-option -g @popup-sync-buffer "$CURRENT_DIR/src/sync-buffer.sh" \; \
+		set-option -goq @popup-autostart 'off' \; \
+		set-option -goq @popup-id-format "$DEFAULT_ID_FORMAT" \; \
+		set-option -goq @popup-on-init "$DEFAULT_ON_INIT" \; \
+		set-option -goq @popup-toggle-mode "$DEFAULT_TOGGLE_MODE" \; \
+		set-option -goq @popup-socket-name "$DEFAULT_SOCKET_NAME" \;
 
 	local autostart socket_name socket_path default_shell
 	target='' batch_get_options \

@@ -3,5 +3,5 @@
 set -eo pipefail
 IFS=':' read -r _ caller <<<"$__tmux_popup_caller"
 if [[ -n $caller ]]; then
-	TMUX=$caller tmux saveb - | tmux loadb -
+	TMUX=$caller tmux save-buffer - | tmux load-buffer -
 fi

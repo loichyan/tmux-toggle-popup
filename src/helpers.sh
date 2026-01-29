@@ -13,7 +13,7 @@ println() {
 # Prints an error message and exits.
 die() {
 	if [[ -n $TMUX ]]; then
-		tmux run "printf '%s\n' $(escape "$*")"
+		tmux run-shell "printf '%s\n' $(escape "$*")"
 	else
 		println "$@" >&2
 	fi
@@ -62,7 +62,7 @@ batch_get_options() {
 			val=()
 			shift
 		fi
-	done < <(TMUX=${target_tmux:-$TMUX} tmux display "${args[@]}" -p "$(printf "%s\n$delimiter\n" "${formats[@]}")")
+	done < <(TMUX=${target_tmux:-$TMUX} tmux display-message "${args[@]}" -p "$(printf "%s\n$delimiter\n" "${formats[@]}")")
 }
 
 # Escapes all given arguments.
@@ -87,7 +87,7 @@ check_hook() {
 
 # Expands the provided tmux FORMAT string.
 format() {
-	tmux display -p "$*"
+	tmux display-message -p "$*"
 }
 
 # Interpolates the provided FORMAT string. The last argument is the format
