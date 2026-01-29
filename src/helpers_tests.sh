@@ -18,38 +18,38 @@ test_interpolate() {
 }
 
 (
-	begin_test "no_interpolate_of_unknown" || exit 0
-	format="{session}/{project}/{popup_name}"
-	expected="working/{project}/default"
-	test_interpolate session="working" popup_name="default"
+	begin_test 'no_interpolate_of_unknown' || exit 0
+	format='{session}/{project}/{popup_name}'
+	expected='working/{project}/default'
+	test_interpolate session='working' popup_name='default'
 ) || exit 1
 
 (
-	begin_test "interpolate_multi" || exit 0
-	format="{var1}/{var2}/{var2}/{var1}"
-	expected="value1/value2/value2/value1"
-	test_interpolate var1="value1" var2="value2"
+	begin_test 'interpolate_multi' || exit 0
+	format='{var1}/{var2}/{var2}/{var1}'
+	expected='value1/value2/value2/value1'
+	test_interpolate var1='value1' var2='value2'
 ) || exit 1
 
 (
-	begin_test "interpolate_with_equals" || exit 0
-	format="{var1}/{var2}/{var2}/{var1}"
-	expected="var1=value1/var2=value2/var2=value2/var1=value1"
-	test_interpolate var1="var1=value1" var2="var2=value2"
+	begin_test 'interpolate_with_equals' || exit 0
+	format='{var1}/{var2}/{var2}/{var1}'
+	expected='var1=value1/var2=value2/var2=value2/var1=value1'
+	test_interpolate var1='var1=value1' var2='var2=value2'
 ) || exit 1
 
 #-- test:batch_get_options -----------------------------------------------------
 
 # Simulates a tmux response.
-declare delimiter=">>>END" input
+declare delimiter='>>>END' input
 declare var1 var2 var3 var4
 tmux() {
 	printf "%s\n$delimiter\n" "${input[@]}"
 }
 
 (
-	begin_test "batch_get_options" || exit 0
-	input=("value1" "value2" "value3")
+	begin_test 'batch_get_options' || exit 0
+	input=('value1' 'value2' 'value3')
 	batch_get_options var1= var2= var3=
 	assert_eq "$var1" "value1"
 	assert_eq "$var2" "value2"

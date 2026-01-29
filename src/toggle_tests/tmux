@@ -17,14 +17,14 @@ trace() {
 
 return_batch_options() {
 	fake_batch_options \
-		t_id_format="default_id_format/{popup_name}" \
-		t_on_init="run '#{@popup_on_init}'" \
-		t_before_open="run '#{@popup_before_open}'" \
-		t_after_close="run '#{@popup_after_close}'" \
-		t_toggle_mode="switch" \
-		t_socket_name="popup_test" \
-		t_socket_path="" \
-		t_current_pane_id="%current_pane_id"
+		t_id_format='default_id_format/{popup_name}' \
+		t_on_init='run "#{@popup_on_init}"' \
+		t_before_open='run "#{@popup_before_open}"' \
+		t_after_close='run "#{@popup_after_close}"' \
+		t_toggle_mode='switch' \
+		t_socket_name='popup_test' \
+		t_socket_path='' \
+		t_current_pane_id='%current_pane_id'
 	cat "$f_args"
 	exit
 }
@@ -49,7 +49,7 @@ parse_commands() {
 
 dump_env() {
 	while [[ $# -gt 0 ]]; do
-		printf "%s=%s\n" "$1" "${!1}"
+		printf '%s=%s\n' "$1" "${!1}"
 		shift
 	done
 }
@@ -60,7 +60,7 @@ main() {
 	# Discard its output since not particularly useful.
 	if [[ ! -f $f_call_id ]]; then
 		call_id=0
-		trace "batch_get_options"
+		trace 'batch_get_options'
 		echo 1 >"$f_call_id"
 		return_batch_options
 	fi
@@ -80,7 +80,7 @@ main() {
 	{
 		echo "TMUX:BEGIN[$call_id] {"
 		dump_env TMUX TMUX_POPUP_SERVER SHELL | normalize_output
-		echo "}"
+		echo '}'
 		parse_commands "$@" | normalize_output
 		echo "TMUX:END[$call_id]"
 	} | {

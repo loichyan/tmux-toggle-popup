@@ -58,7 +58,7 @@ batch_get_options() {
 		elif [[ $line != "$delimiter" ]]; then
 			val+=("$line")
 		else
-			printf -v "$1" "%s" "${val[*]}" # replace line breaks with spaces
+			printf -v "$1" '%s' "${val[*]}" # replace line breaks with spaces
 			val=()
 			shift
 		fi
@@ -80,7 +80,7 @@ escape_session_name() {
 
 # Returns whether a hook is enabled.
 check_hook() {
-	if [[ -z $1 || $1 == "nop" ]]; then
+	if [[ -z $1 || $1 == 'nop' ]]; then
 		return 1
 	fi
 }
@@ -118,7 +118,7 @@ failf() {
 
 assert_eq() {
 	if [[ $1 != "$2" ]]; then
-		failf "assertion failed: left != right:\n\tleft: %s\n\tright: %s\n" "$1" "$2"
+		failf 'assertion failed: left != right:\n\tleft: %s\n\tright: %s\n' "$1" "$2"
 	fi
 }
 

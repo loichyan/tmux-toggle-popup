@@ -20,7 +20,7 @@ main() {
 		set -g @popup-focus "$CURRENT_DIR/src/focus.sh" \; \
 		set -g @popup-proxy "$CURRENT_DIR/bin/proxy" \; \
 		set -g @popup-sync-buffer "$CURRENT_DIR/src/sync-buffer.sh" \; \
-		set -goq @popup-autostart "off" \; \
+		set -goq @popup-autostart 'off' \; \
 		set -goq @popup-id-format "$DEFAULT_ID_FORMAT" \; \
 		set -goq @popup-on-init "$DEFAULT_ON_INIT" \; \
 		set -goq @popup-toggle-mode "$DEFAULT_TOGGLE_MODE" \; \
@@ -28,13 +28,13 @@ main() {
 
 	local autostart socket_name socket_path default_shell
 	target='' batch_get_options \
-		autostart="#{@popup-autostart}" \
-		socket_name="#{@popup-socket-name}" \
-		socket_path="#{@popup-socket-path}" \
-		default_shell="#{default-shell}"
+		autostart='#{@popup-autostart}' \
+		socket_name='#{@popup-socket-name}' \
+		socket_path='#{@popup-socket-path}' \
+		default_shell='#{default-shell}'
 
 	# Do not start itself within a popup server
-	if [[ $autostart == "on" && -z $TMUX_POPUP_SERVER ]]; then
+	if [[ $autostart == 'on' && -z $TMUX_POPUP_SERVER ]]; then
 		(
 			local args
 			if [[ -n $socket_path ]]; then

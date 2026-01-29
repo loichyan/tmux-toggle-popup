@@ -24,7 +24,7 @@ A handy plugin to create toggleable popups.
 Add this plugin to the list of TPM plugins in `.tmux.conf`:
 
 ```tmux
-set -g @plugin "loichyan/tmux-toggle-popup"
+set -g @plugin 'loichyan/tmux-toggle-popup'
 ```
 
 ### Manual installation
@@ -82,14 +82,14 @@ bind -n M-g run "#{@popup-toggle} -w90% -h90% -Ed'##{pane_current_path}' --name=
 set -g  @popup-autostart on
 # If you prefer to share popups within the same project, regardless of which
 # session you are working in, put the following setting to your `.tmux.conf`.
-set -gF @popup-id-format "#{b:pane_current_path}/{popup_name}"
+set -gF @popup-id-format '#{b:pane_current_path}/{popup_name}'
 
 # If you are using tmux-continuum, make sure it is loaded before this plugin.
 # This is only required when you enable @popup-autostart.
-set -g @plugin "tmux-plugins/tmux-continuum"
+set -g @plugin 'tmux-plugins/tmux-continuum'
 # Must be loaded after tmux-continuum, as the autostart of popup server can
 # disable the autosave of tmux-continuum.
-set -g @plugin "loichyan/tmux-toggle-popup"
+set -g @plugin 'loichyan/tmux-toggle-popup'
 ```
 
 > [!Tip]

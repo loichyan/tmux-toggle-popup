@@ -49,12 +49,13 @@ usage() {
 # - `on_cleanup` is used to undo temporary changes on the popup server
 # - `popup_id` is set to the name of the target popup session
 declare init_cmds=() on_cleanup=() popup_id
+args=("$@")
 prepare_init() {
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
 
 	init_cmds=()
-	if [[ $1 == "open" ]]; then
+	if [[ $1 == 'open' ]]; then
 		init_cmds+=(new -As "$popup_id" "${init_args[@]}" \;)
 	else
 		# Start target session before attaching to it
@@ -97,14 +98,14 @@ main() {
 
 	# Expand format strings in the caller pane to ensure consistency.
 	target=$popup_caller batch_get_options \
-		id_format="#{E:@popup-id-format}" \
-		on_init="#{@popup-on-init}" \
-		before_open="#{@popup-before-open}" \
-		after_close="#{@popup-after-close}" \
-		toggle_mode="#{@popup-toggle-mode}" \
-		socket_name="#{@popup-socket-name}" \
-		socket_path="#{@popup-socket-path}" \
-		current_pane_id="#{pane_id}" \
+		id_format='#{E:@popup-id-format}' \
+		on_init='#{@popup-on-init}' \
+		before_open='#{@popup-before-open}' \
+		after_close='#{@popup-after-close}' \
+		toggle_mode='#{@popup-toggle-mode}' \
+		socket_name='#{@popup-socket-name}' \
+		socket_path='#{@popup-socket-path}' \
+		current_pane_id='#{pane_id}' \
 		"${batch_expand_args[@]}"
 
 	local i=1 k expanded_args=()
@@ -125,9 +126,9 @@ main() {
 		d)
 			# Report deprecated placeholders
 			if [[ $OPTARG =~ \{popup_caller(_pane)?_path\} ]]; then
-				die "'{popup_caller_path}' and '{popup_caller_pane_path}' has been removed." \
-					"Please use '##{session_path}' and '##{pane_current_path}' instead." \
-					"For more information, see <https://github.com/loichyan/tmux-toggle-popup/pull/58>."
+				die '"{popup_caller_path}" and "{popup_caller_pane_path}" has been removed.' \
+					'Please use "##{session_path}" and "##{pane_current_path}" instead.' \
+					'For more information, see <https://github.com/loichyan/tmux-toggle-popup/pull/58>.'
 			fi
 			init_args+=(-c "$OPTARG")
 			;;
@@ -145,10 +146,10 @@ main() {
 				OPTARG=${!OPTIND}
 				OPTIND=$((OPTIND + 1))
 			fi
-			if [[ $OPT == "toggle-key" ]]; then
+			if [[ $OPT == 'toggle-key' ]]; then
 				toggle_keys+=("$OPTARG")
 			else
-				printf -v "${OPT//-/_}" "%s" "$OPTARG"
+				printf -v "${OPT//-/_}" '%s' "$OPTARG"
 			fi
 			;;
 		help)
@@ -177,15 +178,15 @@ main() {
 	fi
 
 	if [[ -z $opened_name ]]; then
-		prepare_init "open"
+		prepare_init 'open'
 	elif [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
 		tmux detach >/dev/null
 		return
-	elif [[ $toggle_mode == "switch" ]]; then
-		prepare_init "switch"
+	elif [[ $toggle_mode == 'switch' ]]; then
+		prepare_init 'switch'
 		tmux "${init_cmds[@]}"
 		return
-	elif [[ $toggle_mode != "force-open" ]]; then
+	elif [[ $toggle_mode != 'force-open' ]]; then
 		die "illegal toggle mode: $toggle_mode"
 	fi
 
@@ -217,5 +218,4 @@ main() {
 	fi
 }
 
-args=("$@")
 main "$@"
