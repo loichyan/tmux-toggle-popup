@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-set -eo pipefail
 
 # Name:     tmux-toggle-popup
 # Version:  0.4.4
 # Authors:  Loi Chyan <loichyan@outlook.com>
 # License:  MIT OR Apache-2.0
 
+set -eo pipefail
 CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # shellcheck source=./src/helpers.sh
@@ -35,10 +35,13 @@ main() {
 
 	# Do not start itself within a popup server
 	if [[ $autostart == "on" && -z $TMUX_POPUP_SERVER ]]; then
-		# Set $TMUX_POPUP_SERVER to identify the popup server.
-		# Propagate user's default shell.
-		TMUX_POPUP_SERVER="$socket_name" SHELL="$default_shell" \
-			tmux -L "$socket_name" set exit-empty off \; start &
+		(
+			# Set $TMUX_POPUP_SERVER to identify the popup server.
+			export TMUX_POPUP_SERVER="$socket_name"
+			# Propagate user's default shell.
+			export SHELL="$default_shell"
+			tmux -L "$socket_name" set exit-empty off \; start
+		) &
 	fi
 }
 main "$@"
