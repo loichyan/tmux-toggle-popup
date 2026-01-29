@@ -8,10 +8,12 @@ TMUX:BEGIN[1] {
 	run '#{@popup_before_open}'
 	;
 	display-popup
+	-e
+	TMUX_POPUP_SERVER=socket_path_server
 	TMUX:BEGIN[2] {
 		TMUX=tmux-test
-		TMUX_POPUP_SERVER=socket_path_server
-		SHELL=/default/shell
+		TMUX_POPUP_SERVER=
+		SHELL=/system/shell
 	}
 		-S
 		/path/to/socket_path_server

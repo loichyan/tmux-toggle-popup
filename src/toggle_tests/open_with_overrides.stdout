@@ -8,10 +8,12 @@ TMUX:BEGIN[1] {
 	run '#{@popup-focus} --enter'
 	;
 	display-popup
+	-e
+	TMUX_POPUP_SERVER=popup_server
 	TMUX:BEGIN[2] {
 		TMUX=tmux-test
-		TMUX_POPUP_SERVER=popup_server
-		SHELL=/default/shell
+		TMUX_POPUP_SERVER=
+		SHELL=/system/shell
 	}
 		-S
 		/local/socket_path/popup_server

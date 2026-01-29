@@ -24,7 +24,6 @@ return_batch_options() {
 		t_toggle_mode="switch" \
 		t_socket_name="popup_test" \
 		t_socket_path="" \
-		t_default_shell="/default/shell" \
 		t_current_pane_id="%current_pane_id"
 	cat "$f_args"
 	exit

@@ -16,10 +16,12 @@ TMUX:BEGIN[1] {
 	50%
 	-h
 	70%
+	-e
+	TMUX_POPUP_SERVER=popup_test
 	TMUX:BEGIN[2] {
 		TMUX=tmux-test
-		TMUX_POPUP_SERVER=popup_test
-		SHELL=/default/shell
+		TMUX_POPUP_SERVER=
+		SHELL=/system/shell
 	}
 		-L
 		popup_test
