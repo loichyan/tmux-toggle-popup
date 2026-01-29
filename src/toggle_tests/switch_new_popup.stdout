@@ -28,6 +28,6 @@ TMUX:BEGIN[2] {
 	;
 	run
 	-C
-	run '#{@popup_on_init}'
+	run "#{@popup_on_init}"
 	;
 TMUX:END[2]

@@ -5,7 +5,7 @@ TMUX:BEGIN[1] {
 }
 	run
 	-C
-	run '#{@popup_before_open}'
+	run "#{@popup_before_open}"
 	;
 	display-popup
 	-e
@@ -21,6 +21,6 @@ TMUX:BEGIN[1] {
 	;
 	run
 	-C
-	run '#{@popup_after_close}'
+	run "#{@popup_after_close}"
 	;
 TMUX:END[1]

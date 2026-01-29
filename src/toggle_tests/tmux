@@ -40,6 +40,10 @@ parse_commands() {
 			# Fake a sh exec, redirecting output of nested tmux calls.
 			nested_call=1 /bin/sh -c "$3" 3>&1
 			shift 3
+		elif [[ $1 == run && $2 != -C ]]; then
+			# Fake a sh exec, redirecting output of nested tmux calls.
+			nested_call=1 /bin/sh -c "$2" 3>&1
+			shift 2
 		else
 			println "$1"
 			shift

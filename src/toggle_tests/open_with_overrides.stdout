@@ -5,7 +5,7 @@ TMUX:BEGIN[1] {
 }
 	run
 	-C
-	run '#{@popup-focus} --enter'
+	run "#{@popup-focus} --enter"
 	;
 	display-popup
 	-e
@@ -31,6 +31,6 @@ TMUX:BEGIN[1] {
 	;
 	run
 	-C
-	run '#{@popup-focus} --leave'
+	run "#{@popup-focus} --leave"
 	;
 TMUX:END[1]

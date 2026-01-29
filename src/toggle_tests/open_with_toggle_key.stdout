@@ -5,7 +5,7 @@ TMUX:BEGIN[1] {
 }
 	run
 	-C
-	run '#{@popup_before_open}'
+	run "#{@popup_before_open}"
 	;
 	display-popup
 	-e
@@ -31,24 +31,20 @@ TMUX:BEGIN[1] {
 		-T
 		root
 		M-p
-		run
-		#{@popup-toggle} --name=p_toggle_key --toggle-key=-T\ root\ M-p --toggle-key=-n\ M-o
 		;
 		bind
 		-n
 		M-o
-		run
-		#{@popup-toggle} --name=p_toggle_key --toggle-key=-T\ root\ M-p --toggle-key=-n\ M-o
 		;
 		run
 		-C
-		run '#{@popup_on_init}'
+		run "#{@popup_on_init}"
 		;
 	TMUX:END[2]
 	;
 	run
 	-C
-	run '#{@popup_after_close}'
+	run "#{@popup_after_close}"
 	;
 TMUX:END[1]
 TMUX:BEGIN[3] {
