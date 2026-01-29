@@ -26,21 +26,27 @@ main() {
 		set -goq @popup-toggle-mode "$DEFAULT_TOGGLE_MODE" \; \
 		set -goq @popup-socket-name "$DEFAULT_SOCKET_NAME" \;
 
-	local autostart socket_name default_shell
+	local autostart socket_name socket_path default_shell
 	target='' batch_get_options \
 		autostart="#{@popup-autostart}" \
 		socket_name="#{@popup-socket-name}" \
+		socket_path="#{@popup-socket-path}" \
 		default_shell="#{default-shell}"
-	default_shell=${default_shell:-$SHELL}
 
 	# Do not start itself within a popup server
 	if [[ $autostart == "on" && -z $TMUX_POPUP_SERVER ]]; then
 		(
+			local args
+			if [[ -n $socket_path ]]; then
+				args=(-S "$socket_path")
+			else
+				args=(-L "$socket_name")
+			fi
 			# Set $TMUX_POPUP_SERVER to identify the popup server.
-			export TMUX_POPUP_SERVER="$socket_name"
+			export TMUX_POPUP_SERVER=$socket_name
 			# Propagate user's default shell.
-			export SHELL="$default_shell"
-			tmux -L "$socket_name" set exit-empty off \; start
+			export SHELL=${default_shell:-$SHELL}
+			tmux "${args[@]}" set-option -g exit-empty off \; start-server
 		) &
 	fi
 }
