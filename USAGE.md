@@ -190,7 +190,7 @@ working server in your *.tmux.conf*.
 
 ```tmux
 # Load configurations specific for popup servers
-if -F "$TMUX_POPUP_SERVER" {
+if -F '#{TMUX_POPUP_SERVER}' {
     set -g exit-empty off
     set -g status off
 }
@@ -267,7 +267,7 @@ Forward the output of copies from *popup sessions* to the *working session* and
 the input of pastes in reverse.
 
 ```tmux
-if -F "$TMUX_POPUP_SERVER" {
+if -F '#{TMUX_POPUP_SERVER}' {
    set -g copy-command '~/path/to/this/plugin/bin/proxy loadb -w -'
    # Sync buffer with the caller session before pasting.
    bind -T prefix ] run '#{@popup-sync-buffer}' \; pasteb -p
