@@ -56,11 +56,11 @@ prepare_init() {
 
 	init_cmds=()
 	if [[ $1 == 'open' ]]; then
-		init_cmds+=(new-session -As "$popup_id" "${init_args[@]}" \;)
+		init_cmds+=(new-session -As "$popup_id" "${session_args[@]}" \;)
 	else
 		# Start target session before attaching to it
 		if ! tmux has-session -t "=$popup_id" 2>/dev/null; then
-			init_cmds+=(new-session -ds "$popup_id" "${init_args[@]}" \;)
+			init_cmds+=(new-session -ds "$popup_id" "${session_args[@]}" \;)
 		fi
 		init_cmds+=(switch-client -t "$popup_id" \;)
 	fi
@@ -81,7 +81,7 @@ prepare_init() {
 	if check_hook "$on_init"; then init_cmds+=(run-shell -C "$on_init" \;); fi
 }
 
-declare name id id_format toggle_keys=() init_args=() display_args=()
+declare name id id_format toggle_keys=() session_args=() popup_args=()
 declare on_init before_open after_close toggle_mode socket_name socket_path
 declare popup_caller opened_name current_pane_id
 main() {
@@ -120,8 +120,8 @@ main() {
 	while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
 		case "$OPT" in
-		[BCE]) display_args+=("-$OPT") ;;
-		[bchsStTwxy]) display_args+=("-$OPT" "$OPTARG") ;;
+		[BCE]) popup_args+=("-$OPT") ;;
+		[bchsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
 		# Forward working directory to popup sessions
 		d)
 			# Report deprecated placeholders
@@ -130,10 +130,10 @@ main() {
 					'Please use "##{session_path}" and "##{pane_current_path}" instead.' \
 					'For more information, see <https://github.com/loichyan/tmux-toggle-popup/pull/58>.'
 			fi
-			init_args+=(-c "$OPTARG")
+			session_args+=(-c "$OPTARG")
 			;;
 		# Forward environment overrides to popup sessions
-		e) init_args+=(-e "$OPTARG") ;;
+		e) session_args+=(-e "$OPTARG") ;;
 		name | id | id-format | toggle-key | \
 			on-init | before-open | after-close | \
 			toggle-mode | socket-name | socket-path)
@@ -163,7 +163,7 @@ main() {
 	# If ID specified, use it as the popup name.
 	if [[ -n $id ]]; then name=${id}; fi
 	name=${name:-$DEFAULT_NAME}
-	init_args+=(
+	session_args+=(
 		-e __tmux_popup_name="$name" # set variable to identify opened popups
 		"${@:$OPTIND}"               # forward program to start popup session
 	)
@@ -198,7 +198,7 @@ main() {
 
 	# Add commands that actually open the popup.
 	open_cmds+=(
-		display-popup "${display_args[@]}"
+		display-popup "${popup_args[@]}"
 		-e TMUX_POPUP_SERVER="$popup_server" # used to identify the popup server
 		/bin/sh -c
 		"exec $(escape tmux "${popup_socket[@]}" "${init_cmds[@]}")>/dev/null"
