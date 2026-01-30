@@ -3,7 +3,7 @@ TMUX:BEGIN[1] {
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
-	run
+	run-shell
 	-C
 	run "#{@popup_before_open}"
 	;
@@ -17,7 +17,7 @@ TMUX:BEGIN[1] {
 	}
 		-S
 		/path/to/socket_path_server
-		new
+		new-session
 		-As
 		default_id_format/p_open_with_socket_path
 		-e
@@ -27,13 +27,13 @@ TMUX:BEGIN[1] {
 		__tmux_popup_caller
 		%current_pane_id:tmux-test
 		;
-		run
+		run-shell
 		-C
 		run "#{@popup_on_init}"
 		;
 	TMUX:END[2]
 	;
-	run
+	run-shell
 	-C
 	run "#{@popup_after_close}"
 	;

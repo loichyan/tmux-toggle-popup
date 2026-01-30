@@ -3,7 +3,7 @@ TMUX:BEGIN[1] {
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
-	has
+	has-session
 	-t
 	=default_id_format/p_switch_2
 TMUX:END[1]
@@ -12,7 +12,7 @@ TMUX:BEGIN[2] {
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
-	switchc
+	switch-client
 	-t
 	default_id_format/p_switch_2
 	;
@@ -20,7 +20,7 @@ TMUX:BEGIN[2] {
 	__tmux_popup_caller
 	%current_pane_id:tmux-test
 	;
-	run
+	run-shell
 	-C
 	run "#{@popup_on_init}"
 	;

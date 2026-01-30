@@ -3,7 +3,7 @@ TMUX:BEGIN[1] {
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
-	run
+	run-shell
 	-C
 	run "#{@popup_before_open}"
 	;
@@ -19,7 +19,7 @@ TMUX:BEGIN[1] {
 		popup_test
 	TMUX:END[2]
 	;
-	run
+	run-shell
 	-C
 	run "#{@popup_after_close}"
 	;
