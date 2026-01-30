@@ -44,11 +44,16 @@ batch_get_options() {
 		formats+=("${1#*=}")
 		shift
 	done
-	delimiter=${delimiter:-">>>END@$RANDOM"} # generate a random delimiter
+	delimiter=${delimiter:-"@@@@@$RANDOM@@@@@"} # generate a random delimiter
 
-	local target_pane target_tmux args=()
+	local target_pane target_tmux args
 	IFS=':' read -r target_pane target_tmux <<<"$target"
-	if [[ -n $target_pane ]]; then args+=(-t "$target_pane"); fi
+	if [[ -n $target_pane ]]; then
+		args=(display-message -t "$target_pane")
+	else
+		args=(display-message -t "$target_pane")
+	fi
+	args+=(-p "$(printf "%s\n$delimiter\n" "${formats[@]}")")
 
 	local val=() line
 	set -- "${keys[@]}"
@@ -57,12 +62,16 @@ batch_get_options() {
 			:
 		elif [[ $line != "$delimiter" ]]; then
 			val+=("$line")
+		elif [[ $# -eq 0 ]]; then
+			die 'corrupted batch options'
 		else
 			printf -v "$1" '%s' "${val[*]}" # replace line breaks with spaces
 			val=()
 			shift
 		fi
-	done < <(TMUX=${target_tmux:-$TMUX} tmux display-message "${args[@]}" -p "$(printf "%s\n$delimiter\n" "${formats[@]}")")
+	done < <(TMUX=${target_tmux:-$TMUX} tmux "${args[@]}")
+
+	if [[ $# -ne 0 ]]; then die 'corrupted batch options'; fi
 }
 
 # Escapes all given arguments.

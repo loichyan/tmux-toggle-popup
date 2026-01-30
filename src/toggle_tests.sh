@@ -9,7 +9,7 @@ CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 # shellcheck source=./helpers.sh
 source "$CURRENT_DIR/helpers.sh"
 
-declare delimiter='>>>END' exit_codes=(0 0 0 0) test_name should_fail
+declare delimiter='@@@@@@@@@@' exit_codes=(0 0 0 0) test_name should_fail
 test_toggle() {
 	local i workdir f_call_id f_args f_input f_output f_expected
 
