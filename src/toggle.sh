@@ -17,6 +17,10 @@ usage() {
 
 		  toggle.sh [OPTIONS] [POPUP_OPTIONS] [SHELL_COMMAND]...
 
+		  Note that every argument will be expanded as a tmux format string
+		  before it is parsed. To avoid unexpected expansion of certain format
+		  strings, escape them with `##{<format string>}`.
+
 		Options:
 
 		  --name <name>               Popup name [Default: "$DEFAULT_NAME"]
