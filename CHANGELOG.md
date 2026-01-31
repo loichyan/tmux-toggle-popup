@@ -57,6 +57,7 @@ motivation and migration guide.
 
 - (**breaking**) Use `run-shell -C` to execute hooks. Escape sequences are now
   handled by tmux, so `\;` can be used directly ([#60])
+- Stop resetting `default-shell` when creating popup sessions ([#61])
 
 ### Removed
 
@@ -64,9 +65,15 @@ motivation and migration guide.
   `{popup_caller_pane_path}`. Use `##{session_path}` and `##{pane_current_path}`
   instead ([#58])
 
+### Fixed
+
+- Use socket-path in autostart if set ([#62])
+
 [#58]: https://github.com/loichyan/tmux-toggle-popup/pull/58
 [#59]: https://github.com/loichyan/tmux-toggle-popup/pull/59
 [#60]: https://github.com/loichyan/tmux-toggle-popup/pull/60
+[#61]: https://github.com/loichyan/tmux-toggle-popup/pull/61
+[#62]: https://github.com/loichyan/tmux-toggle-popup/pull/62
 
 ## [0.4.4] - 2025-08-30
 
