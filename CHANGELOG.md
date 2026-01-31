@@ -37,7 +37,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
-## [0.5.0] - {{DATE}}
+## [0.5.0] - 2026-01-31
 
 This release includes some fundamental changes to how popup sessions and hooks
 are handled. These updates should have been released much earlier if I had found
