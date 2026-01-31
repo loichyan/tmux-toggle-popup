@@ -37,6 +37,14 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+## [0.5.0] - {{DATE}}
+
+This release includes some fundamental changes to how popup sessions and hooks
+are handled. These updates should have been released much earlier if I had found
+the right documentation. Now they can only be published as breaking changes 🥲
+For each breaking change, you can check the corresponding PR for the detailed
+motivation and migration guide.
+
 ### Added
 
 - (**breaking**) Support expanding arguments of `@popup-toggle` as format
@@ -248,4 +256,5 @@ for more details.
 [0.4.2]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.1..v0.4.2
 [0.4.3]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.2..v0.4.3
 [0.4.4]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.3..v0.4.4
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.4..HEAD
+[0.5.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.4..v0.5.0
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.5.0..HEAD
