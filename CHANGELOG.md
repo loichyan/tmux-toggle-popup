@@ -37,6 +37,14 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-01-31
+
+This release includes some fundamental changes to how popup sessions and hooks
+are handled. These updates should have been released much earlier if I had found
+the right documentation. Now they can only be published as breaking changes 🥲
+For each breaking change, you can check the corresponding PR for the detailed
+motivation and migration guide.
+
 ### Added
 
 - (**breaking**) Support expanding arguments of `@popup-toggle` as format
@@ -49,6 +57,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 - (**breaking**) Use `run-shell -C` to execute hooks. Escape sequences are now
   handled by tmux, so `\;` can be used directly ([#60])
+- Stop resetting `default-shell` when creating popup sessions ([#61])
 
 ### Removed
 
@@ -56,9 +65,15 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
   `{popup_caller_pane_path}`. Use `##{session_path}` and `##{pane_current_path}`
   instead ([#58])
 
+### Fixed
+
+- Use socket-path in autostart if set ([#62])
+
 [#58]: https://github.com/loichyan/tmux-toggle-popup/pull/58
 [#59]: https://github.com/loichyan/tmux-toggle-popup/pull/59
 [#60]: https://github.com/loichyan/tmux-toggle-popup/pull/60
+[#61]: https://github.com/loichyan/tmux-toggle-popup/pull/61
+[#62]: https://github.com/loichyan/tmux-toggle-popup/pull/62
 
 ## [0.4.4] - 2025-08-30
 
@@ -248,4 +263,5 @@ for more details.
 [0.4.2]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.1..v0.4.2
 [0.4.3]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.2..v0.4.3
 [0.4.4]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.3..v0.4.4
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.4..HEAD
+[0.5.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.4..v0.5.0
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.5.0..HEAD
