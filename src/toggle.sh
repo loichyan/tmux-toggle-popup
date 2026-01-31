@@ -49,19 +49,20 @@ usage() {
 # - `on_cleanup` is used to undo temporary changes on the popup server
 # - `popup_id` is set to the name of the target popup session
 declare init_cmds=() on_cleanup=() popup_id
+args=("$@")
 prepare_init() {
 	popup_id=${id:-$(interpolate popup_name="$name" "$id_format")}
 	popup_id=$(escape_session_name "$popup_id")
 
 	init_cmds=()
-	if [[ $1 == "open" ]]; then
-		init_cmds+=(new -As "$popup_id" "${init_args[@]}" \;)
+	if [[ $1 == 'open' ]]; then
+		init_cmds+=(new-session -As "$popup_id" "${session_args[@]}" \;)
 	else
 		# Start target session before attaching to it
-		if ! tmux has -t "=$popup_id" 2>/dev/null; then
-			init_cmds+=(new -ds "$popup_id" "${init_args[@]}" \;)
+		if ! tmux has-session -t "=$popup_id" 2>/dev/null; then
+			init_cmds+=(new-session -ds "$popup_id" "${session_args[@]}" \;)
 		fi
-		init_cmds+=(switchc -t "$popup_id" \;)
+		init_cmds+=(switch-client -t "$popup_id" \;)
 	fi
 
 	init_cmds+=(
@@ -72,15 +73,15 @@ prepare_init() {
 	# Create temporary toggle keys in the opened popup
 	# shellcheck disable=SC2206
 	for k in "${toggle_keys[@]}"; do
-		init_cmds+=(bind $k run "#{@popup-toggle} $(escape "${args[@]}")" \;)
-		on_cleanup+=(unbind $k \;)
+		init_cmds+=(bind-key $k run "#{@popup-toggle} $(escape "${args[@]}")" \;)
+		on_cleanup+=(unbind-key $k \;)
 	done
 
 	# Handle hook: on-init
-	if check_hook "$on_init"; then init_cmds+=(run -C "$on_init" \;); fi
+	if check_hook "$on_init"; then init_cmds+=(run-shell -C "$on_init" \;); fi
 }
 
-declare name id id_format toggle_keys=() init_args=() display_args=()
+declare name id id_format toggle_keys=() session_args=() popup_args=()
 declare on_init before_open after_close toggle_mode socket_name socket_path
 declare popup_caller opened_name current_pane_id
 main() {
@@ -97,14 +98,14 @@ main() {
 
 	# Expand format strings in the caller pane to ensure consistency.
 	target=$popup_caller batch_get_options \
-		id_format="#{E:@popup-id-format}" \
-		on_init="#{@popup-on-init}" \
-		before_open="#{@popup-before-open}" \
-		after_close="#{@popup-after-close}" \
-		toggle_mode="#{@popup-toggle-mode}" \
-		socket_name="#{@popup-socket-name}" \
-		socket_path="#{@popup-socket-path}" \
-		current_pane_id="#{pane_id}" \
+		id_format='#{E:@popup-id-format}' \
+		on_init='#{@popup-on-init}' \
+		before_open='#{@popup-before-open}' \
+		after_close='#{@popup-after-close}' \
+		toggle_mode='#{@popup-toggle-mode}' \
+		socket_name='#{@popup-socket-name}' \
+		socket_path='#{@popup-socket-path}' \
+		current_pane_id='#{pane_id}' \
 		"${batch_expand_args[@]}"
 
 	local i=1 k expanded_args=()
@@ -119,20 +120,20 @@ main() {
 	while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
 		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
 		case "$OPT" in
-		[BCE]) display_args+=("-$OPT") ;;
-		[bchsStTwxy]) display_args+=("-$OPT" "$OPTARG") ;;
+		[BCE]) popup_args+=("-$OPT") ;;
+		[bchsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
 		# Forward working directory to popup sessions
 		d)
 			# Report deprecated placeholders
 			if [[ $OPTARG =~ \{popup_caller(_pane)?_path\} ]]; then
-				die "'{popup_caller_path}' and '{popup_caller_pane_path}' has been removed." \
-					"Please use '##{session_path}' and '##{pane_current_path}' instead." \
-					"For more information, see <https://github.com/loichyan/tmux-toggle-popup/pull/58>."
+				die '"{popup_caller_path}" and "{popup_caller_pane_path}" has been removed.' \
+					'Please use "##{session_path}" and "##{pane_current_path}" instead.' \
+					'For more information, see <https://github.com/loichyan/tmux-toggle-popup/pull/58>.'
 			fi
-			init_args+=(-c "$OPTARG")
+			session_args+=(-c "$OPTARG")
 			;;
 		# Forward environment overrides to popup sessions
-		e) init_args+=(-e "$OPTARG") ;;
+		e) session_args+=(-e "$OPTARG") ;;
 		name | id | id-format | toggle-key | \
 			on-init | before-open | after-close | \
 			toggle-mode | socket-name | socket-path)
@@ -145,10 +146,10 @@ main() {
 				OPTARG=${!OPTIND}
 				OPTIND=$((OPTIND + 1))
 			fi
-			if [[ $OPT == "toggle-key" ]]; then
+			if [[ $OPT == 'toggle-key' ]]; then
 				toggle_keys+=("$OPTARG")
 			else
-				printf -v "${OPT//-/_}" "%s" "$OPTARG"
+				printf -v "${OPT//-/_}" '%s' "$OPTARG"
 			fi
 			;;
 		help)
@@ -162,7 +163,7 @@ main() {
 	# If ID specified, use it as the popup name.
 	if [[ -n $id ]]; then name=${id}; fi
 	name=${name:-$DEFAULT_NAME}
-	init_args+=(
+	session_args+=(
 		-e __tmux_popup_name="$name" # set variable to identify opened popups
 		"${@:$OPTIND}"               # forward program to start popup session
 	)
@@ -177,15 +178,15 @@ main() {
 	fi
 
 	if [[ -z $opened_name ]]; then
-		prepare_init "open"
+		prepare_init 'open'
 	elif [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
-		tmux detach >/dev/null
+		tmux detach-client >/dev/null
 		return
-	elif [[ $toggle_mode == "switch" ]]; then
-		prepare_init "switch"
+	elif [[ $toggle_mode == 'switch' ]]; then
+		prepare_init 'switch'
 		tmux "${init_cmds[@]}"
 		return
-	elif [[ $toggle_mode != "force-open" ]]; then
+	elif [[ $toggle_mode != 'force-open' ]]; then
 		die "illegal toggle mode: $toggle_mode"
 	fi
 
@@ -193,11 +194,11 @@ main() {
 	open_cmds=()
 
 	# Handle hook: before-open
-	if check_hook "$before_open"; then open_cmds+=(run -C "$before_open" \;); fi
+	if check_hook "$before_open"; then open_cmds+=(run-shell -C "$before_open" \;); fi
 
 	# Add commands that actually open the popup.
 	open_cmds+=(
-		display-popup "${display_args[@]}"
+		display-popup "${popup_args[@]}"
 		-e TMUX_POPUP_SERVER="$popup_server" # used to identify the popup server
 		/bin/sh -c
 		"exec $(escape tmux "${popup_socket[@]}" "${init_cmds[@]}")>/dev/null"
@@ -205,7 +206,7 @@ main() {
 	)
 
 	# Handle hook: after-close
-	if check_hook "$after_close"; then open_cmds+=(run -C "$after_close" \;); fi
+	if check_hook "$after_close"; then open_cmds+=(run-shell -C "$after_close" \;); fi
 
 	# Do open the popup window.
 	tmux "${open_cmds[@]}"
@@ -217,5 +218,4 @@ main() {
 	fi
 }
 
-args=("$@")
 main "$@"

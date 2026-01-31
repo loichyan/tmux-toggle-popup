@@ -56,7 +56,7 @@ main() {
 	programs=("${@:$OPTIND}")
 
 	if check_program; then
-		tmux send Escape "[$mode"
+		tmux send-keys Escape "[$mode"
 	fi
 }
 

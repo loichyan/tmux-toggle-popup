@@ -3,9 +3,9 @@ TMUX:BEGIN[1] {
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
-	run
+	run-shell
 	-C
-	run '#{@popup-focus} --enter'
+	run "#{@popup-focus} --enter"
 	;
 	display-popup
 	-e
@@ -17,7 +17,7 @@ TMUX:BEGIN[1] {
 	}
 		-S
 		/local/socket_path/popup_server
-		new
+		new-session
 		-As
 		local_id_format/p_open_with_overrides
 		-e
@@ -29,8 +29,8 @@ TMUX:BEGIN[1] {
 		;
 	TMUX:END[2]
 	;
-	run
+	run-shell
 	-C
-	run '#{@popup-focus} --leave'
+	run "#{@popup-focus} --leave"
 	;
 TMUX:END[1]

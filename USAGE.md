@@ -190,10 +190,10 @@ working server in your *.tmux.conf*.
 
 ```tmux
 # Load configurations specific for popup servers
-%if "$TMUX_POPUP_SERVER"
+if -F '#{TMUX_POPUP_SERVER}' {
     set -g exit-empty off
     set -g status off
-%endif
+}
 ```
 
 ### `@popup-socket-path`
@@ -267,7 +267,7 @@ Forward the output of copies from *popup sessions* to the *working session* and
 the input of pastes in reverse.
 
 ```tmux
-if -F "$TMUX_POPUP_SERVER" {
+if -F '#{TMUX_POPUP_SERVER}' {
    set -g copy-command '~/path/to/this/plugin/bin/proxy loadb -w -'
    # Sync buffer with the caller session before pasting.
    bind -T prefix ] run '#{@popup-sync-buffer}' \; pasteb -p
@@ -281,13 +281,13 @@ if -F "$TMUX_POPUP_SERVER" {
 
 ```tmux
 # Start popups in the working server
-set -gF @popup-socket-path "#{socket_path}"
+set -gF @popup-socket-path '#{socket_path}'
 # Turn off statusline
-set -g  @popup-on-init "set status off"
+set -g  @popup-on-init 'set status off'
 # Simplify the ID format
-set -g  @popup-id-format "popup/#{b:pane_current_path}/{popup_name}"
+set -g  @popup-id-format 'popup/#{b:pane_current_path}/{popup_name}'
 # Filter out popup session in the session selector
-bind -T prefix s choose-tree -sf "#{!:#{m:popup/*,#{session_name}}}"
+bind -T prefix s choose-tree -sf '#{!:#{m:popup/*,#{session_name}}}'
 ```
 
 **Pros**:
@@ -315,7 +315,7 @@ and:
 # ~/.tmux/layout.conf
 # `on-init` runs each time we enter the popup session, but we only need to set
 # up the layout at the first time.
-if -F "#{!:#{@popup_did_init}}" {
+if -F '#{!:#{@popup_did_init}}' {
    split-window -h program2 ...arguments
    select-layout -t1 main-vertical-mirrored
    set @popup_did_init 1

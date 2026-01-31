@@ -3,9 +3,9 @@ TMUX:BEGIN[1] {
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
-	run
+	run-shell
 	-C
-	run '#{@popup_before_open}'
+	run "#{@popup_before_open}"
 	;
 	display-popup
 	-e
@@ -17,7 +17,7 @@ TMUX:BEGIN[1] {
 	}
 		-L
 		popup_test
-		new
+		new-session
 		-As
 		default_id_format/p_toggle_key
 		-e
@@ -27,28 +27,28 @@ TMUX:BEGIN[1] {
 		__tmux_popup_caller
 		%current_pane_id:tmux-test
 		;
-		bind
+		bind-key
 		-T
 		root
 		M-p
 		run
 		#{@popup-toggle} --name=p_toggle_key --toggle-key=-T\ root\ M-p --toggle-key=-n\ M-o
 		;
-		bind
+		bind-key
 		-n
 		M-o
 		run
 		#{@popup-toggle} --name=p_toggle_key --toggle-key=-T\ root\ M-p --toggle-key=-n\ M-o
 		;
-		run
+		run-shell
 		-C
-		run '#{@popup_on_init}'
+		run "#{@popup_on_init}"
 		;
 	TMUX:END[2]
 	;
-	run
+	run-shell
 	-C
-	run '#{@popup_after_close}'
+	run "#{@popup_after_close}"
 	;
 TMUX:END[1]
 TMUX:BEGIN[3] {
@@ -59,12 +59,12 @@ TMUX:BEGIN[3] {
 	-N
 	-L
 	popup_test
-	unbind
+	unbind-key
 	-T
 	root
 	M-p
 	;
-	unbind
+	unbind-key
 	-n
 	M-o
 	;

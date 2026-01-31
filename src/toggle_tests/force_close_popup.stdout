@@ -3,5 +3,5 @@ TMUX:BEGIN[1] {
 	TMUX_POPUP_SERVER=
 	SHELL=/system/shell
 }
-	detach
+	detach-client
 TMUX:END[1]

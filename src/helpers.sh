@@ -13,7 +13,7 @@ println() {
 # Prints an error message and exits.
 die() {
 	if [[ -n $TMUX ]]; then
-		tmux run "printf '%s\n' $(escape "$*")"
+		tmux run-shell "printf '%s\n' $(escape "$*")"
 	else
 		println "$@" >&2
 	fi
@@ -44,11 +44,16 @@ batch_get_options() {
 		formats+=("${1#*=}")
 		shift
 	done
-	delimiter=${delimiter:-">>>END@$RANDOM"} # generate a random delimiter
+	delimiter=${delimiter:-"@@@@@$RANDOM@@@@@"} # generate a random delimiter
 
-	local target_pane target_tmux args=()
+	local target_pane target_tmux args
 	IFS=':' read -r target_pane target_tmux <<<"$target"
-	if [[ -n $target_pane ]]; then args+=(-t "$target_pane"); fi
+	if [[ -n $target_pane ]]; then
+		args=(display-message -t "$target_pane")
+	else
+		args=(display-message -t "$target_pane")
+	fi
+	args+=(-p "$(printf "%s\n$delimiter\n" "${formats[@]}")")
 
 	local val=() line
 	set -- "${keys[@]}"
@@ -57,12 +62,16 @@ batch_get_options() {
 			:
 		elif [[ $line != "$delimiter" ]]; then
 			val+=("$line")
+		elif [[ $# -eq 0 ]]; then
+			die 'corrupted batch options'
 		else
-			printf -v "$1" "%s" "${val[*]}" # replace line breaks with spaces
+			printf -v "$1" '%s' "${val[*]}" # replace line breaks with spaces
 			val=()
 			shift
 		fi
-	done < <(TMUX=${target_tmux:-$TMUX} tmux display "${args[@]}" -p "$(printf "%s\n$delimiter\n" "${formats[@]}")")
+	done < <(TMUX=${target_tmux:-$TMUX} tmux "${args[@]}")
+
+	if [[ $# -ne 0 ]]; then die 'corrupted batch options'; fi
 }
 
 # Escapes all given arguments.
@@ -80,14 +89,14 @@ escape_session_name() {
 
 # Returns whether a hook is enabled.
 check_hook() {
-	if [[ -z $1 || $1 == "nop" ]]; then
+	if [[ -z $1 || $1 == 'nop' ]]; then
 		return 1
 	fi
 }
 
 # Expands the provided tmux FORMAT string.
 format() {
-	tmux display -p "$*"
+	tmux display-message -p "$*"
 }
 
 # Interpolates the provided FORMAT string. The last argument is the format
@@ -118,7 +127,7 @@ failf() {
 
 assert_eq() {
 	if [[ $1 != "$2" ]]; then
-		failf "assertion failed: left != right:\n\tleft: %s\n\tright: %s\n" "$1" "$2"
+		failf 'assertion failed: left != right:\n\tleft: %s\n\tright: %s\n' "$1" "$2"
 	fi
 }
 
