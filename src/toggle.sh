@@ -94,9 +94,11 @@ main() {
 	opened_name=${__tmux_popup_name}
 
 	# Expand each argument as a tmux format string before actually parsing.
-	local i=1 batch_expand_args=()
+	# Escape % characters to prevent them from being interpreted as format directives
+	local i=1 batch_expand_args=() escaped_arg
 	while [[ $i -le $# ]]; do
-		batch_expand_args+=("argv_$i=${!i}")
+		escaped_arg=${!i//\%/%%}
+		batch_expand_args+=("argv_$i=$escaped_arg")
 		i=$((i + 1))
 	done
 
