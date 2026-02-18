@@ -16,6 +16,7 @@ trace() {
 }
 
 return_batch_options() {
+	# Fake option expansions
 	fake_batch_options \
 		t_id_format='default_id_format/{popup_name}' \
 		t_on_init='run "#{@popup_on_init}"' \
@@ -25,7 +26,17 @@ return_batch_options() {
 		t_socket_name='popup_test' \
 		t_socket_path='' \
 		t_current_pane_id='%current_pane_id'
-	cat "$f_args"
+
+	# Fake argument expansions
+	local i=1 fake_expanded_args=()
+	while IFS= read -r arg; do
+		if contains_format "$arg"; then
+			fake_expanded_args+=("t_argv_$i=$arg")
+		fi
+		i=$((i + 1))
+	done <"$f_args"
+	fake_batch_options "${fake_expanded_args[@]}"
+
 	exit
 }
 
