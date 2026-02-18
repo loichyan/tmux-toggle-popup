@@ -37,11 +37,19 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+### Changed
+
+- Only expand arguments that include format strings ([#65], [#66], thanks
+  [@kwbr])
+
 ### Fixed
 
 - Use strict matching for session names when switching popup sessions ([#67])
 
+[#65]: https://github.com/loichyan/tmux-toggle-popup/pull/65
+[#66]: https://github.com/loichyan/tmux-toggle-popup/pull/66
 [#67]: https://github.com/loichyan/tmux-toggle-popup/pull/67
+[@kwbr]: https://github.com/kwbr
 
 ## [0.5.0] - 2026-01-31
 
