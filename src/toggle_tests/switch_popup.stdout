@@ -14,7 +14,7 @@ TMUX:BEGIN[2] {
 }
 	switch-client
 	-t
-	default_id_format/p_switch_2
+	=default_id_format/p_switch_2
 	;
 	setenv
 	__tmux_popup_caller
