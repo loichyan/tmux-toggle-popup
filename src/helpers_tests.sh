@@ -70,3 +70,30 @@ tmux() {
 	assert_eq "$var3" "line1 line2"
 	assert_eq "$var4" "line1 line2 line3"
 ) || exit 1
+
+#-- test:contains_format -------------------------------------------------------
+
+must_contain_format() {
+	if ! contains_format "$1"; then
+		failf "'%s' must contain format" "$1"
+	fi
+}
+
+must_not_contain_format() {
+	if contains_format "$1"; then
+		failf "'%s' must not contain format" "$1"
+	fi
+}
+
+(
+	begin_test 'contains_format' || exit 0
+	must_not_contain_format ""
+	must_not_contain_format "#"
+	must_not_contain_format "#{"
+	must_not_contain_format "#}"
+	must_contain_format "#{}"
+	must_contain_format "#{abc}"
+	must_contain_format "a#{b}c"
+	must_contain_format "#{}abc"
+	must_contain_format "abc#{}"
+)

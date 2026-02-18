@@ -29,13 +29,8 @@ test_toggle() {
 		i=$((i + 1))
 	done
 
-	# Fake argument expansions
-	local i=1 fake_expanded_args=()
-	while [[ $i -le $# ]]; do
-		fake_expanded_args+=("t_argv_$i=${!i}")
-		i=$((i + 1))
-	done
-	fake_batch_options "${fake_expanded_args[@]}" >"$f_args"
+	# Forward arguments for fake expansions
+	printf "%s\n" "$@" >"$f_args"
 
 	# Do call popup-toggle
 	export delimiter f_call_id f_args f_input f_output

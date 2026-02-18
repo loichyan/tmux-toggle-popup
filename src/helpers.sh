@@ -30,7 +30,7 @@ die_badopt() {
 }
 
 # Fetches tmux options in batch. Each argument may be specified in the syntax
-# `key=format`, where `format` is a tmux FORMAT to retrieve the intended option,
+# `key=format`, where `format` is a tmux format to retrieve the intended option,
 # and its value is assigned to a variable named `key`.
 #
 # Additionally, `$target` may be used to specify the pane in which the format
@@ -91,12 +91,17 @@ check_hook() {
 	fi
 }
 
-# Expands the provided tmux FORMAT string.
+# Expands the provided tmux format string.
 format() {
 	tmux display-message -p "$*"
 }
 
-# Interpolates the provided FORMAT string. The last argument is the format
+# Returns whether the given string contains tmux format strings.
+contains_format() {
+	[[ $1 == *\#\{*\}* ]]
+}
+
+# Interpolates the provided format string. The last argument is the format
 # string, while the preceding arguments represent the variables available during
 # the expansion. All `{variable}` placeholders in the format string will be
 # replaced with their corresponding values.

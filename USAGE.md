@@ -70,14 +70,15 @@ can include any options supported by `bind-key`. For example, you can use
 `--toggle-key '-Troot M-t'` or `--toggle-key '-n M-t'` to bind `M-t` without the
 prefix key.
 
-Each argument passed to `@popup-toggle` will be expanded as a tmux format string
-before parsing. The arguments are always expanded in the *caller session*, even
-when invoked in the *popup session*. This ensures that the expansion produces
-the same result in `switch` mode when `@popup-toggle` is called in a *popup
-session*. For more details about this feature, please refer to [#58]. In brief,
-it's recommended to use `run "#{@popup-toggle} -d'##{pane_current_path}'"`
-instead of `-d'#{pane_current_path}'`, and the same applies to other variables
-like `#{session_name}` and `#{session_path}`.
+If an argument passed to `@popup-toggle` contains format strings (i.e.,
+`#{...}`), it will be expanded using `tmux display-message` before being parsed.
+The arguments are always expanded in the *caller session*, even when invoked in
+the *popup session*. This ensures that the expansion produces the same result in
+`switch` mode when `@popup-toggle` is called in a *popup session*. For more
+details about this feature, please refer to [#58]. In brief, it's recommended to
+use `run "#{@popup-toggle} -d'##{pane_current_path}'"` instead of
+`-d'#{pane_current_path}'`, and the same applies to other variables like
+`#{session_name}` and `#{session_path}`.
 
 [#58]: https://github.com/loichyan/tmux-toggle-popup/pull/58
 
