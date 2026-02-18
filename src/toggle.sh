@@ -94,9 +94,18 @@ main() {
 	opened_name=${__tmux_popup_name}
 
 	# Expand each argument as a tmux format string before actually parsing.
-	local i=1 batch_expand_args=()
+	local i=1 k v batch_expand_args=() expanded_args=()
 	while [[ $i -le $# ]]; do
-		batch_expand_args+=("argv_$i=${!i}")
+		k="argv_$i"
+		v=${!i}
+		# Only expand arguments that include format strings to avoid unexpected
+		# expansion. For example, `%H` would be substituted with the current
+		# hour by strftime(3).
+		if contains_format "$v"; then
+			batch_expand_args+=("$k=$v")
+		else
+			printf -v "$k" '%s' "$v"
+		fi
 		i=$((i + 1))
 	done
 
@@ -112,7 +121,7 @@ main() {
 		current_pane_id='#{pane_id}' \
 		"${batch_expand_args[@]}"
 
-	local i=1 k expanded_args=()
+	local i=1 k
 	while [[ $i -le $# ]]; do
 		k="argv_$i"
 		expanded_args+=("${!k}")
