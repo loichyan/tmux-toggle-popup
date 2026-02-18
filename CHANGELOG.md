@@ -37,6 +37,12 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+### Fixed
+
+- Use strict matching for session names when switching popup sessions ([#67])
+
+[#67]: https://github.com/loichyan/tmux-toggle-popup/pull/67
+
 ## [0.5.0] - 2026-01-31
 
 This release includes some fundamental changes to how popup sessions and hooks

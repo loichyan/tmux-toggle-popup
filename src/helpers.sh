@@ -48,11 +48,8 @@ batch_get_options() {
 
 	local target_pane target_tmux args
 	IFS=':' read -r target_pane target_tmux <<<"$target"
-	if [[ -n $target_pane ]]; then
-		args=(display-message -t "$target_pane")
-	else
-		args=(display-message -t "$target_pane")
-	fi
+	args=(display-message)
+	if [[ -n $target_pane ]]; then args+=(-t "$target_pane"); fi
 	args+=(-p "$(printf "%s\n$delimiter\n" "${formats[@]}")")
 
 	local val=() line

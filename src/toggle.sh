@@ -66,7 +66,7 @@ prepare_init() {
 		if ! tmux has-session -t "=$popup_id" 2>/dev/null; then
 			init_cmds+=(new-session -ds "$popup_id" "${session_args[@]}" \;)
 		fi
-		init_cmds+=(switch-client -t "$popup_id" \;)
+		init_cmds+=(switch-client -t "=$popup_id" \;)
 	fi
 
 	init_cmds+=(
