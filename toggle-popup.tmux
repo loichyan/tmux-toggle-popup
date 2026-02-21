@@ -14,7 +14,7 @@ source "$CURRENT_DIR/src/helpers.sh"
 source "$CURRENT_DIR/src/variables.sh"
 
 main() {
-	# Set option defaults, and export public APIs.
+	# Set option defaults and export public commands.
 	tmux \
 		set-option -g @popup-toggle "$CURRENT_DIR/src/toggle.sh" \; \
 		set-option -g @popup-focus "$CURRENT_DIR/src/focus.sh" \; \

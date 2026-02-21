@@ -37,6 +37,11 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+## [0.5.1] - {{DATE}}
+
+This release improves the rules for argument expansion to resolve failures and
+potential issues on some systems.
+
 ### Changed
 
 - Only expand arguments that include format strings ([#65], [#66], thanks
@@ -278,4 +283,5 @@ for more details.
 [0.4.3]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.2..v0.4.3
 [0.4.4]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.3..v0.4.4
 [0.5.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.4..v0.5.0
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.5.0..HEAD
+[0.5.1]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.5.0..v0.5.1
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.5.1..HEAD
