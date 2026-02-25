@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Name:     tmux-toggle-popup
-# Version:  0.5.0
+# Version:  0.5.1
 # Authors:  Loi Chyan <loichyan@outlook.com>
 # License:  MIT OR Apache-2.0
 
