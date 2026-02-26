@@ -9,7 +9,7 @@ Some terms are emphasized in italics. Most of them are referred in the this sect
 Every popup is associated with a unique tmux session, namely the *popup
 session*, specified by an ID. When you open a popup through `@popup-toggle`:
 
-1. A *popup window* is created by `display-popup`,
+1. A *popup window* is created by `display-popup`.
 2. A tmux session specified by the given ID is created by `new-session` with the
    supplied program in the *popup server* if it does not already exist.
 3. Finally, the focus attaches to that session in the *popup window*.
@@ -18,7 +18,7 @@ The session from which you call `@popup-toggle` is the *working session*, or the
 *caller session*. Similarly, the pane where `@popup-toggle` runs is referred as
 the *caller pane*. In a *popup session*, you can invoke `@popup-toggle` again to
 close it and return to the *working session*. Closing a *popup session* does not
-exit it; instead, it keeps alive until the program running inside it exits.
+kill it; instead, it keeps alive until the program running inside it exits.
 
 In a *working session*, invoking `@popup-toggle` will always open a popup
 window. However, in a *popup session*, only if the specified ID matches the
@@ -68,7 +68,7 @@ both the working server and the *popup server*. `@popup-toggle` supports using
 `--toggle-key <key>` to achieve this, where `<key>` is passed to `bind-key` and
 can include any options supported by `bind-key`. For example, you can use
 `--toggle-key '-Troot M-t'` or `--toggle-key '-n M-t'` to bind `M-t` without the
-prefix key.
+prefix key. For more information about this option, please refer to [#9].
 
 If an argument passed to `@popup-toggle` contains format strings (i.e.,
 `#{...}`), it will be expanded using `tmux display-message` before being parsed.
@@ -80,6 +80,7 @@ use `run "#{@popup-toggle} -d'##{pane_current_path}'"` instead of
 `-d'#{pane_current_path}'`, and the same applies to other variables like
 `#{session_name}` and `#{session_path}`.
 
+[#9]: https://github.com/loichyan/tmux-toggle-popup/pull/9
 [#58]: https://github.com/loichyan/tmux-toggle-popup/pull/58
 
 ### `@popup-proxy`
