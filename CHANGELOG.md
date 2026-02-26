@@ -37,7 +37,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
-## [0.5.1] - {{DATE}}
+## [0.5.1] - 2026-02-26
 
 This release improves the rules for argument expansion to resolve failures and
 potential issues on some systems.
