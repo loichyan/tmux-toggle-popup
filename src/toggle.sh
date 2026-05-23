@@ -182,13 +182,8 @@ main() {
 	)
 
 	# Determine which server to start popups.
-	if [[ -n $socket_path ]]; then
-		popup_socket=(-S "$socket_path")
-		popup_server=${socket_path##*/}
-	else
-		popup_socket=(-L "$socket_name")
-		popup_server=${socket_name}
-	fi
+	socket_path=${socket_path:-"${TMUX_TMPDIR:-/tmp}/tmux-$UID/$socket_name"}
+	popup_server=${socket_path##*/}
 
 	if [[ -z $opened_name ]]; then
 		prepare_init 'open'
@@ -214,7 +209,7 @@ main() {
 		display-popup "${popup_args[@]}"
 		-e TMUX_POPUP_SERVER="$popup_server" # used to identify the popup server
 		/bin/sh -c
-		"exec $(escape tmux "${popup_socket[@]}" "${init_cmds[@]}")>/dev/null"
+		"exec $(escape tmux -S "$socket_path" "${init_cmds[@]}")>/dev/null"
 		\;
 	)
 
@@ -227,7 +222,7 @@ main() {
 	# Undo temporary changes on the popup server
 	if [[ -z $opened_name && ${#on_cleanup} -gt 0 ]]; then
 		# Ignore error if the server has already stopped
-		tmux -N "${popup_socket[@]}" "${on_cleanup[@]}" 2>/dev/null || true
+		tmux -N "$socket_path" "${on_cleanup[@]}" 2>/dev/null || true
 	fi
 }
 
