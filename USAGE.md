@@ -332,3 +332,31 @@ if -F '#{!:#{@popup_did_init}}' {
 > and session tmux(1) targets still refer to your working session. Consequently,
 > tmux commands in `some_script.sh` do not affect the popup session but rather
 > your working session.
+
+### Popups per Git repository
+
+First, add a snippet to update the current Git repository.
+
+```tmux
+set -g @update-pane-current-repo {
+   # Update only if current working directory changes.
+	if -F '#{!=:#{pane_current_path},#{@pane_previous_path}}' {
+		set -pF @pane_previous_path '#{pane_current_path}'
+		# Set @pane_current_repo to the root directory of the current Git
+		# repository if possible; otherwise, use the current working directory.
+		run 'cd "#{pane_current_path}" && tmux set -p @pane_current_repo "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"'
+	}
+}
+```
+
+Then, run the snippet above before `@popup-toggle` is called.
+
+```tmux
+bind C-t run -C '#{@update-pane-current-repo}' \; run "#{@popup-toggle} -Ed'##{@pane_current_repo}' --id-format='popup/#{b:@pane_current_repo}'"
+```
+
+> [!Note]
+>
+> Do not use the `@popup-before-open` hook, as it runs after the expansion of
+> command-line arguments. Consequently, `@popup-toggle` may see a stale
+> `#{@pane_current_repo}` and trigger an unexpected popup session.
