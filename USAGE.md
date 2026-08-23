@@ -167,6 +167,27 @@ works:
 4. Different popups do not share the same ID. This part is usually necessary
    unless you have only one popup set up.
 
+### `@popup-backend`
+
+**Default**: `legacy-popup`
+
+**Description**: Defines the backend used to manage *popup windows*. By default,
+`legacy-popup` is used, which is built on `display-popup`.
+
+Starting from tmux 3.8, you can set this to `floating-pane`, which makes
+`@popup-toggle` use the newly added `new-pane` command instead. This offers
+better terminal compatibility. Note that `@popup-toggle` does not translate
+between the CLI options of `display-popup` and `new-pane`, so you must migrate
+your existing keybindings manually. For example:
+
+```tmux
+# with `@popup-backend` set to `legacy-popup`
+bind C-t run "#{@popup-toggle} -Ed'##{pane_current_path}' -w70% -h90%"
+
+# with `@popup-backend` set to `floating-pane`
+bind C-t run "#{@popup-toggle} -c'##{pane_current_path}' -x70% -y90% -X15% -Y5%"
+```
+
 ### `@popup-toggle-mode`
 
 **Default**: `switch`
@@ -272,7 +293,7 @@ if -F '#{TMUX_POPUP_SERVER}' {
    # `load-buffer` will paste the text into a tmux buffer, but `copy-pipe-*`
    # commands create a buffer with the same text as well. This causes duplicate
    # buffers. Use the `-P` option to prevent `copy-pipe-*` from doing that.
-   set -g copy-command '~/path/to/this/plugin/bin/proxy load-buffer -w -'
+   set -g copy-command '~/path/to/this/plugin/bin/proxy --sync load-buffer -w -'
    bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel -P
    bind -T copy-mode-vi y send -X copy-pipe-and-cancel -P
 }

@@ -12,6 +12,13 @@ source "$CURRENT_DIR/helpers.sh"
 source "$CURRENT_DIR/variables.sh"
 
 usage() {
+	local popup_cmd
+	case $backend in
+	legacy-popup) popup_cmd='display-popup' ;;
+	floating-pane) popup_cmd='new-pane' ;;
+	*) die "unreachable" ;;
+	esac
+
 	cat <<-EOF
 		Usage:
 
@@ -26,8 +33,7 @@ usage() {
 		  --name <name>               Popup name [Default: "$DEFAULT_NAME"]
 		  --id <id>                   Popup ID, default to the expanded ID format
 		  --toggle-key <key>          Bind additional keys to close the opened popup
-		  -[BCE]                      Flags passed to display-popup
-		  -[bcdehsStTwxy] <value>     Options passed to display-popup
+		  -* [value]                  Options passed to "${popup_cmd}"
 
 		Global Options:
 
@@ -85,7 +91,7 @@ prepare_init() {
 	if check_hook "$on_init"; then init_cmds+=(run-shell -C "$on_init" \;); fi
 }
 
-declare name id id_format toggle_keys=() session_args=() popup_args=()
+declare name id id_format backend toggle_keys=() session_args=() popup_args=()
 declare on_init before_open after_close toggle_mode socket_name socket_path
 declare popup_caller opened_name current_pane_id
 main() {
@@ -112,12 +118,13 @@ main() {
 	# Expand format strings in the caller pane to ensure consistency.
 	target=$popup_caller batch_get_options \
 		id_format='#{E:@popup-id-format}' \
-		on_init='#{@popup-on-init}' \
-		before_open='#{@popup-before-open}' \
-		after_close='#{@popup-after-close}' \
+		backend='#{@popup-backend}' \
 		toggle_mode='#{@popup-toggle-mode}' \
 		socket_name='#{@popup-socket-name}' \
 		socket_path='#{@popup-socket-path}' \
+		on_init='#{@popup-on-init}' \
+		before_open='#{@popup-before-open}' \
+		after_close='#{@popup-after-close}' \
 		current_pane_id='#{pane_id}' \
 		"${batch_expand_args[@]}"
 
@@ -129,24 +136,44 @@ main() {
 	done
 	set -- "${expanded_args[@]}" # now all arguments are expanded
 
+	local opts
+	case $backend in
+	legacy-popup) opts=":-:BCEb:c:d:e:h:s:S:t:T:w:x:y:" ;;
+	floating-pane) opts=":-:AbCdefhIkLMPvWZ:B:c:e:F:l:m:p:R:s:S:t:T:x:X:y:Y:" ;;
+	*) die "illegal backend: $backend" ;;
+	esac
+
 	declare OPT OPTARG OPTIND=1
-	while getopts :-:BCEb:c:d:e:h:s:S:t:T:w:x:y: OPT; do
+	while getopts "$opts" OPT; do
 		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
-		case "$OPT" in
-		[BCE]) popup_args+=("-$OPT") ;;
-		[bchsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
-		# Forward working directory to popup sessions
-		d)
-			# Report deprecated placeholders
-			if [[ $OPTARG =~ \{popup_caller(_pane)?_path\} ]]; then
-				die '"{popup_caller_path}" and "{popup_caller_pane_path}" has been removed.' \
-					'Please use "##{session_path}" and "##{pane_current_path}" instead.' \
-					'For more information, see <https://github.com/loichyan/tmux-toggle-popup/pull/58>.'
-			fi
-			session_args+=(-c "$OPTARG")
+
+		case $backend in
+		legacy-popup)
+			case $OPT in
+			# Forward working directory to popup sessions
+			d) session_args+=(-c "$OPTARG") ;;
+			# Forward environment overrides to popup sessions
+			e) session_args+=(-e "$OPTARG") ;;
+			# Passthrough flags
+			[BCE]) popup_args+=("-$OPT") ;;
+			[bchsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
+			esac
 			;;
-		# Forward environment overrides to popup sessions
-		e) session_args+=(-e "$OPTARG") ;;
+		floating-pane)
+			case $OPT in
+			# Forward working directory to popup sessions
+			c) session_args+=(-c "$OPTARG") ;;
+			# Forward environment overrides to popup sessions
+			e) session_args+=(-e "$OPTARG") ;;
+			# Passthrough flags
+			[AbCdefhIkKLMOPvWZ]) popup_args+=("-$OPT") ;;
+			[BceFlmpRsStTxXyY]) popup_args+=("-$OPT" "$OPTARG") ;;
+			esac
+			;;
+		*) die "unreachable" ;;
+		esac
+
+		case "$OPT" in
 		name | id | id-format | toggle-key | \
 			on-init | before-open | after-close | \
 			toggle-mode | socket-name | socket-path)
@@ -199,14 +226,19 @@ main() {
 	fi
 
 	# Command sequence to open the popup window, including hooks.
-	open_cmds=()
+	local open_cmds=()
 
 	# Handle hook: before-open
 	if check_hook "$before_open"; then open_cmds+=(run-shell -C "$before_open" \;); fi
 
 	# Add commands that actually open the popup.
+	case $backend in
+	legacy-popup) open_cmds+=(display-popup) ;;
+	floating-pane) open_cmds+=(new-pane -OK) ;;
+	*) die "unreachable" ;;
+	esac
 	open_cmds+=(
-		display-popup "${popup_args[@]}"
+		"${popup_args[@]}"
 		-e TMUX_POPUP_SERVER="$popup_server" # used to identify the popup server
 		/bin/sh -c
 		"exec $(escape tmux -S "$socket_path" "${init_cmds[@]}")>/dev/null"
