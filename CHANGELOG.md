@@ -33,6 +33,11 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+## [0.5.2] - {{DATE}}
+
+This release adds support for floating panes and improves the buffer
+synchronization between popup and working sessions.
+
 ### Added
 
 - Add `@popup-proxy --sync` for simultaneous command execution in both popup
@@ -292,4 +297,5 @@ for more details.
 [0.4.4]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.3..v0.4.4
 [0.5.0]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.4.4..v0.5.0
 [0.5.1]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.5.0..v0.5.1
-[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.5.1..HEAD
+[0.5.2]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.5.1..v0.5.2
+[Unreleased]: https://github.com/loichyan/tmux-toggle-popup/compare/v0.5.2..HEAD
