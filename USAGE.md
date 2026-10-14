@@ -86,23 +86,22 @@ use `run "#{@popup-toggle} -d'##{pane_current_path}'"` instead of
 ### `@popup-proxy`
 
 **Description**: A helper command for executing tmux commands in the *caller
-session*. It accepts a tmux command sequence and forwards it to tmux(1).
+session*. It can be used as a standalone executable.
 
 This command is helpful for syncing environments and buffers between the *popup
-session* and the *caller session*. If executed outside a *popup session*, it
-will pass the provided commands directly to tmux. This command can be used as a
-standalone executable.
+session* and the *caller session*. It accepts a tmux command sequence and
+automatically forwards it to the *caller session*.
+
+You can also specify `--sync` as the first argument, which makes the following
+command sequence run simultaneously in the *popup session* and the *caller
+session*.
 
 **Example**: See the [recipe for sharing tmux buffers](#sharing-tmux-buffers).
 
 ### `@popup-sync-buffer`
 
-**Description**: A helper command to sync tmux buffers from the *caller
-session*. It uses `@popup-proxy` internally for synchronization. You can this
-before running `paste-buffer` in a *popup session* so that the content from the
-latest buffer of the *caller session* is pasted.
-
-**Example**: See the [recipe for sharing tmux buffers](#sharing-tmux-buffers).
+**Description**: This command is deprecated. See the
+[recipe for sharing tmux buffers](#sharing-tmux-buffers) for a better solution.
 
 ### `@popup-focus`
 
@@ -265,17 +264,17 @@ set -g @popup-on-init '
 
 ### Sharing tmux buffers <a id="sharing-tmux-buffers"></a>
 
-Forward the output of copies from *popup sessions* to the *working session* and
-the input of pastes in reverse.
+Sync buffer loads between the *popup server* and the *working server*. This is
+useful only when you use a dedicated server for popup sessions.
 
 ```tmux
 if -F '#{TMUX_POPUP_SERVER}' {
-   set -g copy-command '~/path/to/this/plugin/bin/proxy loadb -w -'
-   # Sync buffer with the caller session before pasting.
-   bind -T prefix ] run '#{@popup-sync-buffer}' \; pasteb -p
-   # tmux uses copy-pipe-* commands by default, so below may be unnecessary.
-   bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel
-   bind -T copy-mode-vi y send -X copy-pipe-and-cancel
+   # `load-buffer` will paste the text into a tmux buffer, but `copy-pipe-*`
+   # commands create a buffer with the same text as well. This causes duplicate
+   # buffers. Use the `-P` option to prevent `copy-pipe-*` from doing that.
+   set -g copy-command '~/path/to/this/plugin/bin/proxy load-buffer -w -'
+   bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel -P
+   bind -T copy-mode-vi y send -X copy-pipe-and-cancel -P
 }
 ```
 
