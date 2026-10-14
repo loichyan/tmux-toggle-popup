@@ -19,12 +19,13 @@ return_batch_options() {
 	# Fake option expansions
 	fake_batch_options \
 		t_id_format='default_id_format/{popup_name}' \
-		t_on_init='run "#{@popup_on_init}"' \
-		t_before_open='run "#{@popup_before_open}"' \
-		t_after_close='run "#{@popup_after_close}"' \
+		t_backend='legacy-popup' \
 		t_toggle_mode='switch' \
 		t_socket_name='popup_test' \
 		t_socket_path='' \
+		t_on_init='run "#{@popup_on_init}"' \
+		t_before_open='run "#{@popup_before_open}"' \
+		t_after_close='run "#{@popup_after_close}"' \
 		t_current_pane_id='%current_pane_id'
 
 	# Fake argument expansions

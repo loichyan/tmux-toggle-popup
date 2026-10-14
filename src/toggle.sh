@@ -147,6 +147,7 @@ main() {
 	while getopts "$opts" OPT; do
 		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
 
+		local skip=1
 		case $backend in
 		legacy-popup)
 			case $OPT in
@@ -157,6 +158,7 @@ main() {
 			# Passthrough flags
 			[BCE]) popup_args+=("-$OPT") ;;
 			[bchsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
+			*) skip=0 ;;
 			esac
 			;;
 		floating-pane)
@@ -168,10 +170,14 @@ main() {
 			# Passthrough flags
 			[AbCdefhIkKLMOPvWZ]) popup_args+=("-$OPT") ;;
 			[BceFlmpRsStTxXyY]) popup_args+=("-$OPT" "$OPTARG") ;;
+			*) skip=0 ;;
 			esac
 			;;
 		*) die "unreachable" ;;
 		esac
+		if [[ $skip == 1 ]]; then
+			continue
+		fi
 
 		case "$OPT" in
 		name | id | id-format | toggle-key | \
@@ -212,7 +218,7 @@ main() {
 	socket_path=${socket_path:-"${TMUX_TMPDIR:-/tmp}/tmux-$UID/$socket_name"}
 	popup_server=${socket_path##*/}
 
-	if [[ -z $opened_name ]]; then
+	if [[ -z $opened_name || $toggle_mode == 'force-open' ]]; then
 		prepare_init 'open'
 	elif [[ $name == "$opened_name" || $OPTIND -eq 1 || $toggle_mode == "force-close" ]]; then
 		tmux detach-client >/dev/null
