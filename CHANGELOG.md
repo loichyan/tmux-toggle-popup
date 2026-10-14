@@ -37,6 +37,13 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+### Added
+
+- Add `@popup-proxy --sync` for simultaneous command execution in both popup
+  session and working session ([#{{PRNUM}}])
+
+[#{{PRNUM}}]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
+
 ## [0.5.1] - 2026-02-26
 
 This release improves the rules for argument expansion to resolve failures and
