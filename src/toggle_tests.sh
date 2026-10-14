@@ -66,6 +66,13 @@ unset TMUX TMUX_POPUP_SERVER __tmux_popup_caller __tmux_popup_name
 ) || exit 1
 
 (
+	test_name='open_floating_pane'
+	export t_backend='floating-pane'
+	begin_test "$test_name" || exit 0
+	test_toggle --name='p_floating'
+) || exit 1
+
+(
 	test_name='close_popup'
 	export __tmux_popup_name='p_close'
 	begin_test "$test_name" || exit 0
@@ -100,6 +107,15 @@ unset TMUX TMUX_POPUP_SERVER __tmux_popup_caller __tmux_popup_name
 	export __tmux_popup_name='p_open_nested_1'
 	begin_test "$test_name" || exit 0
 	test_toggle --name='p_open_nested_2'
+) || exit 1
+
+(
+	test_name='open_nested_floating_pane'
+	export t_backend='floating-pane'
+	export t_toggle_mode='force-open'
+	export __tmux_popup_name='p_nested_floating_1'
+	begin_test "$test_name" || exit 0
+	test_toggle --name='p_nested_floating_2'
 ) || exit 1
 
 (
@@ -146,9 +162,8 @@ unset TMUX TMUX_POPUP_SERVER __tmux_popup_caller __tmux_popup_name
 
 (
 	test_name='open_with_directory'
-	should_fail=1
 	begin_test "$test_name" || exit 0
-	test_toggle --name='p_open_with_directory' -d'{popup_caller_pane_path}'
+	test_toggle --name='p_open_with_directory' -d'##{pane_current_pane_path}'
 ) || exit 1
 
 (
@@ -172,11 +187,10 @@ unset TMUX TMUX_POPUP_SERVER __tmux_popup_caller __tmux_popup_name
 
 (
 	test_name='switch_with_directory'
-	should_fail=1
 	exit_codes=(0 1 0 0)
 	export __tmux_popup_name='p_switch_with_directory_1'
 	begin_test "$test_name" || exit 0
-	test_toggle --name='p_switch_with_directory_2' -d'{popup_caller_pane_path}'
+	test_toggle --name='p_switch_with_directory_2' -d'##{pane_current_pane_path}'
 ) || exit 1
 
 # ID is taken as the opened name when it is specified.

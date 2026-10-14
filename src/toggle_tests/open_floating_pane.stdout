@@ -1,0 +1,41 @@
+TMUX:BEGIN[1] {
+	TMUX=tmux-test
+	TMUX_POPUP_SERVER=
+	SHELL=/system/shell
+}
+	run-shell
+	-C
+	run "#{@popup_before_open}"
+	;
+	new-pane
+	-OK
+	-e
+	TMUX_POPUP_SERVER=popup_test
+	TMUX:BEGIN[2] {
+		TMUX=tmux-test
+		TMUX_POPUP_SERVER=
+		SHELL=/system/shell
+	}
+		-S
+		/tmp/tmux-3000/popup_test
+		new-session
+		-As
+		default_id_format/p_floating
+		-e
+		__tmux_popup_name=p_floating
+		;
+		setenv
+		__tmux_popup_caller
+		%current_pane_id:tmux-test
+		;
+		run-shell
+		-C
+		run "#{@popup_on_init}"
+		;
+	TMUX:END[2]
+	;
+	run-shell
+	-C
+	run "#{@popup_after_close}"
+	;
+TMUX:END[1]

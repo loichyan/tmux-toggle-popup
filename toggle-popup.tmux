@@ -22,9 +22,10 @@ main() {
 		set-option -g @popup-sync-buffer "$CURRENT_DIR/src/sync_buffer.sh" \; \
 		set-option -goq @popup-autostart 'off' \; \
 		set-option -goq @popup-id-format "$DEFAULT_ID_FORMAT" \; \
-		set-option -goq @popup-on-init "$DEFAULT_ON_INIT" \; \
+		set-option -goq @popup-backend "$DEFAULT_BACKEND" \; \
 		set-option -goq @popup-toggle-mode "$DEFAULT_TOGGLE_MODE" \; \
-		set-option -goq @popup-socket-name "$DEFAULT_SOCKET_NAME" \;
+		set-option -goq @popup-socket-name "$DEFAULT_SOCKET_NAME" \; \
+		set-option -goq @popup-on-init "$DEFAULT_ON_INIT" \;
 
 	local autostart socket_name socket_path default_shell
 	target='' batch_get_options \
