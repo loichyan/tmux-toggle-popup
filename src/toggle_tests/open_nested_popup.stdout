@@ -17,6 +17,20 @@ TMUX:BEGIN[1] {
 	}
 		-S
 		/tmp/tmux-3000/popup_test
+		new-session
+		-As
+		default_id_format/p_open_nested_2
+		-e
+		__tmux_popup_name=p_open_nested_2
+		;
+		setenv
+		__tmux_popup_caller
+		%current_pane_id:tmux-test
+		;
+		run-shell
+		-C
+		run "#{@popup_on_init}"
+		;
 	TMUX:END[2]
 	;
 	run-shell
