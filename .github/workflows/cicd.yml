@@ -40,33 +40,6 @@ jobs:
       - name: Check | Test suite
         run: ./run_tests.sh
 
-  changelog:
-    name: Update changelog
-    needs: [check]
-    if: github.event_name == 'pull_request'
-    permissions:
-      contents: write # need to commit changes
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup | Checkout
-        uses: actions/checkout@v4
-        with: { ref: "${{ github.head_ref }}" }
-
-      - name: Doc | Update changelog
-        run: |
-          sed -i \
-            -e 's/{{PRNUM}}/${{ github.event.number }}/g' \
-            -e "s/{{DATE}}/$(date -u +'%Y-%m-%d')/g" \
-            CHANGELOG.md
-
-      - name: Post Doc | Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v6
-        with:
-          commit_message: "docs: expand variables in changelog"
-          commit_user_name: github-actions[bot]
-          commit_user_email: github-actions[bot]@users.noreply.github.com
-          commit_author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
-
   # How to create a new GitHub release?
   # 1. Create a release branch named "release/<tag>".
   # 2. Open a PR from the branch, including the release note in the PR body.
@@ -74,7 +47,7 @@ jobs:
   # 4. Publish the release when it's ready.
   release:
     name: Create GitHub release
-    needs: [check, changelog]
+    needs: [check]
     if: startsWith(github.head_ref, 'release/') && github.repository == 'loichyan/tmux-toggle-popup'
     permissions:
       contents: write # need to update release

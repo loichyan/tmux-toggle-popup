@@ -17,10 +17,6 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 - (**breaking**) Always place breaking changes at the top of each subsection.
 - Append other changes in chronological order under the appropriate subsection.
-- Additionally, you may use `{{variable name}}` as a placeholder for the value
-  of a named variable, which includes:
-  - `PRNUM`: the number of the pull request
-  - `DATE`: the date in `YYYY-MM-DD` format whenever the pull request is updated
 
 ### Changed
 
