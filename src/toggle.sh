@@ -260,7 +260,7 @@ main() {
 	# Undo temporary changes on the popup server
 	if [[ -z $opened_name && ${#on_cleanup} -gt 0 ]]; then
 		# Ignore error if the server has already stopped
-		tmux -N "$socket_path" "${on_cleanup[@]}" 2>/dev/null || true
+		tmux -N -S "$socket_path" "${on_cleanup[@]}" 2>/dev/null || true
 	fi
 }
 
