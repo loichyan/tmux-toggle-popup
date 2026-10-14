@@ -139,7 +139,7 @@ main() {
 	local opts
 	case $backend in
 	legacy-popup) opts=":-:BCEb:c:d:e:h:s:S:t:T:w:x:y:" ;;
-	floating-pane) opts=":-:AbCdefhIkLMPvWZ:B:c:e:F:l:m:p:R:s:S:t:T:x:X:y:Y:" ;;
+	floating-pane) opts=":-:AbCdDfhIkKLMOPvWZB:c:e:F:l:m:p:R:s:S:t:T:x:X:y:Y:" ;;
 	*) die "illegal backend: $backend" ;;
 	esac
 
@@ -168,7 +168,7 @@ main() {
 			# Forward environment overrides to popup sessions
 			e) session_args+=(-e "$OPTARG") ;;
 			# Passthrough flags
-			[AbCdefhIkKLMOPvWZ]) popup_args+=("-$OPT") ;;
+			[AbCdDfhIkKLMOPvWZ]) popup_args+=("-$OPT") ;;
 			[BceFlmpRsStTxXyY]) popup_args+=("-$OPT" "$OPTARG") ;;
 			*) skip=0 ;;
 			esac
