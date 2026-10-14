@@ -33,7 +33,7 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
-## [0.5.2] - {{DATE}}
+## [0.5.2] - 2026-10-14
 
 This release adds support for floating panes and improves the buffer
 synchronization between popup and working sessions.
