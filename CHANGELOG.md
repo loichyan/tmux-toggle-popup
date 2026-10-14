@@ -41,10 +41,10 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 - Add `@popup-proxy --sync` for simultaneous command execution in both popup
   session and working session ([#69])
-- Add `@popup-backend` for floating pane popups in tmux 3.8 or later ([[#{{PRNUM}}]])
+- Add `@popup-backend` for floating pane popups in tmux 3.8 or later ([[#70]])
 
 [#69]: https://github.com/loichyan/tmux-toggle-popup/pull/69
-[#{{PRNUM}}]: https://github.com/loichyan/tmux-toggle-popup/pull/{{PRNUM}}
+[#70]: https://github.com/loichyan/tmux-toggle-popup/pull/70
 
 ## [0.5.1] - 2026-02-26
 
