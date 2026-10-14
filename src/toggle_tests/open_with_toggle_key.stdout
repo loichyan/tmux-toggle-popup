@@ -15,8 +15,8 @@ TMUX:BEGIN[1] {
 		TMUX_POPUP_SERVER=
 		SHELL=/system/shell
 	}
-		-L
-		popup_test
+		-S
+		/tmp/tmux-3000/popup_test
 		new-session
 		-As
 		default_id_format/p_toggle_key
@@ -57,8 +57,7 @@ TMUX:BEGIN[3] {
 	SHELL=/system/shell
 }
 	-N
-	-L
-	popup_test
+	/tmp/tmux-3000/popup_test
 	unbind-key
 	-T
 	root

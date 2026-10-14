@@ -36,10 +36,10 @@ test_toggle() {
 	export delimiter f_call_id f_args f_input f_output
 	export TMUX=tmux-test
 	if [[ -n $should_fail ]]; then
-		! command "$CURRENT_DIR/toggle.sh" "$@" 4>&2 2>>"$f_output" || exit 1
+		! env UID=3000 "$CURRENT_DIR/toggle.sh" "$@" 4>&2 2>>"$f_output" || exit 1
 		f_expected="$CURRENT_DIR/toggle_tests/$test_name.stderr"
 	else
-		command "$CURRENT_DIR/toggle.sh" "$@" 4>&2 || exit 1
+		env UID=3000 "$CURRENT_DIR/toggle.sh" "$@" 4>&2 || exit 1
 		f_expected="$CURRENT_DIR/toggle_tests/$test_name.stdout"
 	fi
 
@@ -55,6 +55,7 @@ test_toggle() {
 # Ensure out fake executable tmux is picked at first.
 export PATH="$CURRENT_DIR/toggle_tests:$PATH"
 export SHELL='/system/shell'
+export TMUX_TMPDIR=/tmp
 unset TMUX TMUX_POPUP_SERVER __tmux_popup_caller __tmux_popup_name
 
 # Force subshell to ensure modifications are temporary.

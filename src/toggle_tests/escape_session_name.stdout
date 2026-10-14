@@ -15,8 +15,8 @@ TMUX:BEGIN[1] {
 		TMUX_POPUP_SERVER=
 		SHELL=/system/shell
 	}
-		-L
-		popup_test
+		-S
+		/tmp/tmux-3000/popup_test
 		new-session
 		-As
 		pane/_dot/_colon/p_escape_session_name
