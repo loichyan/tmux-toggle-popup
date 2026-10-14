@@ -73,6 +73,13 @@ unset TMUX TMUX_POPUP_SERVER __tmux_popup_caller __tmux_popup_name
 ) || exit 1
 
 (
+	test_name='open_floating_pane_with_options'
+	export t_backend='floating-pane'
+	begin_test "$test_name" || exit 0
+	test_toggle --name='p_floating_options' -e 'FOO=bar' -DZ -x70% -y90%
+) || exit 1
+
+(
 	test_name='close_popup'
 	export __tmux_popup_name='p_close'
 	begin_test "$test_name" || exit 0

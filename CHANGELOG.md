@@ -17,10 +17,6 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 - (**breaking**) Always place breaking changes at the top of each subsection.
 - Append other changes in chronological order under the appropriate subsection.
-- Additionally, you may use `{{variable name}}` as a placeholder for the value
-  of a named variable, which includes:
-  - `PRNUM`: the number of the pull request
-  - `DATE`: the date in `YYYY-MM-DD` format whenever the pull request is updated
 
 ### Changed
 
@@ -41,10 +37,13 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 - Add `@popup-proxy --sync` for simultaneous command execution in both popup
   session and working session ([#69])
-- Add `@popup-backend` for floating pane popups in tmux 3.8 or later ([[#70]])
+- Add `@popup-backend` for floating pane popups in tmux 3.8 or later ([#70],
+  [#72], thanks [@cenk1cenk2])
 
 [#69]: https://github.com/loichyan/tmux-toggle-popup/pull/69
 [#70]: https://github.com/loichyan/tmux-toggle-popup/pull/70
+[#72]: https://github.com/loichyan/tmux-toggle-popup/pull/72
+[@cenk1cenk2]: https://github.com/cenk1cenk2
 
 ## [0.5.1] - 2026-02-26
 

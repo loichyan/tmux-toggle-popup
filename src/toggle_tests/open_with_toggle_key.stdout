@@ -57,6 +57,7 @@ TMUX:BEGIN[3] {
 	SHELL=/system/shell
 }
 	-N
+	-S
 	/tmp/tmux-3000/popup_test
 	unbind-key
 	-T
