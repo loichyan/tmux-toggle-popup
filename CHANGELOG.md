@@ -33,6 +33,12 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 
 ## [Unreleased]
 
+### Fixed
+
+- Wait for popup session exiting and run post-exit hooks ([#73])
+
+[#73]: https://github.com/loichyan/tmux-toggle-popup/pull/73
+
 ## [0.5.2] - 2026-10-14
 
 This release adds support for floating panes and improves the buffer
