@@ -8,7 +8,7 @@ TMUX:BEGIN[1] {
 	run "#{@popup_before_open}"
 	;
 	new-pane
-	-OK
+	-OKW
 	-e
 	TMUX_POPUP_SERVER=popup_test
 	TMUX:BEGIN[2] {
