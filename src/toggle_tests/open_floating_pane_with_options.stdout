@@ -9,6 +9,8 @@ TMUX:BEGIN[1] {
 	;
 	new-pane
 	-OKW
+	-e
+	FOO=bar
 	-D
 	-Z
 	-x
