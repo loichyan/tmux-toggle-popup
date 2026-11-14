@@ -145,39 +145,34 @@ main() {
 
 	declare OPT OPTARG OPTIND=1
 	while getopts "$opts" OPT; do
-		if [[ $OPT == '-' ]]; then OPT=${OPTARG%%=*}; fi
 
-		local skip=1
 		case $backend in
 		legacy-popup)
+			# Forward working directory and environments to the popup session.
 			case $OPT in
-			# Forward working directory to popup sessions
 			d) session_args+=(-c "$OPTARG") ;;
-			# Forward environment overrides to popup sessions
 			e) session_args+=(-e "$OPTARG") ;;
-			# Passthrough flags
+			esac
+			case $OPT in
 			[BCE]) popup_args+=("-$OPT") ;;
-			[bchsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
-			*) skip=0 ;;
+			[bcdehsStTwxy]) popup_args+=("-$OPT" "$OPTARG") ;;
 			esac
 			;;
 		floating-pane)
+			# Forward working directory and environments to the popup session.
 			case $OPT in
-			# Forward working directory to popup sessions
 			c) session_args+=(-c "$OPTARG") ;;
-			# Forward environment overrides to popup sessions
 			e) session_args+=(-e "$OPTARG") ;;
-			# Passthrough flags
+			esac
+			case $OPT in
 			[AbCdDfhIkKLMOPvZ]) popup_args+=("-$OPT") ;;
 			[BceFlmpRsStTxXyY]) popup_args+=("-$OPT" "$OPTARG") ;;
-			*) skip=0 ;;
 			esac
 			;;
 		*) die "unreachable" ;;
 		esac
-		if [[ $skip == 1 ]]; then
-			continue
-		fi
+		if [[ $OPT != '-' ]]; then continue; fi
+		OPT=${OPTARG%%=*}
 
 		case "$OPT" in
 		name | id | id-format | toggle-key | \

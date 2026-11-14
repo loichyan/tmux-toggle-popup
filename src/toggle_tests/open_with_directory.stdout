@@ -8,6 +8,8 @@ TMUX:BEGIN[1] {
 	run "#{@popup_before_open}"
 	;
 	display-popup
+	-d
+	##{pane_current_pane_path}
 	-e
 	TMUX_POPUP_SERVER=popup_test
 	TMUX:BEGIN[2] {
