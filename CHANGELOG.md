@@ -36,8 +36,11 @@ follows <https://www.conventionalcommits.org/en/v1.0.0/> to track changes.
 ### Fixed
 
 - Wait for popup session exiting and run post-exit hooks ([#73])
+- Ensure popup windows use the same working directory and environment as their
+  popup sessions ([#74])
 
 [#73]: https://github.com/loichyan/tmux-toggle-popup/pull/73
+[#74]: https://github.com/loichyan/tmux-toggle-popup/pull/74
 
 ## [0.5.2] - 2026-10-14
 
